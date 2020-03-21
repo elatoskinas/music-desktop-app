@@ -1,5 +1,5 @@
 // Module requires
-const { app, BrowserWindow } = require('electron')
+const { app, dialog, BrowserWindow, ipcMain } = require('electron')
 
 function createWindow() {
     // Create the browser window.
@@ -45,3 +45,15 @@ app.on('activate', () => {
 
 // Rest of app's specific main process code.
 // Can also put the code in separate files and require them.
+
+// Open directory event
+ipcMain.on('openFileSelection', (ev, data) => {
+    var propertyDict = {
+        false: 'openFile',
+        true: 'openDirectory'
+    }
+
+    const property = propertyDict[data.folders]
+
+    dialog.showOpenDialog({properties: [property, 'multiSelections']})
+})

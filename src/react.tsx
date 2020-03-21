@@ -1,8 +1,14 @@
+// React imports
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+// CSS  imports
+import './css/main.css'
+
 // IPCRenderer that can be used to send events to main process
 const ipc = require('electron').ipcRenderer;
+
+// Howl can be used to play sounds
 const {Howl, Howler} = require('howler');
 
 /**

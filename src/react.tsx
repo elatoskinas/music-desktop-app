@@ -27,7 +27,11 @@ class PlayButton extends React.Component {
             PAUSED: "Paused"
         }
 
-        this.state = {'playStatus': this.statusMappings.STOPPED};
+        this.state = {
+            'playStatus': this.statusMappings.STOPPED,
+            'duration': 0,
+            'timestamp': 0
+        };
 
         // Bind this to callbacks
         this.playSound = this.playSound.bind(this);
@@ -37,6 +41,16 @@ class PlayButton extends React.Component {
         this.setState({
             playStatus: newStatus
         });
+    }
+
+    updateDuration(newDuration: number) {
+        this.setState({
+            duration: newDuration
+        });
+    }
+
+    formatTimestamp(time: number) {
+        return new Date(time * 1000).toISOString().substr(11, 8)
     }
 
     componentDidMount() {
@@ -57,11 +71,17 @@ class PlayButton extends React.Component {
                 onplay: () => {
                     this.updatePlayStatus(this.statusMappings.PLAYING);
                 },
+
                 onstop: () => {
                     this.updatePlayStatus(this.statusMappings.PAUSED);
                 },
+                
                 onpause: () => {
                     this.updatePlayStatus(this.statusMappings.PAUSED);
+                },
+
+                onload: () => {
+                    this.updateDuration(newSound.duration())
                 }
             });
 
@@ -70,6 +90,23 @@ class PlayButton extends React.Component {
                 sound: newSound
             });
         })
+
+        // @ts-ignore
+        this.timestamp = setInterval(
+            () => {
+                // @ts-ignore
+                const sound = this.state.sound;
+
+                if (sound != null && sound.state() == 'loaded') {
+                    // @ts-ignore
+                    let time = this.state.sound.seek()
+                    this.setState({
+                        'timestamp': time
+                    });
+                }
+            },
+            1000
+        );
     }
 
     playSound() {
@@ -87,10 +124,25 @@ class PlayButton extends React.Component {
         // @ts-ignore
         const buttonText = this.state.playStatus;
 
+        // @ts-ignore
+        const duration = this.state.duration;
+
+        // @ts-ignore
+        const time = this.state.timestamp;
+
         return(
-            <button onClick={this.playSound}>
-                {buttonText}
-            </button>
+            <div>
+                <button onClick={this.playSound}>
+                    {buttonText}
+                </button>
+
+                {/* TODO: Split to another component */}
+                <p>
+                    {
+                        this.formatTimestamp(time) + "/" + this.formatTimestamp(duration)
+                    }
+                </p>
+            </div>
         );
     }
 }

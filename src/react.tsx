@@ -69,6 +69,7 @@ class PlayButton extends React.Component {
             // Create new sound to play from path
             let newSound = new Howl({
                 src: [data],
+                html5: true,
 
                 // TODO: Detect that these events come from the proper sound
                 onplay: () => {
@@ -133,6 +134,8 @@ class PlayButton extends React.Component {
         // @ts-ignore
         const time = this.state.timestamp;
 
+        const newProgress = ((duration == 0 ? 0 : time/duration) * 100) + '%'
+
         return(
             <div>
                 <button onClick={this.playSound}>
@@ -145,6 +148,12 @@ class PlayButton extends React.Component {
                         this.formatTimestamp(time) + "/" + this.formatTimestamp(duration)
                     }
                 </p>
+
+                {/* TODO: Split to another component */}
+                <div id="musicProgress">
+                    <div id="musicProgressBar" style ={{ width: newProgress }} >
+                    </div>
+                </div>
             </div>
         );
     }

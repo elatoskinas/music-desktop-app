@@ -15,7 +15,7 @@ function createWindow() {
     win.loadFile('index.html')
 
     // Open DevTools
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
 
     // Hide menu bar
     win.setMenuBarVisibility(false)

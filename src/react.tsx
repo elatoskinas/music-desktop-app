@@ -11,6 +11,9 @@ const ipc = require('electron').ipcRenderer;
 // Howl can be used to play sounds
 const {Howl, Howler} = require('howler');
 
+// TODO: The code will need heavy refactoring/reworking & testing.
+// TODO: Right now, it is inteded to be a minimal version of the app
+
 /**
  * Button to play/pause sound.
  * Testing for now.

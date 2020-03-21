@@ -54,6 +54,12 @@ ipcMain.on('openFileSelection', (ev, data) => {
     }
 
     const property = propertyDict[data.folders]
+    let promise = dialog.showOpenDialog({properties: [property, 'multiSelections']})
 
-    dialog.showOpenDialog({properties: [property, 'multiSelections']})
+    promise.then(function(success) {
+        let file = success.filePaths[0]
+        ev.reply('loadedFile', file)
+    }, function(error) {
+        console.log(error)
+    })
 })

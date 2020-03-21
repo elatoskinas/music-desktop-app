@@ -3,25 +3,53 @@ import * as ReactDOM from 'react-dom';
 
 // IPCRenderer that can be used to send events to main process
 const ipc = require('electron').ipcRenderer;
+const {Howl, Howler} = require('howler');
 
 /**
- * Single button component.
+ * Button to play/pause sound.
  * Testing for now.
  */
-class Button extends React.Component {
-    test() {
-        alert('Test!')
+class PlayButton extends React.Component {
+    constructor(props) {
+        super(props);
+
+        console.log("X")
+
+        // Initialize file to none initially
+        this.state = {file: ""};
+        this.playSound = this.playSound.bind(this);
+    }
+
+    componentDidMount() {
+        ipc.on('loadedFile', (e, data) => {
+            this.setState({
+                file: data
+            });
+        })
+    }
+
+    playSound() {
+        // @ts-ignore
+        const file = this.state.file
+
+        // Create sound to play
+        let sound = new Howl({
+            src: [file]
+        });
+
+        // Play the sound
+        sound.play();
     }
 
     render() {
-        return <button onClick={this.test}>Play Sound</button>;
+        return <button onClick={this.playSound}>Play Sound</button>;
     }
 }
 
 class FileSelectionButton extends React.Component {
     openFileSelection() {
         ipc.send('openFileSelection', {
-            folders: true
+            folders: false
         })
     }
 
@@ -39,7 +67,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <Button />
+                <PlayButton />
                 <FileSelectionButton />
             </div>
         );

@@ -16,29 +16,41 @@ class PlayButton extends React.Component {
         console.log("X")
 
         // Initialize file to none initially
-        this.state = {file: ""};
+        this.state = {};
         this.playSound = this.playSound.bind(this);
     }
 
     componentDidMount() {
         ipc.on('loadedFile', (e, data) => {
+            // @ts-ignore
+            let oldSound = this.state.sound
+
+            // Stop old sound if it exists
+            if (oldSound != null) {
+                oldSound.stop();
+            }
+
+            // Create new sound to play from path
+            let newSound = new Howl({
+                src: [data]
+            });
+
+            // Update state
             this.setState({
-                file: data
+                sound: newSound
             });
         })
     }
 
     playSound() {
         // @ts-ignore
-        const file = this.state.file
-
-        // Create sound to play
-        let sound = new Howl({
-            src: [file]
-        });
+        const sound = this.state.sound
 
         // Play the sound
-        sound.play();
+        if (sound != null) {
+            // Pause/play depending on current status
+            sound.playing() ? sound.pause() : sound.play();
+        }
     }
 
     render() {

@@ -16,14 +16,27 @@ const {Howl, Howler} = require('howler');
  * Testing for now.
  */
 class PlayButton extends React.Component {
+    statusMappings: Record<string, string>;
+
     constructor(props) {
         super(props);
 
-        console.log("X")
+        this.statusMappings = {
+            STOPPED: "Stopped",
+            PLAYING: "Playing",
+            PAUSED: "Paused"
+        }
 
-        // Initialize file to none initially
-        this.state = {};
+        this.state = {'playStatus': this.statusMappings.STOPPED};
+
+        // Bind this to callbacks
         this.playSound = this.playSound.bind(this);
+    }
+
+    updatePlayStatus(newStatus: string) {
+        this.setState({
+            playStatus: newStatus
+        });
     }
 
     componentDidMount() {
@@ -38,7 +51,18 @@ class PlayButton extends React.Component {
 
             // Create new sound to play from path
             let newSound = new Howl({
-                src: [data]
+                src: [data],
+
+                // TODO: Detect that these events come from the proper sound
+                onplay: () => {
+                    this.updatePlayStatus(this.statusMappings.PLAYING);
+                },
+                onstop: () => {
+                    this.updatePlayStatus(this.statusMappings.PAUSED);
+                },
+                onpause: () => {
+                    this.updatePlayStatus(this.statusMappings.PAUSED);
+                }
             });
 
             // Update state
@@ -60,7 +84,14 @@ class PlayButton extends React.Component {
     }
 
     render() {
-        return <button onClick={this.playSound}>Play Sound</button>;
+        // @ts-ignore
+        const buttonText = this.state.playStatus;
+
+        return(
+            <button onClick={this.playSound}>
+                {buttonText}
+            </button>
+        );
     }
 }
 

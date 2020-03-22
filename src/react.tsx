@@ -14,59 +14,26 @@ const {Howl, Howler} = require('howler');
 // Music metadata extraction
 const metadata = require('music-metadata');
 
+const {Song} = require('./music-data.ts')
+const {FileSelector} = require('./file-components.tsx')
+
 // TODO: The code will need heavy refactoring/reworking & testing.
 // TODO: Right now, it is inteded to be a minimal version of the app
-
-// TODO: Perhaps rethink/restructure this.
-class Song {
-    artist: string;
-    album: string;
-    title: string;
-    genre: string;
-    tracknumber: number;
-    year: number;
-
-    constructor(metadata) {
-        // TODO: Generalize this
-        this.artist = metadata.artist ? metadata.artist : "Unknown Artist"
-        this.album = metadata.album ? metadata.album : "Unknown Album"
-        this.title = metadata.title ? metadata.title : "Unknown Title"
-        this.genre = metadata.genre ? metadata.genre : "Unknown Genre"
-        this.tracknumber = metadata.track ? metadata.track : 1
-        this.year = metadata.year ? metadata.year : "Unknown Year"
-    }
-}
 
 /**
  * Button to play/pause sound.
  * Testing for now.
  */
-class PlayButton extends React.Component {
+class PlayButton extends React.Component<{ playSound: any, status: string }, {}> {
     statusMappings: Record<string, string>;
 
     constructor(props) {
         super(props);
 
-        this.statusMappings = {
-            STOPPED: "Stopped",
-            PLAYING: "Playing",
-            PAUSED: "Paused"
-        }
-
         this.state = {
-            'playStatus': this.statusMappings.STOPPED,
             'duration': 0,
             'timestamp': 0
         };
-
-        // Bind this to callbacks
-        this.playSound = this.playSound.bind(this);
-    }
-
-    updatePlayStatus(newStatus: string) {
-        this.setState({
-            playStatus: newStatus
-        });
     }
 
     updateDuration(newDuration: number) {
@@ -80,87 +47,25 @@ class PlayButton extends React.Component {
     }
 
     componentDidMount() {
-        ipc.on('loadedFile', (e, data) => {
-            // @ts-ignore
-            let oldSound = this.state.sound
-
-            // Stop old sound if it exists
-            if (oldSound != null) {
-                oldSound.stop();
-            }
-
-            // Create new sound to play from path
-            let newSound = new Howl({
-                src: [data],
-                html5: true,
-
-                // TODO: Detect that these events come from the proper sound
-                onplay: () => {
-                    this.updatePlayStatus(this.statusMappings.PLAYING);
-                },
-
-                onstop: () => {
-                    this.updatePlayStatus(this.statusMappings.PAUSED);
-                },
-                
-                onpause: () => {
-                    this.updatePlayStatus(this.statusMappings.PAUSED);
-                },
-
-                onload: () => {
-                    this.updateDuration(newSound.duration())
-                }
-            });
-
-            metadata.parseFile(data).then(
-                metadata => {
-                    this.setState({
-                        musicData: new Song(metadata.common)
-                    });
-                }
-            ).catch( err => {
-                console.error(err.message)
-            });
-
-            // Update state
-            this.setState({
-                sound: newSound
-            });
-        })
-
         // @ts-ignore
-        this.timestamp = setInterval(
-            () => {
-                // @ts-ignore
-                const sound = this.state.sound;
+        // Timestamp (progress bar)
+        // this.timestamp = setInterval(
+        //     () => {
+        //         const sound = this.props.sound;
 
-                if (sound != null && sound.state() == 'loaded') {
-                    // @ts-ignore
-                    let time = this.state.sound.seek()
-                    this.setState({
-                        'timestamp': time
-                    });
-                }
-            },
-            1000
-        );
-    }
+        //         if (sound != null && sound.state() == 'loaded') {
+        //             let time = sound.seek()
 
-    playSound() {
-        // @ts-ignore
-        const sound = this.state.sound
-
-        // Play the sound
-        if (sound != null) {
-            // Pause/play depending on current status
-            sound.playing() ? sound.pause() : sound.play();
-        }
+        //             this.setState({
+        //                 'timestamp': time
+        //             });
+        //         }
+        //     },
+        //     1000
+        // );
     }
 
     render() {
-        // @ts-ignore
-        const buttonText = this.state.playStatus;
-
         // @ts-ignore
         const duration = this.state.duration;
 
@@ -175,8 +80,8 @@ class PlayButton extends React.Component {
 
         return(
             <div>
-                <button onClick={this.playSound}>
-                    {buttonText}
+                <button onClick={this.props.playSound}>
+                    {this.props.status}
                 </button>
 
                 {/* TODO: Split to another component */}
@@ -201,17 +106,74 @@ class PlayButton extends React.Component {
     }
 }
 
-class FileSelectionButton extends React.Component {
-    openFileSelection() {
-        ipc.send('openFileSelection', {
-            folders: false
+class MusicController extends React.Component<{}, { sound: any, metadata: Record<string, any>, status: string }> {
+    statusMappings = {
+        STOPPED: "Stopped",
+        PLAYING: "Playing",
+        PAUSED: "Paused"
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.state = {sound: undefined, metadata: {}, status: this.statusMappings.STOPPED }
+        this.onFileChange = this.onFileChange.bind(this);
+        this.playSound = this.playSound.bind(this);
+    }
+
+    onFileChange(musicData) {
+        let sound = musicData.sound
+
+        // Stop old sound, if it exists
+        if (this.state.sound != null) {
+            this.state.sound.stop();
+        }
+
+        // Initialize callbacks
+        // TODO: Detect that these come from proper sound
+        sound.on('play', () => this.updateStatus(this.statusMappings.PLAYING));
+        sound.on('stop', () => this.updateStatus(this.statusMappings.PAUSED));
+        sound.on('pause', () => this.updateStatus(this.statusMappings.PAUSED));
+        // TODO: Missing load metadata
+
+        // Update state with new sound
+        this.setState({
+            sound: sound
         })
+
+        musicData.metadata.then(
+            (meta) => {
+                this.setState({
+                    metadata: meta
+                });
+            },
+            (error) => console.log(error)
+        )
+    }
+
+    updateStatus(newStatus: string) {
+        this.setState({
+            status: newStatus
+        });
+    }
+
+    playSound() {
+        const sound = this.state.sound
+
+        // Play the sound
+        if (sound != null) {
+            // Pause/play depending on current status
+            sound.playing() ? sound.pause() : sound.play();
+        }
     }
 
     render() {
-        // @ts-ignore
-        // TODO: Type error here in webkitdir/directory?
-        return <button onClick={this.openFileSelection}>Open Directory</button>
+        return(
+            <div>
+                <PlayButton playSound={this.playSound} status={this.state.status} />
+                <FileSelector onFileChange={this.onFileChange} />
+            </div>
+        )
     }
 }
 
@@ -222,8 +184,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <PlayButton />
-                <FileSelectionButton />
+                <MusicController />
             </div>
         );
     }

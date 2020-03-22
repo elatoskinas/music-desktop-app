@@ -11,8 +11,31 @@ const ipc = require('electron').ipcRenderer;
 // Howl can be used to play sounds
 const {Howl, Howler} = require('howler');
 
+// Music metadata extraction
+const metadata = require('music-metadata');
+
 // TODO: The code will need heavy refactoring/reworking & testing.
 // TODO: Right now, it is inteded to be a minimal version of the app
+
+// TODO: Perhaps rethink/restructure this.
+class Song {
+    artist: string;
+    album: string;
+    title: string;
+    genre: string;
+    tracknumber: number;
+    year: number;
+
+    constructor(metadata) {
+        // TODO: Generalize this
+        this.artist = metadata.artist ? metadata.artist : "Unknown Artist"
+        this.album = metadata.album ? metadata.album : "Unknown Album"
+        this.title = metadata.title ? metadata.title : "Unknown Title"
+        this.genre = metadata.genre ? metadata.genre : "Unknown Genre"
+        this.tracknumber = metadata.track ? metadata.track : 1
+        this.year = metadata.year ? metadata.year : "Unknown Year"
+    }
+}
 
 /**
  * Button to play/pause sound.
@@ -89,6 +112,16 @@ class PlayButton extends React.Component {
                 }
             });
 
+            metadata.parseFile(data).then(
+                metadata => {
+                    this.setState({
+                        musicData: new Song(metadata.common)
+                    });
+                }
+            ).catch( err => {
+                console.error(err.message)
+            });
+
             // Update state
             this.setState({
                 sound: newSound
@@ -136,6 +169,10 @@ class PlayButton extends React.Component {
 
         const newProgress = ((duration == 0 ? 0 : time/duration) * 100) + '%'
 
+        // @ts-ignore
+        // TODO: Find way to generalize displaying metadata
+        const title = this.state.musicData ? this.state.musicData.title : "N/A"
+
         return(
             <div>
                 <button onClick={this.playSound}>
@@ -153,6 +190,11 @@ class PlayButton extends React.Component {
                 <div id="musicProgress">
                     <div id="musicProgressBar" style ={{ width: newProgress }} >
                     </div>
+                </div>
+
+                {/* TODO: Split this to another component */}
+                <div>
+                    <p>{title}</p>
                 </div>
             </div>
         );

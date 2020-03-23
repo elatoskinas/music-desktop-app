@@ -9,10 +9,10 @@ const loadSound = require('./music-data.ts').loadSound
 class FileSelector extends React.Component<{ onFileChange: Function }, {}> {
     constructor(props) {
         super(props);
-        // Props 
     }
 
     openFileSelection() {
+        // Send message to open file selection
         ipc.send('openFileSelection', {
             folders: false
         })
@@ -22,11 +22,12 @@ class FileSelector extends React.Component<{ onFileChange: Function }, {}> {
         // Load the sound to get the sound data
         let soundData = loadSound(path)
 
-        // TODO: Resolve ts-ignore
+        // Invoke callback for sound change
         this.props.onFileChange(soundData);
     }
 
     componentDidMount() {
+        // Receive 'loadedFile' event which contains the path of the file
         ipc.on('loadedFile', (e, path) => {
             this.handleFileChange(path)
         })

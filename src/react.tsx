@@ -36,11 +36,6 @@ class PlayButton extends React.Component<{ playSound: any, status: string }, {}>
                 <button onClick={this.props.playSound}>
                     {this.props.status}
                 </button>
-
-                {/* TODO: Split this to another component */}
-                <div>
-                    <p>{title}</p>
-                </div>
             </div>
         );
     }
@@ -108,7 +103,29 @@ class MusicProgress extends React.Component<{ sound: any }, { duration: number, 
     }
 }
 
-class MusicController extends React.Component<{}, { sound: any, metadata: Record<string, any>, status: string }> {
+class MusicInfo extends React.Component<{ metadata : any }, {}> {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const meta = this.props.metadata;
+
+        if (meta) {
+            return (
+                <div>
+                    <p>Title: {meta.title}</p>
+                    <p>Artist: {meta.artist}</p>
+                    <p>Album: {meta.album}</p>
+                </div>
+            )
+        }
+
+        return null
+    }
+}
+
+class MusicController extends React.Component<{}, { sound: any, metadata: any, status: string }> {
     statusMappings = {
         STOPPED: "Stopped",
         PLAYING: "Playing",
@@ -118,7 +135,7 @@ class MusicController extends React.Component<{}, { sound: any, metadata: Record
     constructor(props) {
         super(props);
 
-        this.state = {sound: undefined, metadata: {}, status: this.statusMappings.STOPPED }
+        this.state = {sound: undefined, metadata: undefined, status: this.statusMappings.STOPPED }
         this.onFileChange = this.onFileChange.bind(this);
         this.playSound = this.playSound.bind(this);
     }
@@ -136,7 +153,6 @@ class MusicController extends React.Component<{}, { sound: any, metadata: Record
         sound.on('play', () => this.updateStatus(this.statusMappings.PLAYING));
         sound.on('stop', () => this.updateStatus(this.statusMappings.PAUSED));
         sound.on('pause', () => this.updateStatus(this.statusMappings.PAUSED));
-        // TODO: Missing load metadata
 
         // Update state with new sound
         this.setState({
@@ -146,7 +162,7 @@ class MusicController extends React.Component<{}, { sound: any, metadata: Record
         musicData.metadata.then(
             (meta) => {
                 this.setState({
-                    metadata: meta
+                    metadata: new Song(meta.common)
                 });
             },
             (error) => console.log(error)
@@ -175,6 +191,7 @@ class MusicController extends React.Component<{}, { sound: any, metadata: Record
                 <PlayButton playSound={this.playSound} status={this.state.status} />
                 <FileSelector onFileChange={this.onFileChange} />
                 <MusicProgress sound={this.state.sound} />
+                <MusicInfo metadata={this.state.metadata} />
             </div>
         )
     }

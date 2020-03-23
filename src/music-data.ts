@@ -9,7 +9,7 @@ const metadata = require('music-metadata')
 
 
 // TODO: Restructure/rethink this in terms of class structure.
-class Song {
+export class Song {
     artist: string;
     album: string;
     title: string;
@@ -39,7 +39,7 @@ class Song {
  * 
  * @param path Path to read sound from
  */
-function loadSound(path: string) {
+export function loadSound(path: string) {
     // Create new sound from the specified path
     let newSound = new Howl({
         src: [path],
@@ -60,5 +60,3 @@ function loadSound(path: string) {
         'metadata': meta
     }
 }
-
-export = {Song, loadSound}

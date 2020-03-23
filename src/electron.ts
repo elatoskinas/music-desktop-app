@@ -1,5 +1,5 @@
 // Module requires
-const { app, dialog, BrowserWindow, ipcMain } = require('electron')
+const { app, dialog, BrowserWindow, ipcMain, globalShortcut } = require('electron')
 
 function createWindow() {
     // Create the browser window.
@@ -43,8 +43,10 @@ app.on('activate', () => {
     }
 })
 
-// Rest of app's specific main process code.
-// Can also put the code in separate files and require them.
+app.on('ready', async () => {
+    // Ignore refresh
+    globalShortcut.register('CmdOrCtrl+R', () => {});
+})
 
 // Open directory event
 ipcMain.on('openFileSelection', (ev, data) => {

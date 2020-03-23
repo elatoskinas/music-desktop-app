@@ -5,32 +5,17 @@ import * as ReactDOM from 'react-dom';
 // CSS  imports
 import './css/main.css'
 
-// IPCRenderer that can be used to send events to main process
-const ipc = require('electron').ipcRenderer;
-
-// Howl can be used to play sounds
-const {Howl, Howler} = require('howler');
-
-// Music metadata extraction
-const metadata = require('music-metadata');
-
 const {Song} = require('./music-data.ts')
 const {FileSelector} = require('./file-components.tsx')
 
-// TODO: The code will need heavy refactoring/reworking & testing.
-// TODO: Right now, it is inteded to be a minimal version of the app
-
 /**
- * Button to play/pause sound.
- * Testing for now.
+ * Button component to play/pause sound.
+ * Contains the played sound and the status of playback as the current properties.
+ * 
+ * TODO: Resolve 'any' type?
  */
 class PlayButton extends React.Component<{ playSound: any, status: string }, {}> {
     render() {
-        // @ts-ignore
-        // TODO: Find way to generalize displaying metadata
-        //const title = this.state.musicData ? this.state.musicData.title : "N/A"
-        const title = "NA"
-
         return(
             <div>
                 <button onClick={this.props.playSound}>
@@ -41,6 +26,13 @@ class PlayButton extends React.Component<{ playSound: any, status: string }, {}>
     }
 }
 
+/**
+ * Component to display sound progress info with regards to the duration.
+ * Contains the current sound as the property, and keeps track of the sound duration
+ * & time for the state.
+ * 
+ * TODO: Resolve 'any' type?
+ */
 class MusicProgress extends React.Component<{ sound: any }, { duration: number, time: number }> {
     // TODO: Set appropriate type
     timeInterval: any;
@@ -103,6 +95,12 @@ class MusicProgress extends React.Component<{ sound: any }, { duration: number, 
     }
 }
 
+/**
+ * Component to display music info, such as the title, artist or album.
+ * Has song metadata as the properties that is a Song object containing relevant metadata.
+ * 
+ * TODO: Resolve 'any' type?
+ */
 class MusicInfo extends React.Component<{ metadata : any }, {}> {
     constructor(props) {
         super(props);
@@ -125,6 +123,15 @@ class MusicInfo extends React.Component<{ metadata : any }, {}> {
     }
 }
 
+/**
+ * Component to control the current sound.
+ * Contains the current sound being played as state, alongside with the metadata
+ * and the status of playback.
+ * 
+ * Valid status includes 'STOPPED', 'PLAYING' and 'PAUSED'.
+ * 
+ * TODO: Resolve 'any' types?
+ */
 class MusicController extends React.Component<{}, { sound: any, metadata: any, status: string }> {
     statusMappings = {
         STOPPED: "Stopped",
@@ -188,8 +195,8 @@ class MusicController extends React.Component<{}, { sound: any, metadata: any, s
     render() {
         return(
             <div>
-                <PlayButton playSound={this.playSound} status={this.state.status} />
                 <FileSelector onFileChange={this.onFileChange} />
+                <PlayButton playSound={this.playSound} status={this.state.status} />
                 <MusicProgress sound={this.state.sound} />
                 <MusicInfo metadata={this.state.metadata} />
             </div>
@@ -209,5 +216,6 @@ class App extends React.Component {
         );
     }
 }
- 
+
+// Render application
 ReactDOM.render(<App />, document.getElementById('app'));

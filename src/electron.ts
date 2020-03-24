@@ -1,5 +1,8 @@
 // Module requires
-const { app, dialog, BrowserWindow, ipcMain, globalShortcut } = require('electron')
+const { app, BrowserWindow, globalShortcut } = require('electron')
+
+// Event imports (adds new events to app.on)
+require('./music-data/file-events.ts')
 
 function createWindow() {
     // Create the browser window.
@@ -46,22 +49,4 @@ app.on('activate', () => {
 app.on('ready', async () => {
     // Ignore refresh
     globalShortcut.register('CmdOrCtrl+R', () => {});
-})
-
-// Open directory event
-ipcMain.on('openFileSelection', (ev, data) => {
-    var propertyDict = {
-        false: 'openFile',
-        true: 'openDirectory'
-    }
-
-    const property = propertyDict[data.folders]
-    let promise = dialog.showOpenDialog({properties: [property, 'multiSelections']})
-
-    promise.then(function(success) {
-        let file = success.filePaths[0]
-        ev.reply('loadedFile', file)
-    }, function(error) {
-        console.log(error)
-    })
 })

@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const npm_package = require('./package.json')
 
 module.exports = [
   {
@@ -15,6 +16,9 @@ module.exports = [
     output: {
       path: __dirname + '/dist',
       filename: 'electron.js'
+    },
+    resolve: {
+      alias: npm_package._moduleAliases || {}
     }
   },
   {
@@ -33,6 +37,9 @@ module.exports = [
     output: {
       path: __dirname + '/dist',
       filename: 'react.js'
+    },
+    resolve: {
+      alias: npm_package._moduleAliases || {}
     },
     plugins: [
       new HtmlWebpackPlugin({

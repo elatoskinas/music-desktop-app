@@ -3,10 +3,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 // CSS imports
-import './css/main.css'
+import '@css/main.css'
 
 // Component imports
-const {MusicController} = require('./player/music-player.tsx')
+const {MusicController} = require('@player/music-player.tsx')
 
 /**
  * Main application component.

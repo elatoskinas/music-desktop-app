@@ -2,6 +2,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { GoFileDirectory } from "react-icons/go";
+
 // IPCRenderer that can be used to send events to main process
 const ipc = require('electron').ipcRenderer;
 const fileLoader = require('./file-loader.ts')
@@ -46,6 +48,6 @@ export class FileSelector extends React.Component<{ onFileChange: Function }, {}
     }
 
     render() {
-        return <button onClick={this.openFileSelection}>Open Directory</button>
+        return <GoFileDirectory onClick={this.openFileSelection} />
     }
 }

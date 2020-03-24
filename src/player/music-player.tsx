@@ -1,6 +1,8 @@
 // React imports
 import * as React from 'react';
 import { Song } from '../music-data/music-data';
+import { IoMdPlay, IoMdPause } from "react-icons/io";
+import { TiMediaStop } from "react-icons/ti";
 
 const {FileSelector} = require('../music-data/file-components.tsx')
 const {MusicInfo} = require('./music-info.tsx')
@@ -17,14 +19,26 @@ let playbackStates = {
  * Contains the played sound and the status of playback as the current properties.
  */
 export class PlayButton extends React.Component<{ playSound: any, status: string }, {}> {
+    buttonIcons = {
+        [playbackStates.STOPPED]: <TiMediaStop />,
+        [playbackStates.PLAYING]: <IoMdPause />,
+        [playbackStates.PAUSED]: <IoMdPlay />
+    }
+
     render() {
+        const status = this.props.status
+        const element = this.buttonIcons[status]
+
         return(
             <div>
-                <button onClick={this.props.playSound}>
-                    {this.props.status}
-                </button>
-            </div>
-        );
+                {
+                    React.cloneElement(
+                        element,
+                        {onClick: this.props.playSound}
+                    )
+                }
+           </div>
+        )
     }
 }
 

@@ -48,5 +48,5 @@ app.on('activate', () => {
 
 app.on('ready', async () => {
     // Ignore refresh
-    globalShortcut.register('CmdOrCtrl+R', () => {});
+    globalShortcut.register('CmdOrCtrl+R', () => {})
 })

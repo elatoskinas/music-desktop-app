@@ -4,9 +4,9 @@ import { Song } from '../music-data/music-data';
 import { IoMdPlay, IoMdPause } from "react-icons/io";
 import { TiMediaStop } from "react-icons/ti";
 
-const {FileSelector} = require('../music-data/file-components.tsx')
-const {MusicInfo} = require('./music-info.tsx')
-const {MusicProgress} = require('./music-progress.tsx')
+const {FileSelector} = require('@music-data/file-components.tsx')
+const {MusicInfo} = require('@player/music-info.tsx')
+const {MusicProgress} = require('@player/music-progress.tsx')
 
 let playbackStates = {
     STOPPED: "Stopped",

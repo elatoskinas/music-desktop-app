@@ -4,7 +4,7 @@
 
 const {Howl} = require('howler')
 const metadata = require('music-metadata')
-const {Song} = require('./music-data.ts')
+const {Song} = require('@music-data/music-data.ts')
 
 /**
  * Loads a sound from the specified path, and returns an object

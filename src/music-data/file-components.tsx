@@ -6,7 +6,7 @@ import { GoFileDirectory } from "react-icons/go";
 
 // IPCRenderer that can be used to send events to main process
 const ipc = require('electron').ipcRenderer;
-const fileLoader = require('./file-loader.ts')
+const fileLoader = require('@music-data/file-loader.ts')
 
 /**
  * Component for selecting files. Takes in a single callback that is invoked after

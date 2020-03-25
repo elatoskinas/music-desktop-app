@@ -1,5 +1,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const npm_package = require('./package.json')
+const path = require('path')
+
+ALIASES = {
+  '@music-data': path.resolve(__dirname, './src/music-data'),
+  '@player': path.resolve(__dirname, './src/player'),
+  '@css': path.resolve(__dirname, './src/css')
+}
 
 module.exports = [
   {
@@ -18,7 +24,7 @@ module.exports = [
       filename: 'electron.js'
     },
     resolve: {
-      alias: npm_package._moduleAliases || {}
+      alias: ALIASES
     }
   },
   {
@@ -39,7 +45,7 @@ module.exports = [
       filename: 'react.js'
     },
     resolve: {
-      alias: npm_package._moduleAliases || {}
+      alias: ALIASES
     },
     plugins: [
       new HtmlWebpackPlugin({

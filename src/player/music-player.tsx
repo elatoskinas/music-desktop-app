@@ -84,6 +84,7 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
             sound: sound
         })
 
+        // Update metadata via promise events
         musicData.metadata.then(
             (meta) => {
                 this.setState({
@@ -92,6 +93,9 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
             },
             (error) => console.log(error)
         )
+
+        // Reset status to paused
+        this.updateStatus(playbackStates.PAUSED)
     }
 
     /**

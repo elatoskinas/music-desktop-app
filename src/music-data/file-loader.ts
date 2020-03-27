@@ -22,7 +22,7 @@ export function loadSound(path: string) {
     let newSound = new Howl({
         src: [path],
         html5: true,
-    });
+    })
 
     // Parse the metadata of the file
     let meta = metadata.parseFile(path).then(
@@ -31,7 +31,7 @@ export function loadSound(path: string) {
         }
     ).catch( err => {
         console.error(err.message)
-    });
+    })
     
     return {
         'sound': newSound,

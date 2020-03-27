@@ -40,10 +40,12 @@ export class MusicProgress extends React.Component<{ sound: Howl }, { duration: 
             const time = sound.seek() as number
             const duration = sound.duration() as number
 
-            this.setState({
-                'duration': duration, // Get duration
-                'time': time // Get current position
-            });
+            if (typeof time == 'number' && typeof duration == 'number') {
+                this.setState({
+                    'duration': duration, // Get duration
+                    'time': time // Get current position
+                });
+            }
         }
     }
 

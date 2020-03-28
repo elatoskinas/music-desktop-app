@@ -5,14 +5,13 @@ import * as React from 'react';
  * Contains the current sound as the property, and keeps track of the sound duration
  * & time for the state.
  */
-export class MusicProgress extends React.Component<{ sound: Howl }, { duration: number, time: number }> {
+export class MusicProgress extends React.Component<{ sound: Howl, status: string, duration: number }, { time: number }> {
     timeInterval: ReturnType<typeof setInterval>;
 
     constructor(props) {
         super(props);
 
         this.state = {
-            'duration': 0,
             'time': 0
         };
     }
@@ -38,11 +37,9 @@ export class MusicProgress extends React.Component<{ sound: Howl }, { duration: 
 
         if (sound != null && sound.state() == 'loaded') {
             const time = sound.seek() as number
-            const duration = sound.duration() as number
 
-            if (typeof time == 'number' && typeof duration == 'number') {
+            if (typeof time == 'number') {
                 this.setState({
-                    'duration': duration, // Get duration
                     'time': time // Get current position
                 });
             }
@@ -57,31 +54,50 @@ export class MusicProgress extends React.Component<{ sound: Howl }, { duration: 
      * @param duration   Duration of song
      */
     getProgress(time: number, duration: number) {
-        return ((duration == 0 ? 0 : time/duration) * 100)
+        return ((duration == 0 ? 0 : Math.floor(time)/Math.floor(duration)) * 100)
     }
 
-    componentDidMount() {
-        // Time interval (progress bar)
-        this.timeInterval = setInterval(
-            () => {
-                this.updateSongProgress()
-            },
-            1000
-        );
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // Reset time step if sound changes
+        if (this.props.sound != prevProps.sound) {
+            this.setState({
+                'time': 0
+            })
+        }
+        
+        if (this.props.status != prevProps.status) {
+            // Stop previous time interval
+            if (this.timeInterval !== undefined) {
+                clearInterval(this.timeInterval);
+            }
+
+            // Immediately update song progress
+            this.updateSongProgress();
+
+            // Begin a new interval (only if playing)
+            if (this.props.status == "Playing") {
+                this.timeInterval = setInterval(
+                    () => {
+                        console.log(this.state.time)
+                        this.updateSongProgress()
+                    },
+                    500
+                );
+            }
+        }
     }
 
     render() {
         const time = this.state.time
-        const duration = this.state.duration
 
         // Get progress value to use as width for progress bar
-        const newProgress = this.getProgress(time, duration) + '%'
+        const newProgress = this.getProgress(time, this.props.duration) + '%'
 
         return (
             <div>
                 <p>
                     {
-                        this.formatTimestamp(time) + "/" + this.formatTimestamp(duration)
+                        this.formatTimestamp(time) + "/" + this.formatTimestamp(this.props.duration)
                     }
                 </p>
 

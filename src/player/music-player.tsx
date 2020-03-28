@@ -49,11 +49,11 @@ export class PlayButton extends React.Component<{ playSound: any, status: string
  * 
  * Valid status includes 'STOPPED', 'PLAYING' and 'PAUSED'.
  */
-export class MusicController extends React.Component<{}, { sound: Howl, metadata: Song, status: string }> {
+export class MusicController extends React.Component<{}, { sound: Howl, metadata: Song, status: string, duration: number }> {
     constructor(props) {
         super(props);
 
-        this.state = {sound: undefined, metadata: undefined, status: playbackStates.STOPPED }
+        this.state = {sound: undefined, metadata: undefined, status: playbackStates.STOPPED, duration: 0 }
         this.onFileChange = this.onFileChange.bind(this);
         this.playSound = this.playSound.bind(this);
     }
@@ -76,8 +76,14 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
         // Initialize callbacks
         // TODO: Detect that these come from proper sound
         sound.on('play', () => this.updateStatus(playbackStates.PLAYING));
-        sound.on('stop', () => this.updateStatus(playbackStates.PAUSED));
+        sound.on('stop', () => this.updateStatus(playbackStates.STOPPED));
+        sound.on('end', () => this.updateStatus(playbackStates.STOPPED));
         sound.on('pause', () => this.updateStatus(playbackStates.PAUSED));
+        sound.on('load', () => {
+            this.setState({
+                duration: sound.duration()
+            })
+        })
 
         // Update state with new sound
         this.setState({
@@ -126,7 +132,7 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
             <div>
                 <FileSelector onFileChange={this.onFileChange} />
                 <PlayButton playSound={this.playSound} status={this.state.status} />
-                <MusicProgress sound={this.state.sound} />
+                <MusicProgress sound={this.state.sound} status={this.state.status} duration={this.state.duration} />
                 <MusicInfo metadata={this.state.metadata} />
             </div>
         )

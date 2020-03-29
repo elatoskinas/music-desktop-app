@@ -5,8 +5,6 @@ module.exports = (function() {
     // Open directory event
     // TODO: Modularize message
     ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
-        console.log(data)
-
         // TODO: Move this elsewhere?
         var propertyDict = {
             false: 'openFile',

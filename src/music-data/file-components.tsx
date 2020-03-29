@@ -23,7 +23,6 @@ export class FileSelector extends React.Component<{ onFileChange: Function }, {}
      */
     openFileSelection() {
         // Send message to open file selection
-        // TODO: Modularize message name
         ipc.send(OPEN_FILE_SELECTION.name, OPEN_FILE_SELECTION.data(false))
     }
 

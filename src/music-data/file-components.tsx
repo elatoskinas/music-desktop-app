@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { GoFileDirectory } from "react-icons/go";
+import { LOADED_FILE, OPEN_FILE_SELECTION } from '@common/messages.ts'
 
 // IPCRenderer that can be used to send events to main process
 const ipc = require('electron').ipcRenderer;
@@ -23,9 +24,7 @@ export class FileSelector extends React.Component<{ onFileChange: Function }, {}
     openFileSelection() {
         // Send message to open file selection
         // TODO: Modularize message name
-        ipc.send('openFileSelection', {
-            folders: false
-        })
+        ipc.send(OPEN_FILE_SELECTION.name, OPEN_FILE_SELECTION.data(false))
     }
 
     /**
@@ -42,8 +41,8 @@ export class FileSelector extends React.Component<{ onFileChange: Function }, {}
 
     componentDidMount() {
         // Receive 'loadedFile' event which contains the path of the file
-        ipc.on('loadedFile', (e, path) => {
-            this.handleFileLoad(path)
+        ipc.on(LOADED_FILE.name, (e, data) => {
+            this.handleFileLoad(data.filePath)
         })
     }
 

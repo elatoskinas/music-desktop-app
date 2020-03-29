@@ -4,7 +4,8 @@ const path = require('path')
 ALIASES = {
   '@music-data': path.resolve(__dirname, './src/music-data'),
   '@player': path.resolve(__dirname, './src/player'),
-  '@css': path.resolve(__dirname, './src/css')
+  '@css': path.resolve(__dirname, './src/css'),
+  '@common': path.resolve(__dirname, './src/common')
 }
 
 module.exports = [

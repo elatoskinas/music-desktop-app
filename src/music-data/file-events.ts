@@ -1,9 +1,12 @@
 const { ipcMain, dialog } = require('electron')
+const { LOADED_FILE, OPEN_FILE_SELECTION } = require('@common/messages.ts')
 
 module.exports = (function() {
     // Open directory event
     // TODO: Modularize message
-    ipcMain.on('openFileSelection', (ev, data) => {
+    ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
+        console.log(data)
+
         // TODO: Move this elsewhere?
         var propertyDict = {
             false: 'openFile',
@@ -11,7 +14,7 @@ module.exports = (function() {
         }
 
         // Get property for file selection
-        const property = propertyDict[data.folders]
+        const property = propertyDict[data.useFolders]
 
         // Open dialog for file selection (enable multi-selection mode)
         let promise = dialog.showOpenDialog({properties: [property, 'multiSelections']})
@@ -25,7 +28,7 @@ module.exports = (function() {
 
                 // Send reply to event for file loaded
                 // TODO: Modularize mssage
-                ev.reply('loadedFile', file)
+                ev.reply(LOADED_FILE.name, LOADED_FILE.data(file))
             }
         }, function(error) {
             console.log(error)
@@ -33,4 +36,4 @@ module.exports = (function() {
     })
 })()
 
-export {};
+export {}

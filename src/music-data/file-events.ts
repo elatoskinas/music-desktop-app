@@ -18,13 +18,15 @@ module.exports = (function() {
 
         // Setup a promise to send the response
         promise.then(function(success) {
-            // Get first file loaded
-            // TODO: Multi-file support
-            let file = success.filePaths[0]
+            if (!success.canceled) {
+                // Get first file loaded
+                // TODO: Multi-file support
+                let file = success.filePaths[0]
 
-            // Send reply to event for file loaded
-            // TODO: Modularize mssage
-            ev.reply('loadedFile', file)
+                // Send reply to event for file loaded
+                // TODO: Modularize mssage
+                ev.reply('loadedFile', file)
+            }
         }, function(error) {
             console.log(error)
         })

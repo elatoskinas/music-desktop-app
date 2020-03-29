@@ -13,8 +13,6 @@ const {Song} = require('@music-data/music-data.ts')
  * The returned promise object's sound can be accesed by the 'sound' field,
  * while the metadata can be accessed by the 'metadata' field.
  * 
- * TODO: Convert to async/promise?
- * 
  * @param path Path to read sound from
  */
 export function loadSound(path: string) {

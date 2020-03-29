@@ -96,7 +96,6 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
      */
     loadSound(sound: Howl) {
         // Initialize callbacks
-        // TODO: Detect that these come from proper sound
         sound.on('play', ()  => this.updateStatus(playbackStates.PLAYING));
         sound.on('stop', ()  => this.updateStatus(playbackStates.STOPPED));
         sound.on('end', ()   => this.updateStatus(playbackStates.STOPPED));

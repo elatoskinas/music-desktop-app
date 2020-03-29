@@ -1,11 +1,24 @@
 import * as React from 'react';
 
+const {PLAY_STATUS} = require('@common/status.ts')
+const {formatTimestamp} = require('@common/format-utils.ts')
+
+interface MusicProgressProps {
+    sound: Howl,
+    status: string,
+    duration: number
+}
+
+interface MusicProgressState {
+    time: number
+}
+
 /**
  * Component to display sound progress info with regards to the duration.
  * Contains the current sound as the property, and keeps track of the sound duration
  * & time for the state.
  */
-export class MusicProgress extends React.Component<{ sound: Howl, status: string, duration: number }, { time: number }> {
+export class MusicProgress extends React.Component<MusicProgressProps, MusicProgressState> {
     timeInterval: ReturnType<typeof setInterval>;
     tickInterval = 200;
 
@@ -18,18 +31,6 @@ export class MusicProgress extends React.Component<{ sound: Howl, status: string
     }
 
     /**
-     * Formats the specified number into a string of format hh:mm:ss
-     * 
-     * TODO: Exclude hours/mins if n/a
-     * TODO: Move to utility class?
-     * 
-     * @param time  Time as number to format
-     */
-    formatTimestamp(time: number) {
-        return new Date(time * 1000).toISOString().substr(11, 8)
-    }
-
-    /**
      * Updates the progress of the song in terms of state by querying
      * the song's duration and current position.
      */
@@ -39,7 +40,9 @@ export class MusicProgress extends React.Component<{ sound: Howl, status: string
         if (sound != null && sound.state() == 'loaded') {
             const time = sound.seek() as number
 
-            if (typeof time == 'number') {
+            // Time might sometimes still resolve to a Howl object. Thus,
+            // an explicit check should be made before assigning the new time value.
+            if (typeof time === 'number') {
                 this.setState({
                     'time': time // Get current position
                 });
@@ -47,6 +50,10 @@ export class MusicProgress extends React.Component<{ sound: Howl, status: string
         }
     }
 
+    /**
+     * Updatess the song progress and sets a new timeout to perform
+     * this update on the next tick.
+     */
     timeStep() {
         this.updateSongProgress();
         this.timeInterval = setTimeout(() => this.timeStep(), this.tickInterval);
@@ -63,27 +70,31 @@ export class MusicProgress extends React.Component<{ sound: Howl, status: string
         return ((duration == 0 ? 0 : Math.floor(time)/Math.floor(duration)) * 100)
     }
 
+    onPlayStatusChange(status: string) {
+        // Stop previous time interval
+        if (this.timeInterval !== undefined) {
+            clearInterval(this.timeInterval);
+        }
+
+        // Immediately update song progress
+        this.updateSongProgress();
+
+        // Begin a new interval (only if playing)
+        if (this.props.status === PLAY_STATUS.PLAYING) {
+            this.timeStep()
+        }
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
         // Reset time step if sound changes
-        if (this.props.sound != prevProps.sound) {
+        if (this.props.sound !== prevProps.sound) {
             this.setState({
                 'time': 0
             })
         }
         
-        if (this.props.status != prevProps.status) {
-            // Stop previous time interval
-            if (this.timeInterval !== undefined) {
-                clearInterval(this.timeInterval);
-            }
-
-            // Immediately update song progress
-            this.updateSongProgress();
-
-            // Begin a new interval (only if playing)
-            if (this.props.status == "Playing") {
-                this.timeStep()
-            }
+        if (this.props.status !== prevProps.status) {
+            this.onPlayStatusChange(this.props.status)
         }
     }
 
@@ -97,7 +108,7 @@ export class MusicProgress extends React.Component<{ sound: Howl, status: string
             <div>
                 <p>
                     {
-                        this.formatTimestamp(time) + "/" + this.formatTimestamp(this.props.duration)
+                        formatTimestamp(time) + "/" + formatTimestamp(this.props.duration)
                     }
                 </p>
 

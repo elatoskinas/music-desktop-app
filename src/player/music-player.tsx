@@ -7,22 +7,22 @@ import { TiMediaStop } from "react-icons/ti";
 const {FileSelector} = require('@music-data/file-components.tsx')
 const {MusicInfo} = require('@player/music-info.tsx')
 const {MusicProgress} = require('@player/music-progress.tsx')
+const {PLAY_STATUS} = require('@common/status.ts')
 
-let playbackStates = {
-    STOPPED: "Stopped",
-    PLAYING: "Playing",
-    PAUSED: "Paused"
+interface PlayButtonProps {
+    playSound: any, // TODO: Could replace with more accurate type for callback
+    status: string
 }
 
 /**
  * Button component to play/pause sound.
  * Contains the played sound and the status of playback as the current properties.
  */
-export class PlayButton extends React.Component<{ playSound: any, status: string }, {}> {
+export class PlayButton extends React.Component<PlayButtonProps> {
     buttonIcons = {
-        [playbackStates.STOPPED]: <TiMediaStop />,
-        [playbackStates.PLAYING]: <IoMdPause />,
-        [playbackStates.PAUSED]: <IoMdPlay />
+        [PLAY_STATUS.STOPPED]: <TiMediaStop />,
+        [PLAY_STATUS.PLAYING]: <IoMdPause />,
+        [PLAY_STATUS.PAUSED]: <IoMdPlay />
     }
 
     render() {
@@ -42,6 +42,13 @@ export class PlayButton extends React.Component<{ playSound: any, status: string
     }
 }
 
+interface MusicControllerState {
+    sound: Howl,
+    metadata: Song,
+    status: string,
+    duration: number
+}
+
 /**
  * Component to control the current sound.
  * Contains the current sound being played as state, alongside with the metadata
@@ -49,11 +56,16 @@ export class PlayButton extends React.Component<{ playSound: any, status: string
  * 
  * Valid status includes 'STOPPED', 'PLAYING' and 'PAUSED'.
  */
-export class MusicController extends React.Component<{}, { sound: Howl, metadata: Song, status: string, duration: number }> {
+export class MusicController extends React.Component<{}, MusicControllerState> {
     constructor(props) {
         super(props);
 
-        this.state = {sound: undefined, metadata: undefined, status: playbackStates.STOPPED, duration: 0 }
+        this.state = {
+            'sound': undefined,
+            'metadata': undefined,
+            'status': PLAY_STATUS.STOPPED,
+            'duration': 0
+        }
         this.onFileChange = this.onFileChange.bind(this);
         this.playSound = this.playSound.bind(this);
     }
@@ -65,7 +77,7 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
      * TODO: Type annotatiaon
      * @param musicData 
      */
-    onFileChange(musicData) {
+    onFileChange(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
         // Stop old sound, if it exists
         if (this.state.sound != null) {
             this.state.sound.stop()
@@ -87,7 +99,7 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
         )
 
         // Reset status to paused
-        this.updateStatus(playbackStates.PAUSED)
+        this.updateStatus(PLAY_STATUS.PAUSED)
     }
 
     /**
@@ -96,10 +108,10 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
      */
     loadSound(sound: Howl) {
         // Initialize callbacks
-        sound.on('play', ()  => this.updateStatus(playbackStates.PLAYING));
-        sound.on('stop', ()  => this.updateStatus(playbackStates.STOPPED));
-        sound.on('end', ()   => this.updateStatus(playbackStates.STOPPED));
-        sound.on('pause', () => this.updateStatus(playbackStates.PAUSED));
+        sound.on('play', ()  => this.updateStatus(PLAY_STATUS.PLAYING));
+        sound.on('stop', ()  => this.updateStatus(PLAY_STATUS.STOPPED));
+        sound.on('end', ()   => this.updateStatus(PLAY_STATUS.STOPPED));
+        sound.on('pause', () => this.updateStatus(PLAY_STATUS.PAUSED));
         sound.on('load', () => {
             this.setState({
                 duration: sound.duration()

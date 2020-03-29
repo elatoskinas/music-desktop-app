@@ -5,15 +5,18 @@ import * as ReactDOM from 'react-dom';
 import { GoFileDirectory } from "react-icons/go";
 import { LOADED_FILE, OPEN_FILE_SELECTION } from '@common/messages.ts'
 
-// IPCRenderer that can be used to send events to main process
 const ipc = require('electron').ipcRenderer;
 const fileLoader = require('@music-data/file-loader.ts')
+
+interface FileSelectorProps {
+    onFileChange: Function
+}
 
 /**
  * Component for selecting files. Takes in a single callback that is invoked after
  * a file is selected.
  */
-export class FileSelector extends React.Component<{ onFileChange: Function }, {}> {
+export class FileSelector extends React.Component<FileSelectorProps> {
     constructor(props) {
         super(props);
     }

@@ -68,7 +68,10 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
     onFileChange(musicData) {
         // Stop old sound, if it exists
         if (this.state.sound != null) {
-            this.state.sound.stop();
+            this.state.sound.stop()
+
+            // Remove all callbacks
+            this.state.sound.off()
         }
 
         // Update sound via promise events
@@ -94,9 +97,9 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
     loadSound(sound: Howl) {
         // Initialize callbacks
         // TODO: Detect that these come from proper sound
-        sound.on('play', () => this.updateStatus(playbackStates.PLAYING));
-        sound.on('stop', () => this.updateStatus(playbackStates.STOPPED));
-        sound.on('end', () => this.updateStatus(playbackStates.STOPPED));
+        sound.on('play', ()  => this.updateStatus(playbackStates.PLAYING));
+        sound.on('stop', ()  => this.updateStatus(playbackStates.STOPPED));
+        sound.on('end', ()   => this.updateStatus(playbackStates.STOPPED));
         sound.on('pause', () => this.updateStatus(playbackStates.PAUSED));
         sound.on('load', () => {
             this.setState({

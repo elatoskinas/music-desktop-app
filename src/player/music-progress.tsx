@@ -7,6 +7,7 @@ import * as React from 'react';
  */
 export class MusicProgress extends React.Component<{ sound: Howl, status: string, duration: number }, { time: number }> {
     timeInterval: ReturnType<typeof setInterval>;
+    tickInterval = 200;
 
     constructor(props) {
         super(props);
@@ -46,6 +47,11 @@ export class MusicProgress extends React.Component<{ sound: Howl, status: string
         }
     }
 
+    timeStep() {
+        this.updateSongProgress();
+        this.timeInterval = setTimeout(() => this.timeStep(), this.tickInterval);
+    }
+
     /**
      * Get the current progress in percentage (in 0 to 100 range as float) of
      * the current song, or 0 if no song is in progress.
@@ -76,13 +82,7 @@ export class MusicProgress extends React.Component<{ sound: Howl, status: string
 
             // Begin a new interval (only if playing)
             if (this.props.status == "Playing") {
-                this.timeInterval = setInterval(
-                    () => {
-                        console.log(this.state.time)
-                        this.updateSongProgress()
-                    },
-                    500
-                );
+                this.timeStep()
             }
         }
     }

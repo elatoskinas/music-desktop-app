@@ -66,13 +66,32 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
      * @param musicData 
      */
     onFileChange(musicData) {
-        let sound = musicData.sound
-
         // Stop old sound, if it exists
         if (this.state.sound != null) {
             this.state.sound.stop();
         }
 
+        // Update sound via promise events
+        musicData.sound.then(
+            (sound) => this.loadSound(sound),
+            (error) => console.log(error)
+        )
+
+        // Update metadata via promise events
+        musicData.metadata.then(
+            (meta)  => this.loadMetadata(meta),
+            (error) => console.log(error)
+        )
+
+        // Reset status to paused
+        this.updateStatus(playbackStates.PAUSED)
+    }
+
+    /**
+     * Loads a new sound to the music player, and sets up all the neccessary callbacks.
+     * @param sound new sound to load
+     */
+    loadSound(sound: Howl) {
         // Initialize callbacks
         // TODO: Detect that these come from proper sound
         sound.on('play', () => this.updateStatus(playbackStates.PLAYING));
@@ -89,19 +108,16 @@ export class MusicController extends React.Component<{}, { sound: Howl, metadata
         this.setState({
             sound: sound
         })
+    }
 
-        // Update metadata via promise events
-        musicData.metadata.then(
-            (meta) => {
-                this.setState({
-                    metadata: meta
-                });
-            },
-            (error) => console.log(error)
-        )
-
-        // Reset status to paused
-        this.updateStatus(playbackStates.PAUSED)
+    /**
+     * Loads the specified metadata of a Song.
+     * @param meta new metadata to load
+     */
+    loadMetadata(meta: Song) {
+        this.setState({
+            metadata: meta
+        });
     }
 
     /**

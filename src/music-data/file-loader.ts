@@ -19,9 +19,13 @@ const {Song} = require('@music-data/music-data.ts')
  */
 export function loadSound(path: string) {
     // Create new sound from the specified path
-    let newSound = new Howl({
-        src: [path],
-        html5: true,
+    let newSound = new Promise((resolve) => {
+        let sound = new Howl({
+            src: [path],
+            html5: true,
+        })
+
+        resolve(sound)
     })
 
     // Parse the metadata of the file

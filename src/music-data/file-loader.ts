@@ -33,6 +33,7 @@ export function loadSound(path: string) {
         }
     ).catch( err => {
         console.error(err.message)
+        return {}
     })
     
     return {

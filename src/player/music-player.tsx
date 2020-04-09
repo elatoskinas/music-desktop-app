@@ -30,14 +30,9 @@ export class PlayButton extends React.Component<PlayButtonProps> {
         const element = this.buttonIcons[status]
 
         return(
-            <div>
-                {
-                    React.cloneElement(
-                        element,
-                        {onClick: this.props.playSound}
-                    )
-                }
-           </div>
+            <button onClick={this.props.playSound}>
+                {element}
+           </button>
         )
     }
 }

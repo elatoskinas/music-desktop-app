@@ -1,5 +1,8 @@
 // Module requires
-const { app, BrowserWindow } = require('electron')
+import { app, BrowserWindow, globalShortcut } from 'electron'
+
+// Event imports (adds new events to app.on)
+import '@music-data/file-events.ts'
 
 function createWindow() {
     // Create the browser window.
@@ -15,7 +18,10 @@ function createWindow() {
     win.loadFile('index.html')
 
     // Open DevTools
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
+
+    // Hide menu bar
+    win.setMenuBarVisibility(false)
 }
 
 // The method will be called when Electron has finished
@@ -40,5 +46,7 @@ app.on('activate', () => {
     }
 })
 
-// Rest of app's specific main process code.
-// Can also put the code in separate files and require them.
+app.on('ready', async () => {
+    // Ignore refresh
+    globalShortcut.register('CmdOrCtrl+R', () => {})
+})

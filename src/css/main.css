@@ -4,11 +4,32 @@ body {
 
 #musicProgress {
     width: 100%;
-    background-color: rgb(152, 152, 152);
+    height: 8px;
+
+    -webkit-appearance: none;
+    outline: none;
+
+    border-radius: 2px;
 }
 
-#musicProgressBar {
-    width: 10%;
-    height: 20px;
-    background-color: rgb(223, 223, 223);
+#musicProgress::-webkit-slider-thumb {
+    width: 15px;
+    height: 15px;
+
+    -webkit-appearance: none;
+    background-color: #f3f3f3;
+
+    border-radius: 100%;
+    border-style: solid;
+    border-color: #48a4ff;
+    border-width: 2px;
+    transition: ease .2s;
+}
+
+#musicProgress::-webkit-slider-thumb:hover {
+    background-color: #7abcff;
+}
+
+#musicProgress::-webkit-slider-thumb:active {
+    background-color: #48a4ff;
 }

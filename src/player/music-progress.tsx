@@ -105,7 +105,19 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         const time = this.state.time
 
         // Get progress value to use as width for progress bar
-        const newProgress = this.getProgress(time, this.props.duration) + '%'
+        const newProgress = this.getProgress(time, this.props.duration)
+
+        const progressBar = (
+            <input id="musicProgress" type="range"
+                min="0"
+                max={ Math.ceil(this.props.duration) }
+                step="1"
+                value={ Math.floor(time) }
+                style={{ background: `linear-gradient(to right, #48a4ff 0%, #48a4ff ${newProgress}%, #d3d3d3 ${newProgress}%, #d3d3d3 100%)` }}>
+            </input>
+        )
+
+        console.log(progressBar)
 
         return (
             <div>
@@ -115,10 +127,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
                     }
                 </p>
 
-                <div id="musicProgress">
-                    <div id="musicProgressBar" style ={{ width: newProgress }} >
-                    </div>
-                </div>
+                {progressBar}
             </div>
         )
     }

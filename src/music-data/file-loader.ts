@@ -14,6 +14,8 @@ import {Song} from '@music-data/music-data.ts'
  * while the metadata can be accessed by the 'metadata' field.
  * 
  * @param path Path to read sound from
+ * @returns Sound data object: Dictionary containing 'sound' and 'metadata' entries
+ *          as promises for the actual Sound & Metadata objects.
  */
 export function loadSound(path: string) {
     // Create new sound from the specified path

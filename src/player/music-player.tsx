@@ -37,13 +37,6 @@ export class PlayButton extends React.Component<PlayButtonProps> {
     }
 }
 
-interface MusicControllerState {
-    sound: Howl,
-    metadata: Song,
-    status: string,
-    duration: number
-}
-
 interface MusicPlayerState {
     sound: Howl,
     metadata: Song
@@ -56,6 +49,13 @@ interface MusicPlayerState {
 export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     constructor(props) {
         super(props);
+
+        this.state = {
+            "sound": undefined,
+            "metadata": undefined
+        }
+
+        this.onFileChange = this.onFileChange.bind(this)
     }
 
     /**
@@ -83,10 +83,21 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     render() {
         return(
             <div>
+                <FileSelector onFileChange={this.onFileChange} />
+                <MusicController sound={this.state.sound} />
                 <MusicInfo metadata={this.state.metadata} />
             </div>
         )
     }
+}
+
+interface MusicControllerState {
+    status: string,
+    duration: number
+}
+
+interface MusicControllerProps {
+    sound: Howl
 }
 
 /**
@@ -96,51 +107,36 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
  * 
  * Valid status includes 'STOPPED', 'PLAYING' and 'PAUSED'.
  */
-export class MusicController extends React.Component<{}, MusicControllerState> {
+export class MusicController extends React.Component<MusicControllerProps, MusicControllerState> {
     constructor(props) {
         super(props);
 
         this.state = {
-            'sound': undefined,
-            'metadata': undefined,
             'status': PLAY_STATUS.STOPPED,
             'duration': 0
         }
 
-        this.onFileChange = this.onFileChange.bind(this);
         this.playSound = this.playSound.bind(this);
     }
 
-    /**
-     * Changes the current active song based on the passed in song & metadata
-     * combination.
-     * 
-     * TODO: Type annotatiaon
-     * @param musicData 
-     */
-    onFileChange(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
-        // Stop old sound, if it exists
-        if (this.state.sound != null) {
-            this.state.sound.stop()
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.sound !== prevProps.sound) {
+            if (prevProps.sound != null) {
+                // Stop old sound
+                prevProps.sound.stop()
 
-            // Remove all callbacks
-            this.state.sound.off()
+                // Remove all callbacks
+                prevProps.sound.off()
+            }
+
+            // Reset status to stopped
+            this.updateStatus(PLAY_STATUS.STOPPED)
+
+            // Load sound if it exists
+            if (this.props.sound != null) {
+                this.loadSound(this.props.sound)
+            }
         }
-
-        // Update sound via promise events
-        musicData.sound.then(
-            (sound) => this.loadSound(sound),
-            (error) => console.log(error)
-        )
-
-        // Update metadata via promise events
-        musicData.metadata.then(
-            (meta)  => this.loadMetadata(meta),
-            (error) => console.log(error)
-        )
-
-        // Reset status to paused
-        this.updateStatus(PLAY_STATUS.PAUSED)
     }
 
     /**
@@ -158,11 +154,6 @@ export class MusicController extends React.Component<{}, MusicControllerState> {
                 duration: sound.duration()
             })
         })
-
-        // Update state with new sound
-        this.setState({
-            sound: sound
-        })
     }
 
     /**
@@ -174,22 +165,12 @@ export class MusicController extends React.Component<{}, MusicControllerState> {
             status: newStatus
         });
     }
-    
-    /**
-     * Loads the specified metadata of a Song.
-     * @param meta new metadata to load
-     */
-    loadMetadata(meta: Song) {
-        this.setState({
-            metadata: meta
-        });
-    }
 
     /**
      * Plays/pauses the current active sound, if a sound is loaded.
      */
     playSound() {
-        const sound = this.state.sound
+        const sound = this.props.sound
 
         // Play the sound
         if (sound != null) {
@@ -201,10 +182,8 @@ export class MusicController extends React.Component<{}, MusicControllerState> {
     render() {
         return(
             <div>
-                <FileSelector onFileChange={this.onFileChange} />
                 <PlayButton playSound={this.playSound} status={this.state.status} />
-                <MusicProgress sound={this.state.sound} status={this.state.status} duration={this.state.duration} />
-                <MusicInfo metadata={this.state.metadata} />
+                <MusicProgress sound={this.props.sound} status={this.state.status} duration={this.state.duration} />
             </div>
         )
     }

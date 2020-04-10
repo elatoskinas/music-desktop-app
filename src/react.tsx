@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 import '@css/main.css'
 
 // Component imports
-const {MusicController} = require('@player/music-player.tsx')
+const {MusicPlayer} = require('@player/music-player.tsx')
 
 /**
  * Main application component.
@@ -15,7 +15,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <MusicController />
+                <MusicPlayer />
             </div>
         );
     }

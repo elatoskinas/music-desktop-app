@@ -1,5 +1,5 @@
-const { ipcMain, dialog } = require('electron')
-const { LOADED_FILE, OPEN_FILE_SELECTION } = require('@common/messages.ts')
+import { ipcMain, dialog } from 'electron'
+import { LOADED_FILE, OPEN_FILE_SELECTION } from '@common/messages.ts'
 
 module.exports = (function() {
     // Open directory event

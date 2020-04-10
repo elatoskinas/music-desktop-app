@@ -1,6 +1,6 @@
 // React imports
 import * as React from 'react';
-import { Song } from '@music-data/music-data';
+import { Song } from '@music-data/music-data.ts';
 
 /**
  * Component to display music info, such as the title, artist or album.

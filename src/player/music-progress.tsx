@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-const {PLAY_STATUS} = require('@common/status.ts')
-const {formatTimestamp} = require('@common/format-utils.ts')
+import {PLAY_STATUS} from '@common/status.ts'
+import {formatTimestamp} from '@common/format-utils.ts'
 
 interface MusicProgressProps {
     sound: Howl,

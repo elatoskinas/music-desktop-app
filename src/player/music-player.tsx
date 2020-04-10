@@ -4,10 +4,10 @@ import { Song } from '../music-data/music-data';
 import { IoMdPlay, IoMdPause } from "react-icons/io";
 import { TiMediaStop } from "react-icons/ti";
 
-const {FileSelector} = require('@music-data/file-components.tsx')
-const {MusicInfo} = require('@player/music-info.tsx')
-const {MusicProgress} = require('@player/music-progress.tsx')
-const {PLAY_STATUS} = require('@common/status.ts')
+import {FileSelector} from '@music-data/file-components.tsx'
+import {MusicInfo} from '@player/music-info.tsx'
+import {MusicProgress} from '@player/music-progress.tsx'
+import {PLAY_STATUS} from '@common/status.ts'
 
 interface PlayButtonProps {
     playSound: any, // TODO: Could replace with more accurate type for callback

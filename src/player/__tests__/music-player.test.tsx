@@ -1,11 +1,10 @@
 import React from 'react'
 
-
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
-const { PlayButton, MusicController } = require('@player/music-player.tsx')
-const { PLAY_STATUS } = require('@common/status.ts')
+import { PlayButton, MusicController } from '@player/music-player.tsx'
+import { PLAY_STATUS } from '@common/status.ts'
 
 import { Howl } from 'howler'
 jest.mock('howler')

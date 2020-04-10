@@ -2,9 +2,9 @@
   * Contains functionality for loading & returning music data in the form of an API.
 */
 
-const {Howl} = require('howler')
-const metadata = require('music-metadata')
-const {Song} = require('@music-data/music-data.ts')
+import {Howl} from 'howler'
+import * as metadata from 'music-metadata'
+import {Song} from '@music-data/music-data.ts'
 
 /**
  * Loads a sound from the specified path, and returns an object
@@ -33,7 +33,7 @@ export function loadSound(path: string) {
         }
     ).catch( err => {
         console.error(err.message)
-        return {}
+        return new Song({})
     })
     
     return {

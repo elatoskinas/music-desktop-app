@@ -1,8 +1,8 @@
 // Module requires
-const { app, BrowserWindow, globalShortcut } = require('electron')
+import { app, BrowserWindow, globalShortcut } from 'electron'
 
 // Event imports (adds new events to app.on)
-require('@music-data/file-events.ts')
+import '@music-data/file-events.ts'
 
 function createWindow() {
     // Create the browser window.

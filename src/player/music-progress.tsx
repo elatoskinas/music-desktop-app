@@ -28,6 +28,8 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         this.state = {
             'time': 0
         }
+
+        this.onProgressBarChange = this.onProgressBarChange.bind(this)
     }
 
     /**
@@ -66,7 +68,13 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
      * @param time       Current time of song
      * @param duration   Duration of song
      */
-    getProgress(time: number, duration: number) {
+    // getProgress(time: number, duration: number) {
+    //     return ((duration == 0 ? 0 : Math.floor(time)/Math.floor(duration)) * 100)
+    // }
+
+    getProgress() {
+        let duration = this.props.duration
+        let time = this.state.time
         return ((duration == 0 ? 0 : Math.floor(time)/Math.floor(duration)) * 100)
     }
 
@@ -101,19 +109,24 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         }
     }
 
+    onProgressBarChange(e) {
+        let newTime = e.target.value
+        this.props.sound.seek(newTime)
+
+        this.setState({
+            'time': newTime
+        })
+    }
+
     render() {
-        const time = this.state.time
-
-        // Get progress value to use as width for progress bar
-        const newProgress = this.getProgress(time, this.props.duration)
-
         const progressBar = (
             <input id="musicProgress" type="range"
                 min="0"
                 max={ Math.ceil(this.props.duration) }
                 step="1"
-                value={ Math.floor(time) }
-                style={{ background: `linear-gradient(to right, #48a4ff 0%, #48a4ff ${newProgress}%, #d3d3d3 ${newProgress}%, #d3d3d3 100%)` }}>
+                onChange={this.onProgressBarChange}
+                value={ Math.floor(this.state.time) }
+                style={{ background: `linear-gradient(to right, #48a4ff 0%, #48a4ff ${this.getProgress()}%, #d3d3d3 ${this.getProgress()}%, #d3d3d3 100%)` }}>
             </input>
         )
 
@@ -123,7 +136,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
             <div>
                 <p>
                     {
-                        formatTimestamp(time) + '/' + formatTimestamp(this.props.duration)
+                        formatTimestamp(this.state.time) + '/' + formatTimestamp(this.props.duration)
                     }
                 </p>
 

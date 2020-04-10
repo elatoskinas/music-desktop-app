@@ -29,6 +29,8 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
             'time': 0
         }
 
+        this.onProgressBarHold = this.onProgressBarHold.bind(this)
+        this.onProgressBarRelease = this.onProgressBarRelease.bind(this)
         this.onProgressBarChange = this.onProgressBarChange.bind(this)
     }
 
@@ -75,7 +77,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
     getProgress() {
         let duration = this.props.duration
         let time = this.state.time
-        return ((duration == 0 ? 0 : Math.floor(time)/Math.floor(duration)) * 100)
+        return ((duration == 0 ? 0 : Math.floor(time)/Math.ceil(duration)) * 100)
     }
 
     onPlayStatusChange(status: string) { // eslint-disable-line no-unused-vars
@@ -109,13 +111,26 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         }
     }
 
-    onProgressBarChange(e) {
-        let newTime = e.target.value
-        this.props.sound.seek(newTime)
+    onProgressBarHold() {
+        // Stop advancing progress bar while holding progress bar
+        clearInterval(this.timeInterval)
+    }
 
+    onProgressBarChange(e) {
+        // Update state with new time
         this.setState({
-            'time': newTime
+            'time': e.target.value
         })
+    }
+
+    onProgressBarRelease(e) {
+        // Seek sound
+        this.props.sound.seek(e.target.value)
+
+        // Continue advancing progress bar
+        if (this.props.status === PLAY_STATUS.PLAYING) {
+            this.timeStep()
+        }
     }
 
     render() {
@@ -124,13 +139,13 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
                 min="0"
                 max={ Math.ceil(this.props.duration) }
                 step="1"
+                onMouseDown={this.onProgressBarHold}
                 onChange={this.onProgressBarChange}
+                onMouseUp={this.onProgressBarRelease}
                 value={ Math.floor(this.state.time) }
                 style={{ background: `linear-gradient(to right, #48a4ff 0%, #48a4ff ${this.getProgress()}%, #d3d3d3 ${this.getProgress()}%, #d3d3d3 100%)` }}>
             </input>
         )
-
-        console.log(progressBar)
 
         return (
             <div>

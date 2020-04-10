@@ -22,7 +22,7 @@ export class PlayButton extends React.Component<PlayButtonProps> {
     buttonIcons = {
         [PLAY_STATUS.STOPPED]: <TiMediaStop />,
         [PLAY_STATUS.PLAYING]: <IoMdPause />,
-        [PLAY_STATUS.PAUSED]: <IoMdPlay />
+        [PLAY_STATUS.PAUSED]:  <IoMdPlay />
     }
 
     render() {
@@ -30,7 +30,7 @@ export class PlayButton extends React.Component<PlayButtonProps> {
         const element = this.buttonIcons[status]
 
         return(
-            <button onClick={this.props.playSound}>
+            <button onClick={this.props.playSound} aria-label='Play Button'>
                 {element}
            </button>
         )
@@ -55,7 +55,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
             "metadata": undefined
         }
 
-        this.onFileChange = this.onFileChange.bind(this)
+        this.onSongLoad = this.onSongLoad.bind(this)
     }
 
     /**
@@ -66,7 +66,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
      *                  both of which are promises; The sound is a promise for the Howl Sound
      *                  object, and the Metadat is a promise for Song information.
      */
-    onFileChange(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
+    onSongLoad(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
         // Update sound via promise events
         musicData.sound.then(
             (sound) => this.setState({ sound }),
@@ -83,7 +83,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     render() {
         return(
             <div>
-                <FileSelector onFileChange={this.onFileChange} />
+                <FileSelector onFileChange={this.onSongLoad} />
                 <MusicController sound={this.state.sound} />
                 <MusicInfo metadata={this.state.metadata} />
             </div>

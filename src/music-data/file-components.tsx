@@ -48,6 +48,10 @@ export class FileSelector extends React.Component<FileSelectorProps> {
     }
 
     render() {
-        return <GoFileDirectory onClick={this.openFileSelection} />
+        return (
+            <button onClick={this.openFileSelection}>
+                <GoFileDirectory/>
+            </button>
+        )
     }
 }

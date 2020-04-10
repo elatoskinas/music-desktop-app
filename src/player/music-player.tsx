@@ -9,6 +9,8 @@ import {MusicInfo} from '@player/music-info.tsx'
 import {MusicProgress} from '@player/music-progress.tsx'
 import {PLAY_STATUS} from '@common/status.ts'
 
+import '@css/music-player.css'
+
 interface PlayButtonProps {
     playSound: any, // TODO: Could replace with more accurate type for callback
     status: string
@@ -83,9 +85,9 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     render() {
         return(
             <div>
+                <MusicInfo metadata={this.state.metadata} />
                 <FileSelector onFileChange={this.onSongLoad} />
                 <MusicController sound={this.state.sound} />
-                <MusicInfo metadata={this.state.metadata} />
             </div>
         )
     }

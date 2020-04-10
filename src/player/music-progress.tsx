@@ -21,6 +21,7 @@ interface MusicProgressState {
 export class MusicProgress extends React.Component<MusicProgressProps, MusicProgressState> {
     timeInterval: ReturnType<typeof setInterval>
     tickInterval = 200
+    seeking = false
 
     constructor(props) {
         super(props)
@@ -39,6 +40,11 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
      * the song's duration and current position.
      */
     updateSongProgress() {
+        // Currently seeking via progress bar; Abort update
+        if (this.seeking) {
+            return
+        }
+
         const sound = this.props.sound
 
         if (sound != null && sound.state() == 'loaded') {
@@ -113,6 +119,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
 
     onProgressBarHold() {
         // Stop advancing progress bar while holding progress bar
+        this.seeking = true
         clearInterval(this.timeInterval)
     }
 
@@ -126,6 +133,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
     onProgressBarRelease(e) {
         // Seek sound
         this.props.sound.seek(e.target.value)
+        this.seeking = false
 
         // Continue advancing progress bar
         if (this.props.status === PLAY_STATUS.PLAYING) {

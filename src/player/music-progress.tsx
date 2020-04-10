@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'
 
 import {PLAY_STATUS} from '@common/status.ts'
 import {formatTimestamp} from '@common/format-utils.ts'
@@ -19,15 +19,15 @@ interface MusicProgressState {
  * & time for the state.
  */
 export class MusicProgress extends React.Component<MusicProgressProps, MusicProgressState> {
-    timeInterval: ReturnType<typeof setInterval>;
-    tickInterval = 200;
+    timeInterval: ReturnType<typeof setInterval>
+    tickInterval = 200
 
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             'time': 0
-        };
+        }
     }
 
     /**
@@ -35,7 +35,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
      * the song's duration and current position.
      */
     updateSongProgress() {
-        const sound = this.props.sound;
+        const sound = this.props.sound
 
         if (sound != null && sound.state() == 'loaded') {
             const time = sound.seek() as number
@@ -45,7 +45,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
             if (typeof time === 'number') {
                 this.setState({
                     'time': time // Get current position
-                });
+                })
             }
         }
     }
@@ -55,8 +55,8 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
      * this update on the next tick.
      */
     timeStep() {
-        this.updateSongProgress();
-        this.timeInterval = setTimeout(() => this.timeStep(), this.tickInterval);
+        this.updateSongProgress()
+        this.timeInterval = setTimeout(() => this.timeStep(), this.tickInterval)
     }
 
     /**
@@ -70,14 +70,17 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         return ((duration == 0 ? 0 : Math.floor(time)/Math.floor(duration)) * 100)
     }
 
-    onPlayStatusChange(status: string) {
+    onPlayStatusChange(status: string) { // eslint-disable-line no-unused-vars
+        // Unused var error suppressed for now due to there being a use-case
+        // for the new status string.
+
         // Stop previous time interval
         if (this.timeInterval !== undefined) {
-            clearInterval(this.timeInterval);
+            clearInterval(this.timeInterval)
         }
 
         // Immediately update song progress
-        this.updateSongProgress();
+        this.updateSongProgress()
 
         // Begin a new interval (only if playing)
         if (this.props.status === PLAY_STATUS.PLAYING) {
@@ -85,7 +88,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         }
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps) {
         // Reset time step if sound changes
         if (this.props.sound !== prevProps.sound) {
             this.setState({
@@ -108,7 +111,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
             <div>
                 <p>
                     {
-                        formatTimestamp(time) + "/" + formatTimestamp(this.props.duration)
+                        formatTimestamp(time) + '/' + formatTimestamp(this.props.duration)
                     }
                 </p>
 

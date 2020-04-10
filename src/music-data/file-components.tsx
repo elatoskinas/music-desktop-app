@@ -1,8 +1,7 @@
 // React imports
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as React from 'react'
 
-import { GoFileDirectory } from "react-icons/go";
+import { GoFileDirectory } from 'react-icons/go'
 import { LOADED_FILE, OPEN_FILE_SELECTION } from '@common/messages.ts'
 
 import { ipcRenderer as ipc } from 'electron'
@@ -18,7 +17,7 @@ interface FileSelectorProps {
  */
 export class FileSelector extends React.Component<FileSelectorProps> {
     constructor(props) {
-        super(props);
+        super(props)
     }
 
     /**
@@ -38,7 +37,7 @@ export class FileSelector extends React.Component<FileSelectorProps> {
         let soundData = loadSound(path)
 
         // Invoke callback for sound change
-        this.props.onFileChange(soundData);
+        this.props.onFileChange(soundData)
     }
 
     componentDidMount() {

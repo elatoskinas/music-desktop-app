@@ -59,12 +59,12 @@ describe('Sound tests', () => {
     })
     
     test('Test play sound', async () => {    
-            // Find play button, perform click & wait for it to register
-            fireEvent.click(screen.getByLabelText('Play Button'))
-            await waitFor(() => screen.getByLabelText('Play Button'))
+        // Find play button, perform click & wait for it to register
+        fireEvent.click(screen.getByLabelText('Play Button'))
+        await waitFor(() => screen.getByLabelText('Play Button'))
     
-            expect(sound.play).toBeCalledTimes(1)
-            expect(sound.pause).toBeCalledTimes(0)
+        expect(sound.play).toBeCalledTimes(1)
+        expect(sound.pause).toBeCalledTimes(0)
     })
 
     test('Test pause sound', async () => {

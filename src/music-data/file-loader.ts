@@ -29,7 +29,7 @@ export function loadSound(path: string) {
     // Parse the metadata of the file
     let meta = metadata.parseFile(path).then(
         outputMetadata => {
-            return new Song(outputMetadata.common);
+            return new Song(outputMetadata.common)
         }
     ).catch( err => {
         console.error(err.message)

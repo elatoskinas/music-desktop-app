@@ -1,6 +1,6 @@
 // React imports
-import * as React from 'react';
-import { Song } from '@music-data/music-data.ts';
+import * as React from 'react'
+import { Song } from '@music-data/music-data.ts' // eslint-disable-line no-unused-vars
 
 /**
  * Component to display music info, such as the title, artist or album.
@@ -8,11 +8,11 @@ import { Song } from '@music-data/music-data.ts';
  */
 export class MusicInfo extends React.Component<{ metadata : Song }, {}> {
     constructor(props) {
-        super(props);
+        super(props)
     }
 
     render() {
-        const meta = this.props.metadata;
+        const meta = this.props.metadata
 
         if (meta) {
             return (

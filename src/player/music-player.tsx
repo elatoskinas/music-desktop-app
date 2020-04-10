@@ -1,8 +1,8 @@
 // React imports
-import * as React from 'react';
-import { Song } from '../music-data/music-data';
-import { IoMdPlay, IoMdPause } from "react-icons/io";
-import { TiMediaStop } from "react-icons/ti";
+import * as React from 'react'
+import { Song } from '../music-data/music-data' // eslint-disable-line no-unused-vars
+import { IoMdPlay, IoMdPause } from 'react-icons/io'
+import { TiMediaStop } from 'react-icons/ti'
 
 import {FileSelector} from '@music-data/file-components.tsx'
 import {MusicInfo} from '@player/music-info.tsx'
@@ -32,7 +32,7 @@ export class PlayButton extends React.Component<PlayButtonProps> {
         return(
             <button onClick={this.props.playSound} aria-label='Play Button'>
                 {element}
-           </button>
+            </button>
         )
     }
 }
@@ -48,11 +48,11 @@ interface MusicPlayerState {
  */
 export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
-            "sound": undefined,
-            "metadata": undefined
+            'sound': undefined,
+            'metadata': undefined
         }
 
         this.onSongLoad = this.onSongLoad.bind(this)
@@ -109,17 +109,17 @@ interface MusicControllerProps {
  */
 export class MusicController extends React.Component<MusicControllerProps, MusicControllerState> {
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             'status': PLAY_STATUS.STOPPED,
             'duration': 0
         }
 
-        this.playSound = this.playSound.bind(this);
+        this.playSound = this.playSound.bind(this)
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps) {
         if (this.props.sound !== prevProps.sound) {
             if (prevProps.sound != null) {
                 // Stop old sound
@@ -145,10 +145,10 @@ export class MusicController extends React.Component<MusicControllerProps, Music
      */
     loadSound(sound: Howl) {
         // Initialize callbacks
-        sound.on('play', ()  => this.updateStatus(PLAY_STATUS.PLAYING));
-        sound.on('stop', ()  => this.updateStatus(PLAY_STATUS.STOPPED));
-        sound.on('end', ()   => this.updateStatus(PLAY_STATUS.STOPPED));
-        sound.on('pause', () => this.updateStatus(PLAY_STATUS.PAUSED));
+        sound.on('play', ()  => this.updateStatus(PLAY_STATUS.PLAYING))
+        sound.on('stop', ()  => this.updateStatus(PLAY_STATUS.STOPPED))
+        sound.on('end', ()   => this.updateStatus(PLAY_STATUS.STOPPED))
+        sound.on('pause', () => this.updateStatus(PLAY_STATUS.PAUSED))
         sound.on('load', () => {
             this.setState({
                 duration: sound.duration()
@@ -163,7 +163,7 @@ export class MusicController extends React.Component<MusicControllerProps, Music
     updateStatus(newStatus: string) {
         this.setState({
             status: newStatus
-        });
+        })
     }
 
     /**
@@ -175,7 +175,7 @@ export class MusicController extends React.Component<MusicControllerProps, Music
         // Play the sound
         if (sound != null) {
             // Pause/play depending on current status
-            sound.playing() ? sound.pause() : sound.play();
+            sound.playing() ? sound.pause() : sound.play()
         }
     }
 

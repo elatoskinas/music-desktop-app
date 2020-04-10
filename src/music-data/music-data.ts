@@ -18,11 +18,11 @@ export class Song {
 
     constructor(metadata) {
         // TODO: Generalize this
-        this.artist = metadata.artist ? metadata.artist : "Unknown Artist"
-        this.album = metadata.album ? metadata.album : "Unknown Album"
-        this.title = metadata.title ? metadata.title : "Unknown Title"
-        this.genre = metadata.genre ? metadata.genre : "Unknown Genre"
+        this.artist = metadata.artist ? metadata.artist : 'Unknown Artist'
+        this.album = metadata.album ? metadata.album : 'Unknown Album'
+        this.title = metadata.title ? metadata.title : 'Unknown Title'
+        this.genre = metadata.genre ? metadata.genre : 'Unknown Genre'
         this.tracknumber = metadata.track ? metadata.track : 1
-        this.year = metadata.year ? metadata.year : "Unknown Year"
+        this.year = metadata.year ? metadata.year : 'Unknown Year'
     }
 }

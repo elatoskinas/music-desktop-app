@@ -44,6 +44,51 @@ interface MusicControllerState {
     duration: number
 }
 
+interface MusicPlayerState {
+    sound: Howl,
+    metadata: Song
+}
+
+/**
+ * Component corresponding to a music player that plays one song and displays the
+ * information of the song, as well as exposing controls for the song.
+ */
+export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
+    constructor(props) {
+        super(props);
+    }
+
+    /**
+     * Changes the current active song based on the passed in song & metadata
+     * combination.
+     * 
+     * @param musicData Dictionary consisting of two elements: 'sound' and 'metadata',
+     *                  both of which are promises; The sound is a promise for the Howl Sound
+     *                  object, and the Metadat is a promise for Song information.
+     */
+    onFileChange(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
+        // Update sound via promise events
+        musicData.sound.then(
+            (sound) => this.setState({ sound }),
+            (error) => console.log(error)
+        )
+
+        // Update metadata via promise events
+        musicData.metadata.then(
+            (metadata)  => this.setState({ metadata }),
+            (error) => console.log(error)
+        )
+    }
+
+    render() {
+        return(
+            <div>
+                <MusicInfo metadata={this.state.metadata} />
+            </div>
+        )
+    }
+}
+
 /**
  * Component to control the current sound.
  * Contains the current sound being played as state, alongside with the metadata
@@ -61,6 +106,7 @@ export class MusicController extends React.Component<{}, MusicControllerState> {
             'status': PLAY_STATUS.STOPPED,
             'duration': 0
         }
+
         this.onFileChange = this.onFileChange.bind(this);
         this.playSound = this.playSound.bind(this);
     }
@@ -120,22 +166,22 @@ export class MusicController extends React.Component<{}, MusicControllerState> {
     }
 
     /**
-     * Loads the specified metadata of a Song.
-     * @param meta new metadata to load
-     */
-    loadMetadata(meta: Song) {
-        this.setState({
-            metadata: meta
-        });
-    }
-
-    /**
      * Updates the playback status.
      * @param newStatus  New status to update to
      */
     updateStatus(newStatus: string) {
         this.setState({
             status: newStatus
+        });
+    }
+    
+    /**
+     * Loads the specified metadata of a Song.
+     * @param meta new metadata to load
+     */
+    loadMetadata(meta: Song) {
+        this.setState({
+            metadata: meta
         });
     }
 

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config ./webpack.config.js",
     "start": "npm run build && electron ./dist/electron.js",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "author": "Evaldas Latoskinas",
   "license": "UNLICENSED",

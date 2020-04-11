@@ -5,6 +5,11 @@
 import {Howl} from 'howler'
 import * as metadata from 'music-metadata'
 import {Song} from '@music-data/music-data.ts'
+import * as fg from 'fast-glob'
+import {SUPPORTED_TYPES} from '@common/status.ts'
+
+// All supported types combined in a single CSV string
+let supportedTypesCSV = SUPPORTED_TYPES.join(',')
 
 /**
  * Loads a sound from the specified path, and returns an object
@@ -42,4 +47,19 @@ export function loadSound(path: string) {
         'sound': newSound,
         'metadata': meta
     }
+}
+
+/**
+ * Recursively traverses the given path (that is expected to be a directory),
+ * and retrieves a stream of audio files with supported extensions.
+ * 
+ * @param path Path of the directory
+ * @returns Stream of files found in the form of a ReadableStream
+ */
+export function getSoundFilesRecursively(path: string) {
+    // Construct path pattern with supported types
+    let pathPattern = path + `/**/*.{${supportedTypesCSV}}`
+
+    // Return stream of the path pattern
+    return fg.stream(pathPattern)
 }

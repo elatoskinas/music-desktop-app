@@ -2,12 +2,14 @@
   * Contains functionality for loading & returning music data in the form of an API.
 */
 
-import {Howl} from 'howler'
 import * as metadata from 'music-metadata'
-import {Song} from '@music-data/music-data.ts'
 import * as fg from 'fast-glob'
-import {SUPPORTED_TYPES} from '@common/status.ts'
 import * as path from 'path'
+import * as fs from 'fs'
+
+import {Howl} from 'howler'
+import {Song} from '@music-data/music-data.ts'
+import {SUPPORTED_TYPES} from '@common/status.ts'
 
 // All supported types combined in a single CSV string
 let supportedTypesCSV = SUPPORTED_TYPES.join(',')
@@ -71,9 +73,16 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
     for (const path of filePaths) {
         // console.log(`Path: ${path}`)
 
-        // Get stream from path, and process it in async fashion
-        const stream = getSoundFilesRecursively(path)
-        processStream(stream, callback)
+        const isDir = fs.statSync(path).isDirectory()
+
+        if (isDir) {
+            // Get stream from path, and process it in async fashion
+            const stream = getSoundFilesRecursively(path)
+            processStream(stream, callback)
+        } else {
+            // Send callback of file directly
+            callback(path)
+        }
     }
 }
 

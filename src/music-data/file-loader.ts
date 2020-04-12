@@ -67,6 +67,7 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
     // Normalize all paths & convert any backward slashes to forward slashes
     // for consistency with fast-glob.
     const filePaths = paths.map(s => path.normalize(s).replace(/\\/g, '/'))
+    const streamPromises = []
 
     for (const path of filePaths) {
         // Ensure path exists
@@ -77,13 +78,16 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
             if (isDir) {
                 // Get stream from path, and process it in async fashion
                 const stream = getSoundFilesRecursively(path, supportedExtensionsCSV)
-                processStream(stream, callback)
+                const streamPromise = processStream(stream, callback)
+                streamPromises.push(streamPromise)
             } else {
                 // Send callback of file directly
                 callback(path)
             }
         }
     }
+
+    return streamPromises
 }
 
 /**

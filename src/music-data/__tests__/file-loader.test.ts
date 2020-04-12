@@ -159,7 +159,7 @@ describe('Sound file processing tests', () => {
             // Create expected stats object, setting the isDirectory check to resolve to false
             const expectedStats = new fs.Stats()
             expectedStats.isDirectory = () => false
-            
+
             // Make statSync return the directory object set to false
             mocked(fs).statSync.mockReturnValue(expectedStats)
         })
@@ -242,5 +242,29 @@ describe('Sound file processing tests', () => {
                 expect(callback).toHaveBeenCalledWith('/path/to/music/file.mp3')
             })
         })
+
+        test('Process single path multi files stream', async () => {
+            expect.assertions(5)
+
+            const paths = ['/path/to/music']
+    
+            dirStream.push('/path/to/music/file1.mp3')
+            dirStream.push('/path/to/music/file2.mp3')
+            dirStream.push('/path/to/music/file3.mp3')
+            dirStream.push(null)
+
+            let streams = await fileLoader.processSoundFilePaths(paths, callback)
+            expect(streams.length).toEqual(1)
+
+            return Promise.all(streams).then(() => {
+                // Assert that a single callback is made
+                expect(callback).toHaveBeenCalledTimes(3)
+                expect(callback).toHaveBeenCalledWith('/path/to/music/file1.mp3')
+                expect(callback).toHaveBeenCalledWith('/path/to/music/file2.mp3')
+                expect(callback).toHaveBeenCalledWith('/path/to/music/file3.mp3')
+            })
+        })
+
+        // TODO: Multi-stream tests
     })
 })

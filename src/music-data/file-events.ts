@@ -6,7 +6,7 @@ module.exports = (function() {
     // Open directory event
     ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
         // Get property for file selection
-        const fileSelectProperty = !data.useFolders ? 'openDirectory' : 'openFile'
+        const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
 
         // Open dialog for file selection (enable multi-selection mode)
         let promise = dialog.showOpenDialog({properties: [fileSelectProperty, 'multiSelections']})

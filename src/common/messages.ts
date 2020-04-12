@@ -11,3 +11,10 @@ export let LOADED_FILE = {
         filePath: filePath
     }}
 }
+
+export let LOAD_FILES_FROM_PATHS = {
+    name: 'loadFilesFromPaths',
+    data: (paths: string[]) => {return {
+        paths
+    }}
+}

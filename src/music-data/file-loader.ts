@@ -55,6 +55,10 @@ export function loadSound(path: string) {
 /**
  * Processes & loads sound files from the provided paths list.
  * The paths are normalized prior to processing them.
+ *
+ * The function is an async function, and thus returns a promise.
+ * The promise returns a list of promises, each of which corresponds
+ * to a single stream.
  * 
  * A callback function is passed in as a parammeter to be invoked after
  * a single file is read from the stream. The callback is expected to take a single
@@ -62,6 +66,8 @@ export function loadSound(path: string) {
  * 
  * @param paths List of full paths (as strings)
  * @param callback  Callback to invoke after processing a single file in a stream
+ * @returns Promise that returns a list of promises (where each entry corresponds to
+ *          a single stream)
  */
 export async function processSoundFilePaths(paths: string[], callback: Function) {
     // Normalize all paths & convert any backward slashes to forward slashes
@@ -94,6 +100,10 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
  * Processes a single stream of audio files.
  * The expected data in the stream are full paths corresponding to
  * concrete audio files.
+ * 
+ * The function is async, therefore it returns a promise. The promise returns
+ * nothing, but upon resolution, it indicates that the stream has finished
+ * processing.
  * 
  * A callback function is passed in as a parameter to be invoked after a
  * single file is read from the stream.

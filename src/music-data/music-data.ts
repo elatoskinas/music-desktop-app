@@ -2,7 +2,7 @@
  * File for keeping music data containing classes.
  */
 
-import { IPicture } from 'music-metadata'
+import { IPicture, IRating } from 'music-metadata/lib/type'
 
 /**
  * Metadata Classes
@@ -12,12 +12,42 @@ import { IPicture } from 'music-metadata'
  * Class to represent the data of a generic Music Entry;
  * Contains common data for music entries (songs & albums)
  */
-abstract class MusicEntryData {
+export abstract class MusicEntryData {
     title: string
     year: number
     duration: number
     genres: string[]
     covers: IPicture[]
+
+    constructor() {
+        this.genres = []
+        this.covers = []
+    }
+
+    setTitle(title: string) {
+        this.title = title
+        return this
+    }
+
+    setYear(year: number) {
+        this.year = year
+        return this
+    }
+
+    setDuration(duration: number) {
+        this.duration = duration
+        return this
+    }
+
+    setGenres(genres: string[]) {
+        this.genres = genres
+        return this
+    }
+
+    setCovers(covers: IPicture[]) {
+        this.covers = covers
+        return this
+    }
 }
 
 /**
@@ -25,14 +55,47 @@ abstract class MusicEntryData {
  * Contains all the necessary song information,
  * as well as the album that the song is linked to.
  */
-class SongData extends MusicEntryData {
-    artists: string[] = []
+export class SongData extends MusicEntryData {
+    artists: string[]
 
     album: AlbumData
     track: number
     disk: number
 
-    rating: number
+    ratings: IRating[]
+
+    constructor() {
+        super()
+
+        this.title = 'Unknown Song'
+        this.artists = []
+        this.ratings = []
+    }
+
+    setArtists(artists: string[]) {
+        this.artists = artists
+        return this
+    }
+
+    setAlbum(album: AlbumData) {
+        this.album = album
+        return this
+    }
+
+    setTrack(track: number) {
+        this.track = track
+        return this
+    }
+
+    setDisk(disk: number) {
+        this.disk = disk
+        return this
+    }
+
+    setRating(ratings: IRating[]) {
+        this.ratings = ratings
+        return this
+    }
 }
 
 /**
@@ -41,10 +104,32 @@ class SongData extends MusicEntryData {
  * but does not contain the information of each concrete song.
  * TODO: Add individual song data as well?
  */
-class AlbumData extends MusicEntryData {
+export class AlbumData extends MusicEntryData {
     artist: string
     totalTracks: number
     totalDisks: number
+
+    constructor() {
+        super()
+
+        this.title = 'Unknown Song'
+        this.artist = 'Unknown artist'
+    }
+
+    setArtist(artist: string) {
+        this.artist = artist
+        return this
+    }
+
+    setTotalTracks(totalTracks: number) {
+        this.totalTracks = totalTracks
+        return this
+    }
+
+    setTotalDisks(totalDisks: number) {
+        this.totalDisks = totalDisks
+        return this
+    }
 }
 
 /**
@@ -54,8 +139,12 @@ class AlbumData extends MusicEntryData {
 /**
  * Generic Music Entry class definition
  */
-class MusicEntry<D extends MusicEntryData> {
+export class MusicEntry<D extends MusicEntryData> {
     data: D
+
+    constructor(data: D) {
+        this.data = data
+    }
 }
 
 /**
@@ -64,8 +153,13 @@ class MusicEntry<D extends MusicEntryData> {
  * 
  * TODO: Rename to Song after migrating from original Song
  */
-class Song_ extends MusicEntry<SongData> {
-    sound: Howl
+export class Song_ extends MusicEntry<SongData> {
+    path: string
+
+    constructor(data: SongData, path: string) {
+        super(data)
+        this.path = path
+    }
 }
 
 /**
@@ -73,8 +167,13 @@ class Song_ extends MusicEntry<SongData> {
  * songs that the album contains in order, as well as the
  * album data.
  */
-class Album extends MusicEntry<AlbumData> {
+export class Album extends MusicEntry<AlbumData> {
     songs: Song[]
+
+    constructor(data: AlbumData) {
+        super(data)
+        this.songs = []
+    }
 }
 
 /**

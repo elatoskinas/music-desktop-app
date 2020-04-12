@@ -113,7 +113,7 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
  */
 async function processStream(stream, callback: Function) {
     // Wait for entry to come from stream
-    for await (const entry of stream) {
+    for await (const entry of stream) {        
         callback(entry)
     }
 }

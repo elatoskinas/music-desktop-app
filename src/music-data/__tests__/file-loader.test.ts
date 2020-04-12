@@ -95,7 +95,12 @@ describe('Load sound non-existing file tests', () => {
  * Tests for sound file processing functionality
  */
 describe('Sound file processing tests', () => {
-    const callback = jest.fn()
+    let callback = jest.fn()
+
+    beforeEach(() => {
+        // Re-create callback on each call
+        callback = jest.fn()
+    })
 
     test('Process empty sound file paths', () => {
         const paths = []
@@ -138,6 +143,43 @@ describe('Sound file processing tests', () => {
     
             // Assert that the directory check was called with a forward-slash path
             expect(fs.existsSync).toBeCalledWith('path/with/some/minor/inconsistencies')
+        })
+    })
+
+    describe('Non-directory path tests', () => {
+        beforeEach(() => {
+            // Let the path exist via fs check
+            mocked(fs).existsSync.mockReturnValue(true)
+
+            // Create expected stats object, setting the isDirectory check to resolve to false
+            const expectedStats = new fs.Stats()
+            expectedStats.isDirectory = () => false
+
+            
+            // Make statSync return the directory object set to false
+            mocked(fs).statSync.mockReturnValue(expectedStats)
+        })
+
+        test('Process existing file not directory', () => {
+            const paths = ['/path/to/file.mp3']
+    
+            fileLoader.processSoundFilePaths(paths, callback)
+    
+            // Assert callback invoked with direct path
+            expect(callback).toHaveBeenCalledTimes(1)
+            expect(callback).toHaveBeenCalledWith(paths[0])
+        })
+    
+        test('Process existing files not directories multiple', () => {
+            const paths = ['/path/to/file1.mp3', '/path/to/file2.mp3', '/path/to/file3.mp3']
+    
+            fileLoader.processSoundFilePaths(paths, callback)
+    
+            // Assert callback invoked with direct path
+            expect(callback).toHaveBeenCalledTimes(3)
+            expect(callback).toHaveBeenCalledWith(paths[0])
+            expect(callback).toHaveBeenCalledWith(paths[1])
+            expect(callback).toHaveBeenCalledWith(paths[2])
         })
     })
 })

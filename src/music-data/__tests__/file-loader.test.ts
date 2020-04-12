@@ -1,5 +1,6 @@
 import * as fileLoader from '@music-data/file-loader.ts'
 import * as metadata from 'music-metadata'
+import * as fg from 'fast-glob'
 
 afterEach(() => {
     // Restore all mocks in case of spying
@@ -81,5 +82,23 @@ describe('Load sound non-existing file tests', () => {
         // return loadedSound.metadata.then(data => {
         //     expect(data.artist).toEqual()
         // })
+    })
+})
+
+/**
+ * Tests for sound file processing functionality
+ */
+describe('Sound file processing tests', () => {
+    const fg = jest.mock('fast-glob')
+
+    test('Process empty sound file paths', () => {
+        const callback = jest.fn()
+        const paths = []
+
+        // Process no paths; The test will suceed if no crashes occur
+        fileLoader.processSoundFilePaths(paths, callback)
+
+        // Assert that callback is never invoked
+        expect(callback).toHaveBeenCalledTimes(0)
     })
 })

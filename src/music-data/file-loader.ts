@@ -11,8 +11,8 @@ import {Howl} from 'howler'
 import {Song} from '@music-data/music-data.ts'
 import {SUPPORTED_TYPES} from '@common/status.ts'
 
-// All supported types combined in a single CSV string
-let supportedTypesCSV = SUPPORTED_TYPES.join(',')
+// All supported extensions combined in a single CSV string
+let supportedExtensionsCSV = SUPPORTED_TYPES.join(',')
 
 /**
  * Loads a sound from the specified path, and returns an object
@@ -75,7 +75,7 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
 
         if (isDir) {
             // Get stream from path, and process it in async fashion
-            const stream = getSoundFilesRecursively(path)
+            const stream = getSoundFilesRecursively(path, supportedExtensionsCSV)
             processStream(stream, callback)
         } else {
             // Send callback of file directly
@@ -104,14 +104,15 @@ async function processStream(stream, callback: Function) {
 
 /**
  * Recursively traverses the given path (that is expected to be a directory),
- * and retrieves a stream of audio files with supported extensions.
+ * and retrieves a stream of audio files with the specified extensions.
  * 
  * @param path Path of the directory
+ * @param extensions Extensions to look for as a CSV string
  * @returns Stream of files found in the form of a ReadableStream
  */
-function getSoundFilesRecursively(path: string) {
+function getSoundFilesRecursively(path: string, extensions: string) {
     // Construct path pattern with supported types
-    let pathPattern = path + `/**/*.{${supportedTypesCSV}}`
+    let pathPattern = path + `/**/*.{${extensions}}`
 
     // Return stream of the path pattern
     return fg.stream(pathPattern)

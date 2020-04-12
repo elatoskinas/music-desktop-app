@@ -1,6 +1,12 @@
 import * as fileLoader from '@music-data/file-loader.ts'
 import * as metadata from 'music-metadata'
+import {mocked} from 'ts-jest/utils'
+
+jest.mock('fast-glob')
+jest.mock('fs')
+
 import * as fg from 'fast-glob'
+import * as fs from 'fs'
 
 afterEach(() => {
     // Restore all mocks in case of spying
@@ -89,10 +95,9 @@ describe('Load sound non-existing file tests', () => {
  * Tests for sound file processing functionality
  */
 describe('Sound file processing tests', () => {
-    const fg = jest.mock('fast-glob')
+    const callback = jest.fn()
 
     test('Process empty sound file paths', () => {
-        const callback = jest.fn()
         const paths = []
 
         // Process no paths; The test will suceed if no crashes occur
@@ -100,5 +105,39 @@ describe('Sound file processing tests', () => {
 
         // Assert that callback is never invoked
         expect(callback).toHaveBeenCalledTimes(0)
+    })
+
+    describe('Non-existing single path tests', () => {
+        beforeEach(() => {
+            // Let the path not exist via fs check
+            mocked(fs).existsSync.mockReturnValue(false)
+        })
+
+        test('Process single file path does not exist', () => {
+            const paths = ['/some/path/not/exists']
+    
+            fileLoader.processSoundFilePaths(paths, callback)
+    
+            // Callback should never be invoked if the path does not exist
+            expect(callback).toHaveBeenCalledTimes(0)
+        })
+    
+        test('Path formatting with backslashes', () => {
+            const paths = ['path\\with\\backslash']
+    
+            fileLoader.processSoundFilePaths(paths, callback)
+    
+            // Assert that the directory check was called with a forward-slash path
+            expect(fs.existsSync).toBeCalledWith('path/with/backslash')
+        })
+    
+        test('Path formatting inconsistent', () => {
+            const paths = ['path/with\\some\\minor/inconsistencies']
+    
+            fileLoader.processSoundFilePaths(paths, callback)
+    
+            // Assert that the directory check was called with a forward-slash path
+            expect(fs.existsSync).toBeCalledWith('path/with/some/minor/inconsistencies')
+        })
     })
 })

@@ -69,17 +69,19 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
     const filePaths = paths.map(s => path.normalize(s).replace(/\\/g, '/'))
 
     for (const path of filePaths) {
-        // console.log(`Path: ${path}`)
+        // Ensure path exists
+        if (fs.existsSync(path)) {
+            // Check whether the path points to a directory
+            const isDir = fs.statSync(path).isDirectory()
 
-        const isDir = fs.statSync(path).isDirectory()
-
-        if (isDir) {
-            // Get stream from path, and process it in async fashion
-            const stream = getSoundFilesRecursively(path, supportedExtensionsCSV)
-            processStream(stream, callback)
-        } else {
-            // Send callback of file directly
-            callback(path)
+            if (isDir) {
+                // Get stream from path, and process it in async fashion
+                const stream = getSoundFilesRecursively(path, supportedExtensionsCSV)
+                processStream(stream, callback)
+            } else {
+                // Send callback of file directly
+                callback(path)
+            }
         }
     }
 }

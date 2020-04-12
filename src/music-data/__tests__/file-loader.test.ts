@@ -9,7 +9,7 @@ afterEach(() => {
 /**
  * Existing file tests (mocked unit tests)
  */
-describe('Existing file tests', () => {
+describe('Load sound existing file tests', () => {
     test('Load sound existing metadata test', () => {
         // Spy on parseFile to re-define return value
         const spy = jest.spyOn(metadata, 'parseFile')
@@ -51,7 +51,7 @@ describe('Existing file tests', () => {
 /**
  * Non-existing file tests (direct integration tests)
  */
-describe('Non-existing file tests', () => {
+describe('Load sound non-existing file tests', () => {
     test('Load sound non-existing sound test', () => {
         expect.assertions(2)
 

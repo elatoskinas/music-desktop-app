@@ -64,8 +64,6 @@ export function loadSound(path: string) {
  * @param callback  Callback to invoke after processing a single file in a stream
  */
 export async function processSoundFilePaths(paths: string[], callback: Function) {
-    // TODO: Support non-directory paths?
-
     // Normalize all paths & convert any backward slashes to forward slashes
     // for consistency with fast-glob.
     const filePaths = paths.map(s => path.normalize(s).replace(/\\/g, '/'))

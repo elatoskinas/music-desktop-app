@@ -1,6 +1,7 @@
 import * as fileLoader from '@music-data/file-loader.ts'
 import * as metadata from 'music-metadata'
 import {mocked} from 'ts-jest/utils'
+import { Stream } from 'stream'
 
 jest.mock('fast-glob')
 jest.mock('fs')
@@ -148,7 +149,7 @@ describe('Sound file processing tests', () => {
 
     describe('Non-directory path tests', () => {
         beforeEach(() => {
-            // Let the path exist via fs check
+            // Let every path exist via fs check
             mocked(fs).existsSync.mockReturnValue(true)
 
             // Create expected stats object, setting the isDirectory check to resolve to false
@@ -181,5 +182,48 @@ describe('Sound file processing tests', () => {
             expect(callback).toHaveBeenCalledWith(paths[1])
             expect(callback).toHaveBeenCalledWith(paths[2])
         })
+    })
+
+    describe('Directory stream tests', () => {
+        let dirStream = new Stream.Readable()
+
+        beforeEach(() => {
+            // Let every path exist via fs check
+            mocked(fs).existsSync.mockReturnValue(true)
+
+            // Create expected stats object, setting the isDirectory check to resolve to false
+            const expectedStats = new fs.Stats()
+            expectedStats.isDirectory = () => true
+            
+            // Make statSync return the directory object set to false
+            mocked(fs).statSync.mockReturnValue(expectedStats)
+
+            // Re-create stream
+            dirStream = new Stream.Readable()
+
+            // Make fast-glob return the created stream
+            mocked(fg.stream).mockReturnValue(dirStream)
+        })
+
+        test('Process single path empty stream', async () => {
+            const paths = ['/path/to/music']
+    
+            await fileLoader.processSoundFilePaths(paths, callback)
+
+            // Assert that no callbacks are made
+            expect(callback).toHaveBeenCalledTimes(0)
+        })
+
+        // test('Process single path single file stream', async () => {
+        //     const paths = ['/path/to/music']
+    
+        //     dirStream.push('/path/to/music/file.mp3')
+        //     dirStream.push(null)
+
+        //     fileLoader.processSoundFilePaths(paths, callback)
+
+        //     // Assert that no callbacks are made
+        //     expect(callback).toHaveBeenCalledTimes(1)
+        // })
     })
 })

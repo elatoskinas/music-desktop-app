@@ -54,7 +54,12 @@ export function loadSound(path: string) {
  * Processes & loads sound files from the provided paths list.
  * The paths are normalized prior to processing them.
  * 
+ * A callback function is passed in as a parammeter to be invoked after
+ * a single file is read from the stream. The callback is expected to take a single
+ * string parameter, corresponding to the full path of the audio.
+ * 
  * @param paths List of full paths (as strings)
+ * @param callback  Callback to invoke after processing a single file in a stream
  */
 export async function processSoundFilePaths(paths: string[], callback: Function) {
     // TODO: Support non-directory paths?
@@ -77,7 +82,11 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
  * The expected data in the stream are full paths corresponding to
  * concrete audio files.
  * 
+ * A callback function is passed in as a parameter to be invoked after a
+ * single file is read from the stream.
+ * 
  * @param stream  Stream of audio file paths (as strings)
+ * @param callback Callback to invoke after processing a single file in the stream
  */
 async function processStream(stream, callback: Function) {
     // Wait for entry to come from stream

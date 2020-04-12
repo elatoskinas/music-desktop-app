@@ -1,5 +1,5 @@
 import { ipcMain, dialog } from 'electron'
-import { LOADED_FILE, OPEN_FILE_SELECTION, LOAD_FILES_FROM_PATHS } from '@common/messages.ts'
+import { LOADED_FILE, OPEN_FILE_SELECTION } from '@common/messages.ts'
 import * as fileLoader from '@music-data/file-loader.ts'
 
 module.exports = (function() {

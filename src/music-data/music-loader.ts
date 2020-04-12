@@ -1,5 +1,5 @@
 import * as metadata from 'music-metadata'
-import { Song_, SongData, AlbumData } from '@music-data/music-data.ts'
+import { Song, SongData, AlbumData } from '@music-data/music-data.ts'
 
 // TODO: Move load sound to this file (?)
 
@@ -9,11 +9,11 @@ export function loadSound(path: string) {
         duration: true
     }).then(
         outputMetadata => {
-            return new Song_(createSongData(outputMetadata), path)
+            return new Song(createSongData(outputMetadata), path)
         }
     ).catch( err => {
         console.error(err.message)
-        return new Song_(new SongData(), path)
+        return new Song(new SongData(), path)
     })
 }
 

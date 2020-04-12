@@ -23,8 +23,8 @@ module.exports = (function() {
             // If file selection was not cancelled, then process selected file paths
             if (!success.canceled) {
                 // Construct file callback to send back to event
-                let replyCallback = function fileSendCallback(filePath) {
-                    ev.reply(LOADED_FILE.name, LOADED_FILE.data(filePath))
+                let replyCallback = function fileSendCallback(sound) {
+                    ev.reply(LOADED_FILE.name, LOADED_FILE.data(sound))
                 }
 
                 fileLoader.processSoundFilePaths(success.filePaths, replyCallback)

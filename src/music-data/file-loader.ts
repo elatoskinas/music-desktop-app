@@ -10,6 +10,7 @@ import * as fs from 'fs'
 import {Howl} from 'howler'
 import {Song} from '@music-data/music-data.ts'
 import {SUPPORTED_TYPES} from '@common/status.ts'
+import {loadSound} from '@music-data/music-loader.ts'
 
 // All supported extensions combined in a single CSV string
 let supportedExtensionsCSV = SUPPORTED_TYPES.join(',')
@@ -25,32 +26,32 @@ let supportedExtensionsCSV = SUPPORTED_TYPES.join(',')
  * @returns Sound data object: Dictionary containing 'sound' and 'metadata' entries
  *          as promises for the actual Sound & Metadata objects.
  */
-export function loadSound(path: string) {
-    // Create new sound from the specified path
-    let newSound = new Promise((resolve) => {
-        let sound = new Howl({
-            src: [path],
-            html5: true,
-        })
+// export function loadSound(path: string) {
+//     // Create new sound from the specified path
+//     let newSound = new Promise((resolve) => {
+//         let sound = new Howl({
+//             src: [path],
+//             html5: true,
+//         })
 
-        resolve(sound)
-    })
+//         resolve(sound)
+//     })
 
-    // Parse the metadata of the file
-    let meta = metadata.parseFile(path).then(
-        outputMetadata => {
-            return new Song(outputMetadata.common)
-        }
-    ).catch( err => {
-        console.error(err.message)
-        return new Song({})
-    })
+//     // Parse the metadata of the file
+//     let meta = metadata.parseFile(path).then(
+//         outputMetadata => {
+//             return new Song(outputMetadata.common)
+//         }
+//     ).catch( err => {
+//         console.error(err.message)
+//         return new Song({})
+//     })
     
-    return {
-        'sound': newSound,
-        'metadata': meta
-    }
-}
+//     return {
+//         'sound': newSound,
+//         'metadata': meta
+//     }
+// }
 
 /**
  * Processes & loads sound files from the provided paths list.
@@ -88,7 +89,9 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
                 streamPromises.push(streamPromise)
             } else {
                 // Send callback of file directly
-                callback(path)
+                loadSound(path).then((sound) => {
+                    callback(sound)
+                })
             }
         }
     }
@@ -114,7 +117,10 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
 async function processStream(stream, callback: Function) {
     // Wait for entry to come from stream
     for await (const entry of stream) {        
-        callback(entry)
+        // Load sound and invoke callback
+        loadSound(entry).then((sound) => {
+            callback(sound)
+        })
     }
 }
 

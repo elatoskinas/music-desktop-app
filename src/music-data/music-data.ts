@@ -153,7 +153,7 @@ export class MusicEntry<D extends MusicEntryData> {
  * 
  * TODO: Rename to Song after migrating from original Song
  */
-export class Song_ extends MusicEntry<SongData> {
+export class Song extends MusicEntry<SongData> {
     path: string
 
     constructor(data: SongData, path: string) {
@@ -181,24 +181,24 @@ export class Album extends MusicEntry<AlbumData> {
  * 
  * TODO: Restructure/rethink this in terms of class structure.
  */
-export class Song {
-    artist: string;
-    album: string;
-    title: string;
-    genre: string;
-    tracknumber: number;
-    year: number;
+// export class Song {
+//     artist: string;
+//     album: string;
+//     title: string;
+//     genre: string;
+//     tracknumber: number;
+//     year: number;
 
-    covers: IPicture[];
+//     covers: IPicture[];
 
-    constructor(metadata) {
-        // TODO: Generalize this
-        this.artist = metadata.artist ? metadata.artist : 'Unknown Artist'
-        this.album = metadata.album ? metadata.album : 'Unknown Album'
-        this.title = metadata.title ? metadata.title : 'Unknown Title'
-        this.genre = metadata.genre ? metadata.genre : 'Unknown Genre'
-        this.tracknumber = metadata.track ? metadata.track : 1
-        this.year = metadata.year ? metadata.year : 'Unknown Year'
-        this.covers = metadata.picture ? metadata.picture : []
-    }
-}
+//     constructor(metadata) {
+//         // TODO: Generalize this
+//         this.artist = metadata.artist ? metadata.artist : 'Unknown Artist'
+//         this.album = metadata.album ? metadata.album : 'Unknown Album'
+//         this.title = metadata.title ? metadata.title : 'Unknown Title'
+//         this.genre = metadata.genre ? metadata.genre : 'Unknown Genre'
+//         this.tracknumber = metadata.track ? metadata.track : 1
+//         this.year = metadata.year ? metadata.year : 'Unknown Year'
+//         this.covers = metadata.picture ? metadata.picture : []
+//     }
+// }

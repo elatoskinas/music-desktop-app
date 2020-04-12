@@ -5,7 +5,6 @@ import { GoFileDirectory } from 'react-icons/go'
 import { LOADED_FILE, OPEN_FILE_SELECTION } from '@common/messages.ts'
 
 import { ipcRenderer as ipc } from 'electron'
-import {loadSound} from '@music-data/file-loader.ts'
 
 interface FileSelectorProps {
     onFileChange: Function
@@ -32,18 +31,20 @@ export class FileSelector extends React.Component<FileSelectorProps> {
      * Handles loading a sound after a path is selected in file selection.
      * @param path Path of the file that was loaded
      */
-    handleFileLoad(path: string) {
-        // Load the sound to get the sound data
-        let soundData = loadSound(path)
+    // handleFileLoad(path: string) {
+    //     // Load the sound to get the sound data
+    //     let soundData = loadSound(path)
 
-        // Invoke callback for sound change
-        this.props.onFileChange(soundData)
-    }
+    //     // Invoke callback for sound change
+    //     this.props.onFileChange(soundData)
+    // }
 
     componentDidMount() {
-        // Receive 'loadedFile' event which contains the path of the file
+        // Receive 'loadedFile' event which contains the sound data of the file
         ipc.on(LOADED_FILE.name, (e, data) => {
-            this.handleFileLoad(data.filePath)
+            this.props.onFileChange(data.sound)
+
+            // this.handleFileLoad(data.filePath)
         })
     }
 

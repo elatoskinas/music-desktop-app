@@ -1,6 +1,9 @@
 // React imports
 import * as React from 'react'
-import { Song } from '../music-data/music-data' // eslint-disable-line no-unused-vars
+
+import { Howl } from 'howler'
+
+import { Song, SongData } from '@music-data/music-data.ts' // eslint-disable-line no-unused-vars
 import { IoMdPlay, IoMdPause } from 'react-icons/io'
 import { TiMediaStop } from 'react-icons/ti'
 
@@ -41,7 +44,7 @@ export class PlayButton extends React.Component<PlayButtonProps> {
 
 interface MusicPlayerState {
     sound: Howl,
-    metadata: Song
+    metadata: SongData
 }
 
 /**
@@ -68,18 +71,30 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
      *                  both of which are promises; The sound is a promise for the Howl Sound
      *                  object, and the Metadat is a promise for Song information.
      */
-    onSongLoad(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
-        // Update sound via promise events
-        musicData.sound.then(
-            (sound) => this.setState({ sound }),
-            (error) => console.log(error)
-        )
+    // onSongLoad(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
+    //     // Update sound via promise events
+    //     musicData.sound.then(
+    //         (sound) => this.setState({ sound }),
+    //         (error) => console.log(error)
+    //     )
 
-        // Update metadata via promise events
-        musicData.metadata.then(
-            (metadata)  => this.setState({ metadata }),
-            (error) => console.log(error)
-        )
+    //     // Update metadata via promise events
+    //     musicData.metadata.then(
+    //         (metadata)  => this.setState({ metadata }),
+    //         (error) => console.log(error)
+    //     )
+    // }
+
+    onSongLoad(musicData: Song) {
+        const sound = new Howl({
+            src: [musicData.path],
+            html5: true
+        })
+
+        this.setState({
+            sound,
+            metadata: musicData.data
+        })
     }
 
     render() {

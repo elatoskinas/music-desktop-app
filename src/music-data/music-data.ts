@@ -2,7 +2,8 @@
  * File for keeping music data containing classes.
  */
 
-import { IPicture, IRating } from 'music-metadata/lib/type'
+import { IRating } from 'music-metadata/lib/type'
+import { IPicture } from 'music-metadata'
 
 /**
  * Metadata Classes

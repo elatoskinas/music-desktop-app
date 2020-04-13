@@ -17,8 +17,7 @@ export class MusicInfo extends React.Component<{ metadata : SongData }, {}> {
      * @param data   Data buffer of image
      */
     imageBufferToSource(format: string, data: Buffer) {
-        return `data:${format}; base64,
-                ${data.toString('base64')}`
+        return `data:${format}; base64, ${new Buffer(data).toString('base64')}`
     }
 
     render() {

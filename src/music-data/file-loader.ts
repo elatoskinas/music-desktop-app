@@ -2,13 +2,10 @@
   * Contains functionality for loading & returning music data in the form of an API.
 */
 
-import * as metadata from 'music-metadata'
 import * as fg from 'fast-glob'
 import * as path from 'path'
 import * as fs from 'fs'
 
-import {Howl} from 'howler'
-import {Song} from '@music-data/music-data.ts'
 import {SUPPORTED_TYPES} from '@common/status.ts'
 import {loadSound} from '@music-data/music-loader.ts'
 

@@ -24,7 +24,7 @@ export class FileSelector extends React.Component<FileSelectorProps> {
      */
     openFileSelection() {
         // Send message to open file selection
-        ipc.send(OPEN_FILE_SELECTION.name, OPEN_FILE_SELECTION.data(false))
+        ipc.send(OPEN_FILE_SELECTION.name, OPEN_FILE_SELECTION.data(true))
     }
 
     /**

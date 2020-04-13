@@ -144,6 +144,10 @@ export class MusicController extends React.Component<MusicControllerProps, Music
 
                 // Remove all callbacks
                 prevProps.sound.off()
+
+                // Unload last sound
+                // TODO: Should some caching mechanism be used, e.g. for queue?
+                prevProps.sound.unload()
             }
 
             // Reset status to stopped

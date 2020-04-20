@@ -7,8 +7,8 @@ export let OPEN_FILE_SELECTION = {
     }}
 }
 
-export let LOADED_FILE = {
-    name: 'loadedFile',
+export let LOADED_SOUND = {
+    name: 'loadedSound',
     data: (sound: Song) => {return {
         sound
     }}

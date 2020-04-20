@@ -63,28 +63,6 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         this.onSongLoad = this.onSongLoad.bind(this)
     }
 
-    /**
-     * Changes the current active song based on the passed in song & metadata
-     * combination.
-     * 
-     * @param musicData Dictionary consisting of two elements: 'sound' and 'metadata',
-     *                  both of which are promises; The sound is a promise for the Howl Sound
-     *                  object, and the Metadat is a promise for Song information.
-     */
-    // onSongLoad(musicData: {sound: Promise<Howl>, metadata: Promise<Song>}) {
-    //     // Update sound via promise events
-    //     musicData.sound.then(
-    //         (sound) => this.setState({ sound }),
-    //         (error) => console.log(error)
-    //     )
-
-    //     // Update metadata via promise events
-    //     musicData.metadata.then(
-    //         (metadata)  => this.setState({ metadata }),
-    //         (error) => console.log(error)
-    //     )
-    // }
-
     onSongLoad(musicData: Song) {
         const sound = new Howl({
             src: [musicData.path],

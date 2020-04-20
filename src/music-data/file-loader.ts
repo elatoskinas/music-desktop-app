@@ -13,44 +13,6 @@ import {loadSound} from '@music-data/music-loader.ts'
 let supportedExtensionsCSV = SUPPORTED_TYPES.join(',')
 
 /**
- * Loads a sound from the specified path, and returns an object
- * that contains both the sound and the metadata as a promise.
- * 
- * The returned promise object's sound can be accesed by the 'sound' field,
- * while the metadata can be accessed by the 'metadata' field.
- * 
- * @param path Path to read sound from
- * @returns Sound data object: Dictionary containing 'sound' and 'metadata' entries
- *          as promises for the actual Sound & Metadata objects.
- */
-// export function loadSound(path: string) {
-//     // Create new sound from the specified path
-//     let newSound = new Promise((resolve) => {
-//         let sound = new Howl({
-//             src: [path],
-//             html5: true,
-//         })
-
-//         resolve(sound)
-//     })
-
-//     // Parse the metadata of the file
-//     let meta = metadata.parseFile(path).then(
-//         outputMetadata => {
-//             return new Song(outputMetadata.common)
-//         }
-//     ).catch( err => {
-//         console.error(err.message)
-//         return new Song({})
-//     })
-    
-//     return {
-//         'sound': newSound,
-//         'metadata': meta
-//     }
-// }
-
-/**
  * Processes & loads sound files from the provided paths list.
  * The paths are normalized prior to processing them.
  *

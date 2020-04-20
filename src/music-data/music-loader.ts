@@ -1,8 +1,6 @@
 import * as metadata from 'music-metadata'
 import { Song, SongData, AlbumData } from '@music-data/music-data.ts'
 
-// TODO: Move load sound to this file (?)
-
 export function loadSound(path: string) {
     // Parse the metadata of the file
     return metadata.parseFile(path, {

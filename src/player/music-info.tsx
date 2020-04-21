@@ -1,12 +1,12 @@
 // React imports
 import * as React from 'react'
-import { Song } from '@music-data/music-data.ts' // eslint-disable-line no-unused-vars
+import { SongData, AlbumData } from '@music-data/music-data.ts' // eslint-disable-line no-unused-vars
 
 /**
  * Component to display music info, such as the title, artist or album.
  * Has song metadata as the properties that is a Song object containing relevant metadata.
  */
-export class MusicInfo extends React.Component<{ metadata : Song }, {}> {
+export class MusicInfo extends React.Component<{ metadata : SongData }, {}> {
     constructor(props) {
         super(props)
     }
@@ -17,8 +17,7 @@ export class MusicInfo extends React.Component<{ metadata : Song }, {}> {
      * @param data   Data buffer of image
      */
     imageBufferToSource(format: string, data: Buffer) {
-        return `data:${format}; base64,
-                ${data.toString('base64')}`
+        return `data:${format}; base64, ${new Buffer(data).toString('base64')}`
     }
 
     render() {
@@ -35,8 +34,8 @@ export class MusicInfo extends React.Component<{ metadata : Song }, {}> {
                 <div className='song-info'>
                     <img src={coverSource} className='song-cover' />
                     <p>Title: {meta.title}</p>
-                    <p>Artist: {meta.artist}</p>
-                    <p>Album: {meta.album}</p>
+                    <p>Album Artist: {meta.album.artist}</p>
+                    <p>Album: {meta.album.title}</p>
                 </div>
             )
         }

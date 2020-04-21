@@ -1,5 +1,5 @@
 import { ipcMain, dialog } from 'electron'
-import { LOADED_FILE, OPEN_FILE_SELECTION } from '@common/messages.ts'
+import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
 import * as fileLoader from '@music-data/file-loader.ts'
 import { SUPPORTED_TYPES } from '@common/status.ts'
 
@@ -23,8 +23,8 @@ module.exports = (function() {
             // If file selection was not cancelled, then process selected file paths
             if (!success.canceled) {
                 // Construct file callback to send back to event
-                let replyCallback = function fileSendCallback(filePath) {
-                    ev.reply(LOADED_FILE.name, LOADED_FILE.data(filePath))
+                let replyCallback = function fileSendCallback(sound) {
+                    ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
                 }
 
                 fileLoader.processSoundFilePaths(success.filePaths, replyCallback)

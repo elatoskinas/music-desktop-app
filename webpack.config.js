@@ -25,7 +25,8 @@ module.exports = [
             filename: 'electron.js'
         },
         resolve: {
-            alias: ALIASES
+            alias: ALIASES,
+            extensions: ['.js', '.jsx', '.ts', '.tsx']
         }
     },
     {
@@ -46,7 +47,8 @@ module.exports = [
             filename: 'react.js'
         },
         resolve: {
-            alias: ALIASES
+            alias: ALIASES,
+            extensions: ['.js', '.jsx', '.ts', '.tsx']
         },
         plugins: [
             new HtmlWebpackPlugin({

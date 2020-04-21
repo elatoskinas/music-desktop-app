@@ -7,7 +7,7 @@ import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
 import { ipcRenderer as ipc } from 'electron'
 
 interface FileSelectorProps {
-    onFileChange: Function
+    onSoundLoaded: Function
 }
 
 /**
@@ -30,7 +30,7 @@ export class FileSelector extends React.Component<FileSelectorProps> {
     componentDidMount() {
         // Receive sound loading event which contains the sound data of the file
         ipc.on(LOADED_SOUND.name, (e, data) => {
-            this.props.onFileChange(data.sound)
+            this.props.onSoundLoaded(data.sound)
         })
     }
 

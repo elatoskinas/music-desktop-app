@@ -79,7 +79,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         return(
             <div>
                 <MusicInfo metadata={this.state.metadata} />
-                <FileSelector onFileChange={this.onSongLoad} />
+                <FileSelector onSoundLoaded={this.onSongLoad} />
                 <MusicController sound={this.state.sound} />
             </div>
         )

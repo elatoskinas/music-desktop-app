@@ -67,3 +67,24 @@ describe('AlbumData tests', () => {
         expect(albumData.artist).toEqual(artist)
     })
 })
+
+describe('Album & Song tests', () => {
+    test('Create Song', () => {
+        const data = new SongData()
+        const path = 'some/path/to/file'
+
+        let song = new Song(data, path)
+
+        expect(song.data).toBe(data)
+        expect(song.path).toBe(path)
+    })
+
+    test('Create Album', () => {
+        const data = new AlbumData()
+
+        let album = new Album(data)
+        
+        expect(album.data).toBe(data)
+        expect(album.songs).toEqual([])
+    })
+})

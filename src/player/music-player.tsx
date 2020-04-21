@@ -13,6 +13,7 @@ import {MusicProgress} from '@player/music-progress.tsx'
 import {PLAY_STATUS} from '@common/status.ts'
 
 import '@css/music-player.css'
+import { SongQueue } from './song-queue'
 
 interface PlayButtonProps {
     playSound: any, // TODO: Could replace with more accurate type for callback
@@ -52,6 +53,8 @@ interface MusicPlayerState {
  * information of the song, as well as exposing controls for the song.
  */
 export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
+    songQueue: SongQueue
+
     constructor(props) {
         super(props)
 
@@ -60,10 +63,31 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
             'metadata': undefined
         }
 
+        this.songQueue = new SongQueue()
+
         this.onSongLoad = this.onSongLoad.bind(this)
+        this.onSongEnded = this.onSongEnded.bind(this)
     }
 
     onSongLoad(musicData: Song) {
+        // Add song to queue
+        this.songQueue.addSong(musicData)
+
+        // Current song loaded should be played, as it
+        // got inserted as the first song in the queue.
+        if (this.songQueue.current() === musicData) {
+            this.loadSound(musicData, false)
+        }
+    }
+
+    onSongEnded() {
+        // Play next song if there is another song to play
+        if (this.songQueue.hasNext()) {
+            this.loadSound(this.songQueue.next(), true)
+        }
+    }
+
+    private loadSound(musicData: Song, play: boolean) {
         const sound = new Howl({
             src: [musicData.path],
             html5: true
@@ -73,6 +97,10 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
             sound,
             metadata: musicData.data
         })
+
+        if (play) {
+            sound.play()
+        }
     }
 
     render() {
@@ -80,7 +108,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
             <div>
                 <MusicInfo metadata={this.state.metadata} />
                 <FileSelector onSoundLoaded={this.onSongLoad} />
-                <MusicController sound={this.state.sound} />
+                <MusicController sound={this.state.sound} onSongEnded={this.onSongEnded} />
             </div>
         )
     }
@@ -92,7 +120,8 @@ interface MusicControllerState {
 }
 
 interface MusicControllerProps {
-    sound: Howl
+    sound: Howl,
+    onSongEnded: Function
 }
 
 /**
@@ -146,7 +175,10 @@ export class MusicController extends React.Component<MusicControllerProps, Music
         // Initialize callbacks
         sound.on('play', ()  => this.updateStatus(PLAY_STATUS.PLAYING))
         sound.on('stop', ()  => this.updateStatus(PLAY_STATUS.STOPPED))
-        sound.on('end', ()   => this.updateStatus(PLAY_STATUS.STOPPED))
+        sound.on('end', ()   => {
+            this.updateStatus(PLAY_STATUS.STOPPED)
+            this.props.onSongEnded()
+        })
         sound.on('pause', () => this.updateStatus(PLAY_STATUS.PAUSED))
         sound.on('load', () => {
             this.setState({

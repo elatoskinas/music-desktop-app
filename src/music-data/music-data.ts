@@ -202,4 +202,17 @@ export class Album extends MusicEntry<AlbumData> {
         super(data)
         this.songs = []
     }
+
+    /**
+     * Adds a song to the album, also updating any relevant
+     * data for the album.
+     * 
+     * TODO: Prevent song duplication
+     * TODO: Update AlbumData
+     * 
+     * @param song Song to add to the album
+     */
+    addSong(song: Song) {
+        this.songs.push(song)
+    }
 }

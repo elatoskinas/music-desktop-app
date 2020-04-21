@@ -110,7 +110,6 @@ export class SongData extends MusicEntryData {
  * Class to represent the data of an Album.
  * Contains all the necessary album information,
  * but does not contain the information of each concrete song.
- * TODO: Add individual song data as well?
  */
 export class AlbumData extends MusicEntryData {
     artist: string

@@ -7,7 +7,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 import {SUPPORTED_TYPES} from '@common/status.ts'
-import {loadSound} from '@music-data/music-loader.ts'
+import {loadSoundData} from '@music-data/music-loader.ts'
 
 // All supported extensions combined in a single CSV string
 let supportedExtensionsCSV = SUPPORTED_TYPES.join(',')
@@ -48,7 +48,7 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
                 streamPromises.push(streamPromise)
             } else {
                 // Send callback of file directly
-                loadSound(path).then((sound) => {
+                loadSoundData(path).then((sound) => {
                     callback(sound)
                 })
             }
@@ -77,7 +77,7 @@ async function processStream(stream, callback: Function) {
     // Wait for entry to come from stream
     for await (const entry of stream) {        
         // Load sound and invoke callback
-        loadSound(entry).then((sound) => {
+        loadSoundData(entry).then((sound) => {
             callback(sound)
         })
     }

@@ -1,7 +1,19 @@
 import * as metadata from 'music-metadata'
 import { Song, SongData, AlbumData } from '@music-data/music-data.ts'
 
-export function loadSound(path: string) {
+/**
+ * Loads sound data from the specified file path.
+ * If the sound data cannot be loaded, a default SongData
+ * object is constructed.
+ * 
+ * The function returns a promise that resolves to a Song object,
+ * which contains the 'data' property corresponding to the Song's
+ * metadata (which is a SongData object) 
+ * 
+ * @param path  path to load Sound Data from
+ * @returns Promise resolving to a Song object instance
+ */
+export function loadSoundData(path: string) {
     // Parse the metadata of the file
     return metadata.parseFile(path, {
         duration: true
@@ -15,6 +27,12 @@ export function loadSound(path: string) {
     })
 }
 
+/**
+ * Creates & returns a Song Data object from the specified metadata
+ * 
+ * @param metadata  Song metadata
+ * @returns new Song Data instance corresponding to the metadata provided
+ */
 function createSongData(metadata: metadata.IAudioMetadata) {
     let commonMeta = metadata.common
     let songData = new SongData()

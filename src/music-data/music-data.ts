@@ -20,6 +20,9 @@ export abstract class MusicEntryData {
     genres: string[]
     covers: IPicture[]
 
+    /**
+     * Create a new Music Entry Data instance.
+     */
     constructor() {
         this.genres = []
         this.covers = []
@@ -65,6 +68,10 @@ export class SongData extends MusicEntryData {
 
     ratings: IRating[]
 
+    /**
+     * Create aa new Song Data instance.
+     * The title of the song is initialized to 'Unknown Song' by default.
+     */
     constructor() {
         super()
 
@@ -110,11 +117,16 @@ export class AlbumData extends MusicEntryData {
     totalTracks: number
     totalDisks: number
 
+    /**
+     * Create new Album Data instance.
+     * The title of the album is initialized to 'Unknown Album',
+     * and the artist is initialized to 'Unknown Artist' by default.
+     */
     constructor() {
         super()
 
-        this.title = 'Unknown Song'
-        this.artist = 'Unknown artist'
+        this.title = 'Unknown Album'
+        this.artist = 'Unknown Artist'
     }
 
     setArtist(artist: string) {
@@ -143,6 +155,12 @@ export class AlbumData extends MusicEntryData {
 export class MusicEntry<D extends MusicEntryData> {
     data: D
 
+    /**
+     * Create a new MusicEntry instance holding the specified corresponding
+     * data.
+     * 
+     * @param data  Data of the MusicEntry
+     */
     constructor(data: D) {
         this.data = data
     }
@@ -155,6 +173,13 @@ export class MusicEntry<D extends MusicEntryData> {
 export class Song extends MusicEntry<SongData> {
     path: string
 
+    /**
+     * Create a new Song instancce with the specified
+     * song data and the path of the song.
+     * 
+     * @param data  SongData object
+     * @param path  Full path of song
+     */
     constructor(data: SongData, path: string) {
         super(data)
         this.path = path
@@ -169,6 +194,11 @@ export class Song extends MusicEntry<SongData> {
 export class Album extends MusicEntry<AlbumData> {
     songs: Song[]
 
+    /**
+     * Create a new Album instance with the specified album data.
+     * 
+     * @param data  AlbumData object
+     */
     constructor(data: AlbumData) {
         super(data)
         this.songs = []

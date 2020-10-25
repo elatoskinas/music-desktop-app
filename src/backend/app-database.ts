@@ -1,7 +1,7 @@
 import * as sqlite3 from 'sqlite3'
 import { Song } from '@data/music-data'
 
-export class AppDatabase {
+class AppDatabase {
     db: sqlite3.Database
 
     constructor(dbFilePath) {
@@ -35,3 +35,9 @@ export class AppDatabase {
         })
     }
 }
+
+// Create in-memory database
+const appDB = new AppDatabase(":memory:")
+
+// Export app database singleton
+export default appDB

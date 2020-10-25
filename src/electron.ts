@@ -1,6 +1,6 @@
 // Module requires
 import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron'
-import { AppDatabase } from '@backend/app-database'
+import ApplicationDB from '@backend/app-database'
 
 import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
 import * as fileLoader from '@backend/file-loader'
@@ -8,9 +8,6 @@ import { SUPPORTED_TYPES } from '@common/status.ts'
 
 // Event imports (adds new events to app.on)
 import { Song } from '@data/music-data'
-
-// Create in-memory database
-const appDB = new AppDatabase(":memory:")
 
 function createWindow() {
     // Create the browser window.
@@ -79,7 +76,8 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
         if (!success.canceled) {
             // Construct file callback to send back to event
             let replyCallback = function fileSendCallback(sound: Song) {
-                appDB.addSong(sound)
+                // @ts-ignore
+                ApplicationDB.addSong(sound)
                 ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
             }
 

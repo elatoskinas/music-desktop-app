@@ -6,6 +6,7 @@ import { Howl } from 'howler'
 import { Song, SongData } from '@music-data/music-data.ts' // eslint-disable-line no-unused-vars
 import { IoMdPlay, IoMdPause } from 'react-icons/io'
 import { TiMediaStop } from 'react-icons/ti'
+import { MdFastRewind, MdFastForward } from 'react-icons/md'
 
 import {FileSelector} from '@music-data/file-components.tsx'
 import {MusicInfo} from '@player/music-info.tsx'
@@ -43,6 +44,30 @@ export class PlayButton extends React.Component<PlayButtonProps> {
     }
 }
 
+interface ControlButtonProps {
+    callback: any
+}
+
+export class RewindButton extends React.Component<ControlButtonProps> {
+    render() {
+        return(
+            <button onClick={this.props.callback} aria-label='Rewind Button'>
+                <MdFastRewind />
+            </button>
+        )
+    }
+}
+
+export class ForwardButton extends React.Component<ControlButtonProps> {
+    render() {
+        return(
+            <button onClick={this.props.callback} aria-label='Forward Button'>
+                <MdFastForward />
+            </button>
+        )
+    }
+}
+
 interface MusicPlayerState {
     sound: Howl,
     metadata: SongData
@@ -67,6 +92,8 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
 
         this.onSongLoad = this.onSongLoad.bind(this)
         this.onSongEnded = this.onSongEnded.bind(this)
+        this.onNextSong = this.onNextSong.bind(this)
+        this.onPreviousSong = this.onPreviousSong.bind(this)
     }
 
     onSongLoad(musicData: Song) {
@@ -85,6 +112,14 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         if (this.songQueue.hasNext()) {
             this.loadSound(this.songQueue.next(), true)
         }
+    }
+
+    onNextSong() {
+        this.loadSound(this.songQueue.next(), true)
+    }
+
+    onPreviousSong() {
+        this.loadSound(this.songQueue.previous(), true)
     }
 
     private loadSound(musicData: Song, play: boolean) {
@@ -108,7 +143,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
             <div>
                 <MusicInfo metadata={this.state.metadata} />
                 <FileSelector onSoundLoaded={this.onSongLoad} />
-                <MusicController sound={this.state.sound} onSongEnded={this.onSongEnded} />
+                <MusicController sound={this.state.sound} onSongEnded={this.onSongEnded} onPreviousSong={this.onPreviousSong} onNextSong={this.onNextSong} />
             </div>
         )
     }
@@ -121,7 +156,9 @@ interface MusicControllerState {
 
 interface MusicControllerProps {
     sound: Howl,
-    onSongEnded: Function
+    onSongEnded: Function,
+    onPreviousSong: any,
+    onNextSong: any
 }
 
 /**
@@ -213,7 +250,11 @@ export class MusicController extends React.Component<MusicControllerProps, Music
     render() {
         return(
             <div>
-                <PlayButton playSound={this.playSound} status={this.state.status} />
+                <div id="musicControls">
+                    <RewindButton callback={this.props.onPreviousSong} />
+                    <PlayButton playSound={this.playSound} status={this.state.status} />
+                    <ForwardButton callback={this.props.onNextSong} />
+                </div>
                 <MusicProgress sound={this.props.sound} status={this.state.status} duration={this.state.duration} />
             </div>
         )

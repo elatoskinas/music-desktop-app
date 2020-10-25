@@ -33,3 +33,30 @@ body {
 #musicProgress::-webkit-slider-thumb:active {
     background-color: #48a4ff;
 }
+
+#musicControls button {
+    border-radius: 100%;
+    background-color: none;
+    text-decoration: none;
+    height: 48px;
+    width: 48px;
+    margin: 0 5px;
+    border-color: #000000;
+    border-width: 1.5px;
+    transition: ease 0.1s;
+}
+
+#musicControls button:hover {
+    background-color: #e4e4e4c6;
+}
+
+#musicControls button:active {
+    background-color: #ffffffc6;
+    border-color: #f0f0f0;
+}
+
+#musicControls {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 
 export type StyledProgressBarProps = {
+    /** Percentage of progress bar completion */
     progressPercent: number
 }
 

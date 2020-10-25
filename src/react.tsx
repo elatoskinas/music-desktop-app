@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom'
 import '@css/main.css'
 
 // Component imports
-import {MusicPlayer} from '@player/music-player.tsx'
+import {MusicPlayer} from '@frontend/music-player'
 
 /**
  * Main application component.

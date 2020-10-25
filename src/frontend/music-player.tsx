@@ -3,18 +3,18 @@ import * as React from 'react'
 
 import { Howl } from 'howler'
 
-import { Song, SongData } from '@music-data/music-data.ts' // eslint-disable-line no-unused-vars
+import { Song, SongData } from '@data/music-data' // eslint-disable-line no-unused-vars
 import { IoMdPlay, IoMdPause } from 'react-icons/io'
 import { TiMediaStop } from 'react-icons/ti'
 import { MdFastRewind, MdFastForward } from 'react-icons/md'
 
-import {FileSelector} from '@music-data/file-components.tsx'
-import {MusicInfo} from '@player/music-info.tsx'
-import {MusicProgress} from '@player/music-progress.tsx'
+import {FileSelector} from '@frontend/file-components'
+import {MusicInfo} from '@frontend/music-info'
+import {MusicProgress} from '@frontend/music-progress'
 import {PLAY_STATUS} from '@common/status.ts'
 
 import '@css/music-player.css'
-import { SongQueue } from './song-queue'
+import { SongQueue } from '@data/song-queue'
 
 interface PlayButtonProps {
     playSound: any, // TODO: Could replace with more accurate type for callback

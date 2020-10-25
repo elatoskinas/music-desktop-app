@@ -2,8 +2,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path')
 
 let ALIASES = {
-    '@music-data': path.resolve(__dirname, './src/music-data'),
-    '@player': path.resolve(__dirname, './src/player'),
+    '@data': path.resolve(__dirname, './src/data'),
+    '@backend': path.resolve(__dirname, './src/backend'),
+    '@frontend': path.resolve(__dirname, './src/frontend'),
     '@css': path.resolve(__dirname, './src/css'),
     '@common': path.resolve(__dirname, './src/common')
 }
@@ -27,6 +28,10 @@ module.exports = [
         resolve: {
             alias: ALIASES,
             extensions: ['.js', '.jsx', '.ts', '.tsx']
+        },
+        externals: {
+            // https://stackoverflow.com/questions/50991453/electron-packager-with-sqlite3-and-webpack
+            sqlite3: 'commonjs sqlite3'
         }
     },
     {

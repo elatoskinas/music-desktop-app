@@ -1,6 +1,6 @@
 // React imports
 import * as React from 'react'
-import { SongData, AlbumData } from '@music-data/music-data.ts' // eslint-disable-line no-unused-vars
+import { SongData, AlbumData } from '@data/music-data' // eslint-disable-line no-unused-vars
 
 /**
  * Component to display music info, such as the title, artist or album.

@@ -1,5 +1,5 @@
 import * as metadata from 'music-metadata'
-import { Song, SongData, AlbumData } from '@music-data/music-data.ts'
+import { Song, SongData, AlbumData } from '@data/music-data'
 
 /**
  * Loads sound data from the specified file path.

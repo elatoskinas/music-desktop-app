@@ -1,8 +1,13 @@
 // Module requires
-import { app, BrowserWindow, globalShortcut } from 'electron'
+import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron'
+import ApplicationDB from '@backend/app-database'
+
+import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
+import * as fileLoader from '@backend/file-loader'
+import { SUPPORTED_TYPES } from '@common/status.ts'
 
 // Event imports (adds new events to app.on)
-import '@music-data/file-events.ts'
+import { Song } from '@data/music-data'
 
 function createWindow() {
     // Create the browser window.
@@ -50,3 +55,35 @@ app.on('ready', async () => {
     // Ignore refresh
     globalShortcut.register('CmdOrCtrl+R', () => {})
 })
+
+// Open directory event
+ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
+    // Get property for file selection
+    const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
+
+    // Open dialog for file selection (enable multi-selection mode)
+    let promise = dialog.showOpenDialog(
+        {
+            properties: [fileSelectProperty, 'multiSelections'],
+            filters: [
+                { name: 'All Files', extensions: SUPPORTED_TYPES }
+            ]
+        })
+
+    // Setup a promise to send the response
+    promise.then(function(success) {
+        // If file selection was not cancelled, then process selected file paths
+        if (!success.canceled) {
+            // Construct file callback to send back to event
+            let replyCallback = function fileSendCallback(sound: Song) {
+                ApplicationDB.addSong(sound)
+                ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
+            }
+
+            fileLoader.processSoundFilePaths(success.filePaths, replyCallback)
+        }
+    }, function(error) {
+        console.log(error)
+    })
+})
+

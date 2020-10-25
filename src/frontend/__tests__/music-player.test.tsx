@@ -3,7 +3,7 @@ import React from 'react'
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
-import { PlayButton, MusicController } from '@player/music-player.tsx'
+import { PlayButton, MusicController } from '@frontend/music-player'
 import { PLAY_STATUS } from '@common/status.ts'
 
 import { Howl } from 'howler'

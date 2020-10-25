@@ -76,7 +76,6 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
         if (!success.canceled) {
             // Construct file callback to send back to event
             let replyCallback = function fileSendCallback(sound: Song) {
-                // @ts-ignore
                 ApplicationDB.addSong(sound)
                 ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
             }

@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import {PLAY_STATUS} from '@common/status.ts'
 import {formatTimestamp} from '@common/format-utils.ts'
+import { StyledProgressBar } from './music-progress.styles'
 
 interface MusicProgressProps {
     sound: Howl,
@@ -143,7 +144,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
 
     render() {
         const progressBar = (
-            <input id="musicProgress" type="range"
+            <StyledProgressBar type="range"
                 min="0"
                 max={ Math.ceil(this.props.duration) }
                 step="1"
@@ -151,8 +152,9 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
                 onChange={this.onProgressBarChange}
                 onMouseUp={this.onProgressBarRelease}
                 value={ Math.floor(this.state.time) }
-                style={{ background: `linear-gradient(to right, #48a4ff 0%, #48a4ff ${this.getProgress()}%, #d3d3d3 ${this.getProgress()}%, #d3d3d3 100%)` }}>
-            </input>
+                progressPercent={this.getProgress()}
+            >
+            </StyledProgressBar>
         )
 
         return (

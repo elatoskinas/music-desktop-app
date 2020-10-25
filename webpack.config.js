@@ -27,6 +27,10 @@ module.exports = [
         resolve: {
             alias: ALIASES,
             extensions: ['.js', '.jsx', '.ts', '.tsx']
+        },
+        externals: {
+            // https://stackoverflow.com/questions/50991453/electron-packager-with-sqlite3-and-webpack
+            sqlite3: 'commonjs sqlite3'
         }
     },
     {

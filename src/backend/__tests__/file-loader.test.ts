@@ -7,12 +7,12 @@ import { Stream } from 'stream'
 
 jest.mock('fast-glob')
 jest.mock('fs')
-jest.mock('@music-data/music-loader.ts')
+jest.mock('@backend/music-loader.ts')
 
 import * as fg from 'fast-glob'
 import * as fs from 'fs'
 
-import {loadSoundData} from '../music-loader'
+import {loadSoundData} from '@backend/music-loader'
 
 afterEach(() => {
     // Restore all mocks after finishing with a test

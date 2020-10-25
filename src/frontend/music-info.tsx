@@ -1,6 +1,7 @@
 // React imports
 import * as React from 'react'
 import { SongData, AlbumData } from '@data/music-data' // eslint-disable-line no-unused-vars
+import { StyledSongInfoContainer, StyledSongCoverImage } from './music-info.styles'
 
 /**
  * Component to display music info, such as the title, artist or album.
@@ -31,12 +32,12 @@ export class MusicInfo extends React.Component<{ metadata : SongData }, {}> {
             }
 
             return (
-                <div className='song-info'>
-                    <img src={coverSource} className='song-cover' />
+                <StyledSongInfoContainer>
+                    <StyledSongCoverImage src={coverSource} />
                     <p>Title: {meta.title}</p>
                     <p>Album Artist: {meta.album.artist}</p>
                     <p>Album: {meta.album.title}</p>
-                </div>
+                </StyledSongInfoContainer>
             )
         }
 

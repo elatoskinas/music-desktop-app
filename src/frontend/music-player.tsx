@@ -13,8 +13,9 @@ import {MusicInfo} from '@frontend/music-info'
 import {MusicProgress} from '@frontend/music-progress'
 import {PLAY_STATUS} from '@common/status.ts'
 
-import '@css/music-player.css'
 import { SongQueue } from '@data/song-queue'
+
+import { StyledMusicControlButton, StyledMusicControlContainer } from './music-player.styles'
 
 interface PlayButtonProps {
     playSound: any, // TODO: Could replace with more accurate type for callback
@@ -37,9 +38,9 @@ export class PlayButton extends React.Component<PlayButtonProps> {
         const element = this.buttonIcons[status]
 
         return(
-            <button onClick={this.props.playSound} aria-label='Play Button'>
+            <StyledMusicControlButton onClick={this.props.playSound} aria-label='Play Button'>
                 {element}
-            </button>
+            </StyledMusicControlButton>
         )
     }
 }
@@ -55,9 +56,9 @@ interface ControlButtonProps {
 export class RewindButton extends React.Component<ControlButtonProps> {
     render() {
         return(
-            <button onClick={this.props.callback} aria-label='Rewind Button'>
+            <StyledMusicControlButton onClick={this.props.callback} aria-label='Rewind Button'>
                 <MdFastRewind />
-            </button>
+            </StyledMusicControlButton>
         )
     }
 }
@@ -69,9 +70,9 @@ export class RewindButton extends React.Component<ControlButtonProps> {
 export class ForwardButton extends React.Component<ControlButtonProps> {
     render() {
         return(
-            <button onClick={this.props.callback} aria-label='Forward Button'>
+            <StyledMusicControlButton onClick={this.props.callback} aria-label='Forward Button'>
                 <MdFastForward />
-            </button>
+            </StyledMusicControlButton>
         )
     }
 }
@@ -170,8 +171,8 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     render() {
         return(
             <div>
-                <MusicInfo metadata={this.state.metadata} />
                 <FileSelector onSoundLoaded={this.onSongLoad} />
+                <MusicInfo metadata={this.state.metadata} />
                 <MusicController sound={this.state.sound} onSongEnded={this.onSongEnded} onPreviousSong={this.onPreviousSong} onNextSong={this.onNextSong} />
             </div>
         )
@@ -279,11 +280,11 @@ export class MusicController extends React.Component<MusicControllerProps, Music
     render() {
         return(
             <div>
-                <div id="musicControls">
+                <StyledMusicControlContainer>
                     <RewindButton callback={this.props.onPreviousSong} />
                     <PlayButton playSound={this.playSound} status={this.state.status} />
                     <ForwardButton callback={this.props.onNextSong} />
-                </div>
+                </StyledMusicControlContainer>
                 <MusicProgress sound={this.props.sound} status={this.state.status} duration={this.state.duration} />
             </div>
         )

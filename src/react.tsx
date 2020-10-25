@@ -3,7 +3,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 // CSS imports
-import '@css/main.css'
+import '@css/base.css'
 
 // Component imports
 import {MusicPlayer} from '@frontend/music-player'

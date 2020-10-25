@@ -1,6 +1,9 @@
 import * as sqlite3 from 'sqlite3'
 import { Song } from '@data/music-data'
 
+/**
+ * Component encapsulating the central application database.
+ */
 class AppDatabase {
     db: sqlite3.Database
 
@@ -28,8 +31,11 @@ class AppDatabase {
         })
     }
 
+    /**
+     * Creates data tables.
+     * TODO: Check for table existence, create only if not present
+     */
     initializeTables() {
-        // TODO: Check for table existence
         this.db.serialize(() => {
             this.db.run("CREATE TABLE song(path TEXT, title TEXT, track INTEGER)")
         })

@@ -1,3 +1,5 @@
+import { Song } from '@music-data/music-data.ts'
+
 export let OPEN_FILE_SELECTION = {
     name: 'openFileSelection',
     data: (useFolders: boolean) => {return {
@@ -5,9 +7,9 @@ export let OPEN_FILE_SELECTION = {
     }}
 }
 
-export let LOADED_FILE = {
-    name: 'loadedFile',
-    data: (filePath: string) => {return {
-        filePath: filePath
+export let LOADED_SOUND = {
+    name: 'loadedSound',
+    data: (sound: Song) => {return {
+        sound
     }}
 }

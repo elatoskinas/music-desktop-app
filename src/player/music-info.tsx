@@ -4,7 +4,7 @@ import { SongData, AlbumData } from '@music-data/music-data.ts' // eslint-disabl
 
 /**
  * Component to display music info, such as the title, artist or album.
- * Has song metadata as the properties that is a Song object containing relevant metadata.
+ * Displays the passed in metadata information.
  */
 export class MusicInfo extends React.Component<{ metadata : SongData }, {}> {
     constructor(props) {

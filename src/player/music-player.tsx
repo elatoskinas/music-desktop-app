@@ -48,6 +48,10 @@ interface ControlButtonProps {
     callback: any
 }
 
+/**
+ * Button component to rewind sound.
+ * When button is clicked, the passed in callback is fired.
+ */
 export class RewindButton extends React.Component<ControlButtonProps> {
     render() {
         return(
@@ -58,6 +62,10 @@ export class RewindButton extends React.Component<ControlButtonProps> {
     }
 }
 
+/**
+ * Button component to forward sound.
+ * When button is clicked, the passed in callback is fired.
+ */
 export class ForwardButton extends React.Component<ControlButtonProps> {
     render() {
         return(
@@ -96,6 +104,11 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         this.onPreviousSong = this.onPreviousSong.bind(this)
     }
 
+    /**
+     * Event call for when the provided Song is loaded.
+     * 
+     * @param musicData Music data of the song that was loaded
+     */
     onSongLoad(musicData: Song) {
         // Add song to queue
         this.songQueue.addSong(musicData)
@@ -107,6 +120,9 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         }
     }
 
+    /**
+     * Event call for when the current Song has ended.
+     */
     onSongEnded() {
         // Play next song if there is another song to play
         if (this.songQueue.hasNext()) {
@@ -114,14 +130,27 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         }
     }
 
+    /**
+     * Event call when the player is forwarded to the next song.
+     */
     onNextSong() {
         this.loadSound(this.songQueue.next(), true)
     }
 
+    /**
+     * Event call when the player is forwarded to the previous song.
+     */
     onPreviousSong() {
         this.loadSound(this.songQueue.previous(), true)
     }
 
+    /**
+     * Loads the Song from the provided data, and plays the song if the
+     * flag is set.
+     * 
+     * @param musicData Song data
+     * @param play If true, the song will start playing
+     */
     private loadSound(musicData: Song, play: boolean) {
         const sound = new Howl({
             src: [musicData.path],

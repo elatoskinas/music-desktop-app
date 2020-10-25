@@ -1,4 +1,4 @@
-import {Song, SongData, Album, AlbumData} from '@music-data/music-data.ts'
+import {Song, SongData, Album, AlbumData} from '../music-data'
 
 describe('SongData tests', () => {
     let songData: SongData

@@ -1,4 +1,4 @@
-import { Song } from '@music-data/music-data.ts'
+import { Song } from '@data/music-data'
 
 export let OPEN_FILE_SELECTION = {
     name: 'openFileSelection',

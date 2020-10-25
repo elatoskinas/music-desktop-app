@@ -1,13 +1,13 @@
 // Module requires
 import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron'
-import { AppDatabase } from '@music-data/app-database'
+import { AppDatabase } from '@backend/app-database'
 
 import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
-import * as fileLoader from '@music-data/file-loader.ts'
+import * as fileLoader from '@backend/file-loader'
 import { SUPPORTED_TYPES } from '@common/status.ts'
 
 // Event imports (adds new events to app.on)
-import { Song } from '@music-data/music-data'
+import { Song } from '@data/music-data'
 
 // Create in-memory database
 const appDB = new AppDatabase(":memory:")

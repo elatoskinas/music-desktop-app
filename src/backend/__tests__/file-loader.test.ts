@@ -1,5 +1,5 @@
-import * as fileLoader from '@music-data/file-loader'
-import {Song, SongData} from '@music-data/music-data'
+import * as fileLoader from '@backend/file-loader'
+import {Song, SongData} from '@data/music-data'
 
 import * as metadata from 'music-metadata'
 import { mocked } from 'ts-jest/utils'
@@ -12,7 +12,7 @@ jest.mock('@music-data/music-loader.ts')
 import * as fg from 'fast-glob'
 import * as fs from 'fs'
 
-import {loadSoundData} from '@music-data/music-loader'
+import {loadSoundData} from '../music-loader'
 
 afterEach(() => {
     // Restore all mocks after finishing with a test

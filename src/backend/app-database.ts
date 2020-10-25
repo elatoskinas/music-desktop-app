@@ -1,5 +1,5 @@
 import * as sqlite3 from 'sqlite3'
-import { Song } from './music-data'
+import { Song } from '@data/music-data'
 
 export class AppDatabase {
     db: sqlite3.Database

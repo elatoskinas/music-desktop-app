@@ -7,7 +7,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 import {SUPPORTED_TYPES} from '@common/status.ts'
-import {loadSoundData} from '@music-data/music-loader.ts'
+import {loadSoundData} from '@backend/music-loader'
 
 // All supported extensions combined in a single CSV string
 let supportedExtensionsCSV = SUPPORTED_TYPES.join(',')

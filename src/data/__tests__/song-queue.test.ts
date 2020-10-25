@@ -1,5 +1,5 @@
-import {SongQueue} from '@player/song-queue.ts'
-import {Song, SongData, Album, AlbumData} from '@music-data/music-data.ts'
+import {SongQueue} from '@data/song-queue.ts'
+import {Song, SongData, Album, AlbumData} from '@data/music-data.ts'
 
 let songQueue: SongQueue
 

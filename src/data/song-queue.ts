@@ -1,5 +1,5 @@
 import * as LinkedList from 'yallist'
-import {Song, Album} from '@music-data/music-data.ts'
+import {Song, Album} from '@data/music-data'
 
 /**
  * Song Queue abstract data type holding a structure to maintain

@@ -53,11 +53,7 @@ app.on('activate', () => {
 
 app.on('ready', async () => {
     // Ignore refresh
-    globalShortcut.register('CmdOrCtrl+R', () => {
-        ApplicationDB.listSongs((rows) => {
-            console.log(rows)
-        })
-    })
+    globalShortcut.register('CmdOrCtrl+R', () => {})
 })
 
 // Open directory event

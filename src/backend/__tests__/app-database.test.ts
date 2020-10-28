@@ -1,15 +1,15 @@
 import AppDatabase from '../app-database'
 import { AlbumData } from '@data/music-data'
 
-describe("Album table tests", () => {
-    test("Query non-existent", async () => {
-        const resultingAlbum = await AppDatabase.getAlbum("randomTitle", "withRandomArtist")
+describe('Album table tests', () => {
+    test('Query non-existent', async () => {
+        const resultingAlbum = await AppDatabase.getAlbum('randomTitle', 'withRandomArtist')
         expect(resultingAlbum).toBeUndefined()
     })
 
-    test("Add album with artist, title, year", async () => {
-        const artist = "Test Artist"
-        const title = "Test Album Title"
+    test('Add album with artist, title, year', async () => {
+        const artist = 'Test Artist'
+        const title = 'Test Album Title'
         const year = 2020
 
 
@@ -24,7 +24,7 @@ describe("Album table tests", () => {
         expect(queriedAlbum).toBeDefined()
     })
 
-    test("Add album with no parameters", async () => {
+    test('Add album with no parameters', async () => {
         const album = new AlbumData()
 
         await AppDatabase.addAlbum(album)
@@ -33,8 +33,8 @@ describe("Album table tests", () => {
         expect(queriedAlbum).toBeDefined()
     })
 
-    test("Add album with only artist", async () => {
-        const artist = "Test Artist"
+    test('Add album with only artist', async () => {
+        const artist = 'Test Artist'
         const album = new AlbumData()
             .setArtist(artist)
 
@@ -44,8 +44,8 @@ describe("Album table tests", () => {
         expect(queriedAlbum).toBeDefined()
     })
 
-    test("Add album with only title", async () => {
-        const title = "Test title"
+    test('Add album with only title', async () => {
+        const title = 'Test title'
         const album = new AlbumData()
             .setTitle(title)
 

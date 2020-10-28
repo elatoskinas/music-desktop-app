@@ -26,8 +26,8 @@ class AppDatabase {
      */
     async getAlbum(title: string, artist: string) {
         return await new Promise((resolve) => {
-            const titleCondition = title ? "title = ?" : "title iS NULL"
-            const artistCondition = artist ? "artist = ?" : "artist IS NULL"
+            const titleCondition = title ? 'title = ?' : 'title iS NULL'
+            const artistCondition = artist ? 'artist = ?' : 'artist IS NULL'
 
             const params = []
             if (title) {
@@ -56,7 +56,7 @@ class AppDatabase {
     async addAlbum(album: AlbumData): Promise<void> {
         return await new Promise((resolve) => {
             this.db.serialize(async () => {
-                const albumStmt = this.db.prepare(`INSERT OR IGNORE INTO album VALUES (NULL, ?, ?, ?, ?, ?)`)
+                const albumStmt = this.db.prepare('INSERT OR IGNORE INTO album VALUES (NULL, ?, ?, ?, ?, ?)')
                 albumStmt.run(album.title, album.artist, album.year, album.totalTracks, album.totalDisks, () => {
                     resolve()
                 })
@@ -79,7 +79,7 @@ class AppDatabase {
             albumEntry = await this.getAlbum(song.data.album.title, song.data.album.artist)
         }
 
-        const songStmt = this.db.prepare(`INSERT INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)`)
+        const songStmt = this.db.prepare('INSERT INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)')
         songStmt.run(song.path, song.data.title, song.data.year, song.data.track, song.data.disk, song.data.duration, albumEntry.id)
         songStmt.finalize()
     }
@@ -88,7 +88,7 @@ class AppDatabase {
      * List songs
      */
     listSongs(callback: Function) {
-        this.db.all("SELECT * FROM song ORDER BY title", (err, rows) => {
+        this.db.all('SELECT * FROM song ORDER BY title', (err, rows) => {
             callback(rows)
         })
     }
@@ -130,7 +130,7 @@ class AppDatabase {
 }
 
 // Create in-memory database
-const appDB = new AppDatabase(":memory:")
+const appDB = new AppDatabase(':memory:')
 
 // Export app database singleton
 export default appDB

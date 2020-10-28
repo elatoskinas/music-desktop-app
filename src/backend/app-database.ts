@@ -21,8 +21,20 @@ class AppDatabase {
      */
     async getAlbum(title: string, artist: string) {
         return await new Promise((resolve) => {
-            const existingAlbumStmt = this.db.prepare(`SELECT id FROM album WHERE title = ? AND artist = ? LIMIT 1`)
-            existingAlbumStmt.get(title, artist, (err, row) => {
+            const titleCondition = title ? "title = ?" : "title iS NULL"
+            const artistCondition = artist ? "artist = ?" : "artist IS NULL"
+
+            const params = []
+            if (title) {
+                params.push(title)
+            }
+
+            if (artist) {
+                params.push(artist)
+            }
+
+            const existingAlbumStmt = this.db.prepare(`SELECT id FROM album WHERE ${titleCondition} AND ${artistCondition} LIMIT 1`)
+            existingAlbumStmt.get(params, (err, row) => {
                 resolve(row)
             })
             existingAlbumStmt.finalize()
@@ -37,7 +49,6 @@ class AppDatabase {
      * @param album Album to add
      */
     async addAlbum(album: AlbumData): Promise<void> {
-        console.log(album)
         return await new Promise((resolve) => {
             this.db.serialize(async () => {
                 const albumStmt = this.db.prepare(`INSERT OR IGNORE INTO album VALUES (NULL, ?, ?, ?, ?, ?)`)

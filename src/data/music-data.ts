@@ -75,7 +75,6 @@ export class SongData extends MusicEntryData {
     constructor() {
         super()
 
-        this.title = 'Unknown Song'
         this.artists = []
         this.ratings = []
     }
@@ -118,14 +117,9 @@ export class AlbumData extends MusicEntryData {
 
     /**
      * Create new Album Data instance.
-     * The title of the album is initialized to 'Unknown Album',
-     * and the artist is initialized to 'Unknown Artist' by default.
      */
     constructor() {
         super()
-
-        this.title = 'Unknown Album'
-        this.artist = 'Unknown Artist'
     }
 
     setArtist(artist: string) {

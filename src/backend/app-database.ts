@@ -3,6 +3,11 @@ import { AlbumData, Song } from '@data/music-data'
 
 /**
  * Component encapsulating the central application database.
+ * 
+ * TODO: Split into different components/DAOs?
+ * TODO: Song add query can probably be optimized
+ *       (using 1 fetch instead of 2?)
+ * TODO: Look into secondary indices
  */
 class AppDatabase {
     db: sqlite3.Database

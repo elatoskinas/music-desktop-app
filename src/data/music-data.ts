@@ -69,8 +69,7 @@ export class SongData extends MusicEntryData {
     ratings: IRating[]
 
     /**
-     * Create aa new Song Data instance.
-     * The title of the song is initialized to 'Unknown Song' by default.
+     * Create a new Song Data instance.
      */
     constructor() {
         super()

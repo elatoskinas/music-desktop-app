@@ -1,10 +1,10 @@
 // Module requires
 import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron'
+import ApplicationDB from '@backend/app-database'
 
 import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
 import * as fileLoader from '@backend/file-loader'
 import { SUPPORTED_TYPES } from '@common/status.ts'
-import ApplicationDB from '@backend/app-database'
 
 // Event imports (adds new events to app.on)
 import { Song } from '@data/music-data'

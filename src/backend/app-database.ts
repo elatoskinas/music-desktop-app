@@ -1,5 +1,5 @@
 import * as sqlite3 from 'sqlite3'
-import { Song } from '@data/music-data'
+import { AlbumData, Song } from '@data/music-data'
 
 /**
  * Component encapsulating the central application database.
@@ -13,13 +13,59 @@ class AppDatabase {
     }
 
     /**
-     * Adds song
+     * Fetches album with given title & artist.
+     * If such entry does not exist, 'undefined' will be returned.
+     * 
+     * @param title Title of album to fetch
+     * @param artist Artist of album to fetch
+     */
+    async getAlbum(title: string, artist: string) {
+        return await new Promise((resolve) => {
+            const existingAlbumStmt = this.db.prepare(`SELECT id FROM album WHERE title = ? AND artist = ? LIMIT 1`)
+            existingAlbumStmt.get(title, artist, (err, row) => {
+                resolve(row)
+            })
+            existingAlbumStmt.finalize()
+        })
+    }
+
+    /**
+     * Adds an album to the database from the provided AlbumData data object.
+     * If an album with the same title & album already exists, then no insertion
+     * is performed.
+     * 
+     * @param album Album to add
+     */
+    async addAlbum(album: AlbumData): Promise<void> {
+        console.log(album)
+        return await new Promise((resolve) => {
+            this.db.serialize(async () => {
+                const albumStmt = this.db.prepare(`INSERT OR IGNORE INTO album VALUES (NULL, ?, ?, ?, ?, ?)`)
+                albumStmt.run(album.title, album.artist, album.year, album.totalTracks, album.totalDisks, () => {
+                    resolve()
+                })
+                albumStmt.finalize()
+            })
+        })
+    }
+
+    /**
+     * Adds a song to the database from the provided Song object.
+     * The Song is linked to it's defined album, which is created if it does not exist.
+     * 
      * @param song Song to add
      */
-    addSong(song: Song) {
-        const stmt = this.db.prepare(`INSERT INTO song VALUES (?, ?, ?)`)
-        stmt.run(song.path, song.data.title, song.data.track)
-        stmt.finalize()
+    async addSong(song: Song) {
+        let albumEntry: any = await this.getAlbum(song.data.album.title, song.data.album.artist)
+
+        if (!albumEntry) {
+            await this.addAlbum(song.data.album)
+            albumEntry = await this.getAlbum(song.data.album.title, song.data.album.artist)
+        }
+
+        const songStmt = this.db.prepare(`INSERT INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)`)
+        songStmt.run(song.path, song.data.title, song.data.year, song.data.track, song.data.disk, song.data.duration, albumEntry.id)
+        songStmt.finalize()
     }
 
     /**
@@ -37,7 +83,32 @@ class AppDatabase {
      */
     initializeTables() {
         this.db.serialize(() => {
-            this.db.run("CREATE TABLE song(path TEXT, title TEXT, track INTEGER)")
+            // TODO: normalize tables
+
+            this.db.run(`CREATE TABLE IF NOT EXISTS song(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                path TEXT UNIQUE,
+                title TEXT,
+                year INTEGER,
+                track INTEGER,
+                disk INTEGER,
+                duration FLOAT,
+                albumId INTEGER,
+                FOREIGN KEY(albumId) REFERENCES album(id)
+            )`)
+
+            this.db.run(`CREATE TABLE IF NOT EXISTS album(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                artist TEXT,
+                year INTEGER,
+                total_tracks INTEGER,
+                total_disks INTEGER,
+                UNIQUE(title, artist)
+            )`)
+
+            // TODO: track artists
+            // TODO: genres
         })
     }
 }

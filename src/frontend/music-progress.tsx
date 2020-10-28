@@ -87,7 +87,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         return ((duration == 0 ? 0 : Math.floor(time)/Math.ceil(duration)) * 100)
     }
 
-    onPlayStatusChange(status: string) { // eslint-disable-line no-unused-vars
+    onPlayStatusChange(status: string) { // eslint-disable-line @typescript-eslint/no-unused-vars
         // Unused var error suppressed for now due to there being a use-case
         // for the new status string.
 

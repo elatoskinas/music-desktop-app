@@ -30,7 +30,7 @@ describe('SongData tests', () => {
     })
 
     test('Set title', () => {
-        expect(songData.title).toEqual('Unknown Song')
+        expect(songData.title).toBeUndefined()
 
         const title = 'Song Title'
         let returnSong = songData.setTitle(title)
@@ -58,7 +58,7 @@ describe('AlbumData tests', () => {
     })
 
     test('Set artist', () => {
-        expect(albumData.artist).toEqual('Unknown Artist')
+        expect(albumData.artist).toBeUndefined()
 
         const artist = 'Album Artist'
         let returnAlbum = albumData.setArtist(artist)

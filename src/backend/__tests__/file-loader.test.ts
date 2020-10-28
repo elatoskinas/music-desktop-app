@@ -1,7 +1,6 @@
 import * as fileLoader from '@backend/file-loader'
 import {Song, SongData} from '@data/music-data'
 
-import * as metadata from 'music-metadata'
 import { mocked } from 'ts-jest/utils'
 import { Stream } from 'stream'
 

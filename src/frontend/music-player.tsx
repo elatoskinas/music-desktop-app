@@ -15,7 +15,7 @@ import {PLAY_STATUS} from '@common/status.ts'
 
 import { SongQueue } from '@data/song-queue'
 
-import { StyledMusicControlButton, StyledMusicControlContainer } from './music-player.styles'
+import { StyledMusicControlButton, StyledMusicControlContainer, StyledMusicControllerContainer } from './music-player.styles'
 import { MusicPlayingQueue } from './music-playing-queue'
 
 interface PlayButtonProps {
@@ -293,14 +293,14 @@ export class MusicController extends React.Component<MusicControllerProps, Music
 
     render() {
         return(
-            <div>
+            <StyledMusicControllerContainer>
                 <StyledMusicControlContainer>
                     <RewindButton callback={this.props.onPreviousSong} />
                     <PlayButton playSound={this.playSound} status={this.state.status} />
                     <ForwardButton callback={this.props.onNextSong} />
                 </StyledMusicControlContainer>
                 <MusicProgress sound={this.props.sound} status={this.state.status} duration={this.state.duration} />
-            </div>
+            </StyledMusicControllerContainer>
         )
     }
 }

@@ -27,3 +27,7 @@ export const StyledMusicControlContainer = styled.div`
     align-content: center;
     justify-content: center;
 `
+export const StyledMusicControllerContainer = styled.div`
+    padding: 10px;
+    background-color: #dedede;
+`

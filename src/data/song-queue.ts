@@ -24,13 +24,27 @@ export class SongQueue {
     }
 
     /**
-     * Gets the current position of the queue as the song in the queue.
+     * Changes the song to the specified song, if it exists in the queue.
+     * Otherwise does nothing.
      * 
-     * @returns  Song at which the queue currently points to
+     * @param song Song to change to
      */
-    getCurrentSong(): Song {
-        return this.currentSong?.value
+    changeSong(song: Song) {
+        if (this.songNodeMapping.has(song)) {
+            this.currentSong = this.songNodeMapping.get(song)
+            this.onSongChangeListener(song)
+        }
     }
+
+    /**
+     * Returns the current song in the queue
+     * 
+     * @returns Current song in the queue
+     */
+    current() {
+        return this.currentSong ? this.currentSong.value : undefined
+    }
+
 
     /**
      * Moves the position of the queue to the next song in the queue.
@@ -57,12 +71,12 @@ export class SongQueue {
     }
 
     /**
-     * Returns the current position of the queue
+     * Returns true if the current song precedes another song in the queue.
      * 
-     * @returns Current song in the queue
+     * @returns false if the current song is the last in the queue
      */
-    current() {
-        return this.currentSong ? this.currentSong.value : undefined
+    hasNext() {
+        return this.currentSong != undefined && this.currentSong.next != undefined
     }
 
     /**
@@ -90,15 +104,6 @@ export class SongQueue {
     }
 
     /**
-     * Returns true if the current song precedes another song in the queue.
-     * 
-     * @returns false if the current song is the last in the queue
-     */
-    hasNext() {
-        return this.currentSong != undefined && this.currentSong.next != undefined
-    }
-
-    /**
      * Adds a song to the queue
      * 
      * @param song  Song to add to queue
@@ -120,19 +125,6 @@ export class SongQueue {
      */
     addAlbum(album: Album) {
         album.songs.forEach((song) => this.addSong(song))
-    }
-
-    /**
-     * Changes the song to the specified song, if it exists in the queue.
-     * Otherwise does nothing.
-     * 
-     * @param song Song to change to
-     */
-    changeSong(song: Song) {
-        if (this.songNodeMapping.has(song)) {
-            this.currentSong = this.songNodeMapping.get(song)
-            this.onSongChangeListener(song)
-        }
     }
 
     /**

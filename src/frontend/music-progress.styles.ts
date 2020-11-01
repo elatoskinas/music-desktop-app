@@ -44,3 +44,8 @@ export const StyledProgressBar = styled.input`
         background-color: ${progressFilledColor};
     }
 `
+
+export const StyledProgressTimeContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+`

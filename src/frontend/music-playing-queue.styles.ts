@@ -7,17 +7,15 @@ export type StyledSongListEntryTitleProps = {
 
 export const StyledSongListContainer = styled.div`
     text-align: center;
-    max-height: 300px;
-    overflow-y: scroll;
 `
 
 export const StyledSongListEntry = styled.div`
-    background-color: ${(props:  StyledSongListEntryTitleProps) => props.isActive ? THEME_COLOURS.accentDark : THEME_COLOURS.secondary};
+    background-color: ${(props:  StyledSongListEntryTitleProps) => props.isActive ? THEME_COLOURS.tertiary : THEME_COLOURS.accentLight};
     padding: ${BASE_STYLE.padding.med} 0;
     margin: ${BASE_STYLE.margin.small} 0;
 
     :hover {
-        background-color: ${THEME_COLOURS.accentLight};
+        background-color: ${THEME_COLOURS.accentDark};
     }
 `
 

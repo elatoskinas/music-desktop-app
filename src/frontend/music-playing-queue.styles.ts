@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { BASE_STYLE, THEME_COLOURS } from './common-styles'
 
 export type StyledSongListEntryTitleProps = {
     isActive?: boolean
@@ -11,14 +12,12 @@ export const StyledSongListContainer = styled.div`
 `
 
 export const StyledSongListEntry = styled.div`
-    background-color: ${(props:  StyledSongListEntryTitleProps) => props.isActive ? '#aaaaaa' : '#eaeaea'};
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin-bottom: 5px;
-    margin-top: 5px;
+    background-color: ${(props:  StyledSongListEntryTitleProps) => props.isActive ? THEME_COLOURS.accentDark : THEME_COLOURS.secondary};
+    padding: ${BASE_STYLE.padding.med} 0;
+    margin: ${BASE_STYLE.margin.small} 0;
 
     :hover {
-        background-color: #cccccc;
+        background-color: ${THEME_COLOURS.accentLight};
     }
 `
 

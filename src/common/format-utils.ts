@@ -6,5 +6,11 @@
  * @param time  Time as number to format
  */
 export function formatTimestamp(time: number) {
-    return new Date(time * 1000).toISOString().substr(11, 8)
+    time = Math.floor(time)
+    const minutes = Math.floor(time / 60)
+    const seconds = time - minutes * 60
+
+    const secondsString = seconds < 10 ? `0${seconds}` : seconds
+
+    return `${minutes}:${secondsString}`
 }

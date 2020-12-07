@@ -15,7 +15,7 @@ import {PLAY_STATUS} from '@common/status.ts'
 
 import { SongQueue } from '@data/song-queue'
 
-import { StyledMusicControlButton, StyledMusicControlContainer, StyledMusicControllerContainer } from './music-player.styles'
+import { StyledMusicControlButton, StyledMusicControlContainer, StyledMusicControllerContainer, StyledMusicPlayerContainer, StyledMusicPlayerContentContainer, StyledMusicPlayerContentPanel, StyledMusicPlayerNavBarContainer, StyledMusicPlayerNavBarContent } from './music-player.styles'
 import { MusicPlayingQueue } from './music-playing-queue'
 
 interface PlayButtonProps {
@@ -179,16 +179,26 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
 
     render() {
         return(
-            <div>
-                <FileSelector onSoundLoaded={this.onSongLoad} />
-                <MusicInfo metadata={this.state.metadata} />
-                <MusicPlayingQueue songQueue={this.songQueue} />
+            <StyledMusicPlayerContainer>
+                <StyledMusicPlayerContentPanel>
+                    <StyledMusicPlayerNavBarContainer>
+                        <StyledMusicPlayerNavBarContent>
+                            <FileSelector onSoundLoaded={this.onSongLoad} />
+                        </StyledMusicPlayerNavBarContent>
+                    </StyledMusicPlayerNavBarContainer>
+
+                    <StyledMusicPlayerContentContainer>
+                        <MusicInfo metadata={this.state.metadata} />
+                        <MusicPlayingQueue songQueue={this.songQueue} />
+                    </StyledMusicPlayerContentContainer>
+                </StyledMusicPlayerContentPanel>
+
                 <MusicController sound={this.state.sound}
                     onSongEnded={this.onSongEnded}
                     onPreviousSong={this.onPreviousSong}
                     onNextSong={this.onNextSong}
                 />
-            </div>
+            </StyledMusicPlayerContainer>
         )
     }
 }

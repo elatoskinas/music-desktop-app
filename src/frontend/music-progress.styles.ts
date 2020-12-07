@@ -1,9 +1,12 @@
 import styled from '@emotion/styled'
+import { THEME_COLOURS } from './common-styles'
 
 export type StyledProgressBarProps = {
     /** Percentage of progress bar completion */
     progressPercent: number
 }
+
+const progressFilledColor = '#48a4ff'
 
 export const StyledProgressBar = styled.input`
     width: 100%;
@@ -14,21 +17,21 @@ export const StyledProgressBar = styled.input`
 
     border-radius: 2px;
 
-    background: linear-gradient(to right, #48a4ff 0%,
-        #48a4ff ${(props: StyledProgressBarProps) => props.progressPercent}%,
-        #d3d3d3 ${(props: StyledProgressBarProps) => props.progressPercent}%,
-        #d3d3d3 100%);
+    background: linear-gradient(to right, ${progressFilledColor} 0%,
+        ${progressFilledColor} ${(props: StyledProgressBarProps) => props.progressPercent}%,
+        ${THEME_COLOURS.accentDark} ${(props: StyledProgressBarProps) => props.progressPercent}%,
+        ${THEME_COLOURS.accentDark} 100%);
 
     ::-webkit-slider-thumb {
         width: 15px;
         height: 15px;
     
         -webkit-appearance: none;
-        background-color: #f3f3f3;
+        background-color: ${THEME_COLOURS.primary};
     
         border-radius: 100%;
         border-style: solid;
-        border-color: #48a4ff;
+        border-color: ${progressFilledColor};
         border-width: 2px;
         transition: ease .2s;
     }
@@ -38,6 +41,11 @@ export const StyledProgressBar = styled.input`
     }
     
     ::-webkit-slider-thumb:active {
-        background-color: #48a4ff;
+        background-color: ${progressFilledColor};
     }
+`
+
+export const StyledProgressTimeContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
 `

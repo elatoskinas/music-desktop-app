@@ -6,6 +6,10 @@
  * @param time  Time as number to format
  */
 export function formatTimestamp(time: number) {
+    if (time === undefined || time === null) {
+        return '?:??'
+    }
+
     time = Math.floor(time)
     const minutes = Math.floor(time / 60)
     const seconds = time - minutes * 60

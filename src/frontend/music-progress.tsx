@@ -125,6 +125,10 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
     }
 
     onProgressBarChange(e) {
+        if (!this.seeking) {
+            this.props.sound.seek(e.target.value)
+        }
+
         // Update state with new time
         this.setState({
             'time': e.target.value

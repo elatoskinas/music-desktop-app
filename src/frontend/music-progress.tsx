@@ -125,6 +125,8 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
     }
 
     onProgressBarChange(e) {
+        // Update progress directly if not seeking (holding progress bar)
+        // In effect when arrow keys are used for control
         if (!this.seeking) {
             this.props.sound.seek(e.target.value)
         }

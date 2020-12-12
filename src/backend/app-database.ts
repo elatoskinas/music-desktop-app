@@ -79,7 +79,7 @@ class AppDatabase {
             albumEntry = await this.getAlbum(song.data.album.title, song.data.album.artist)
         }
 
-        const songStmt = this.db.prepare('INSERT INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)')
+        const songStmt = this.db.prepare('INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)')
         songStmt.run(song.path, song.data.title, song.data.year, song.data.track, song.data.disk, song.data.duration, albumEntry.id)
         songStmt.finalize()
     }

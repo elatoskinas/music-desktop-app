@@ -18,3 +18,13 @@ export function formatTimestamp(time: number) {
 
     return `${minutes}:${secondsString}`
 }
+
+/**
+ * Escape regex string literal by replacing special regexp symbols with
+ * escaped counterparts.
+ * 
+ * @param text String literal to escape
+ */
+export function escapeRegex(text: string): string {
+    return text.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
+} 

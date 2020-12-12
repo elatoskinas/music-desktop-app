@@ -75,7 +75,7 @@ export async function processSoundFilePaths(paths: string[], callback: Function)
  */
 async function processStream(stream, callback: Function) {
     // Wait for entry to come from stream
-    for await (const entry of stream) {        
+    for await (const entry of stream) { 
         // Load sound and invoke callback
         loadSoundData(entry).then((sound) => {
             callback(sound)
@@ -93,7 +93,8 @@ async function processStream(stream, callback: Function) {
  */
 function getSoundFilesRecursively(path: string, extensions: string) {
     // Construct path pattern with supported types
-    let pathPattern = path + `/**/*.{${extensions}}`
+    const escapedPath = fg.escapePath(path)
+    const pathPattern = `${escapedPath}/**/*.{${extensions}}`
 
     // Return stream of the path pattern
     return fg.stream(pathPattern)

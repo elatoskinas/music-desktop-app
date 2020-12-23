@@ -20,11 +20,11 @@ export class MusicPlayingQueue extends React.Component<MusicPlayingQueueProps> {
 
         // Map queue songs to list entries
         // TODO: Optimize this?
-        return queue.getAllSongs().map(song => {
-            const isActive = song.path === queue.current()?.path
+        return queue.getAllSongs().map((song, index) => {
+            const isActive = song === queue.current()
 
             return (
-                <StyledSongListEntry key={song.path} isActive={isActive}
+                <StyledSongListEntry key={index} isActive={isActive}
                     onClick={() => { queue.changeSong(song) }}
                 >
                     <StyledSongListEntryTitle>

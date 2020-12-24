@@ -6,7 +6,7 @@ import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
 
 import { ipcRenderer as ipc } from 'electron'
 
-interface FileSelectorProps {
+export interface FileSelectorProps {
     onSoundLoaded: Function
 }
 

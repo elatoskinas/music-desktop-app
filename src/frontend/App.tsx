@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {MusicPlayer} from '@frontend/music-player'
+import {MusicPlayer} from '@frontend/MusicPlayer'
 import { AppContainer } from './App.styled'
 
 /**

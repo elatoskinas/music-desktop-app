@@ -2,9 +2,9 @@ import * as React from 'react'
 
 import {PLAY_STATUS} from '@common/status.ts'
 import {formatTimestamp} from '@common/format-utils.ts'
-import { StyledProgressBar, StyledProgressTimeContainer } from './music-progress.styles'
+import {StyledProgressBar, StyledProgressTimeContainer} from './MusicProgressBar.styles'
 
-interface MusicProgressProps {
+export interface MusicProgressProps {
     sound: Howl,
     status: string,
     duration: number

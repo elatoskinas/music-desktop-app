@@ -1,8 +1,8 @@
 import React from 'react'
-import { StyledSongListContainer, StyledSongListEntry, StyledSongListEntryTitle } from './music-playing-queue.styles'
+import { StyledSongListContainer, StyledSongListEntry, StyledSongListEntryTitle } from './MusicPlayingQueue.styles'
 import { SongQueue } from '@data/song-queue'
 
-interface MusicPlayingQueueProps {
+export interface MusicPlayingQueueProps {
     songQueue: SongQueue
 }
 

@@ -8,6 +8,8 @@ import { AlbumData, Song } from '@data/music-data'
  * TODO: Song add query can probably be optimized
  *       (using 1 fetch instead of 2?)
  * TODO: Look into secondary indices
+ * TODO: Make SongData and AlbumData function calls consistent
+ *       (use either Album and Song OR AlbumData and SongData)
  */
 class AppDatabase {
     db: sqlite3.Database
@@ -82,15 +84,6 @@ class AppDatabase {
         const songStmt = this.db.prepare('INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)')
         songStmt.run(song.path, song.data.title, song.data.year, song.data.track, song.data.disk, song.data.duration, albumEntry.id)
         songStmt.finalize()
-    }
-
-    /**
-     * List songs
-     */
-    listSongs(callback: Function) {
-        this.db.all('SELECT * FROM song ORDER BY title', (err, rows) => {
-            callback(rows)
-        })
     }
 
     /**

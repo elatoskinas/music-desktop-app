@@ -95,6 +95,8 @@ export class MusicProgress extends React.Component<
         )
     }
 
+    // TODO: Remove ignore
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onPlayStatusChange(status: string) {
         // eslint-disable-line @typescript-eslint/no-unused-vars
         // Unused var error suppressed for now due to there being a use-case

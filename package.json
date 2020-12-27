@@ -8,7 +8,7 @@
     "start": "npm run build && electron ./dist/electron.js",
     "test": "jest --coverage",
     "lint": "eslint --ext .js,.ts,.tsx --fix src/**",
-    "format": "prettier-eslint --eslint-config-path ./.eslintrc.js --write 'src/**/*.(js|jsx|ts|tsx)'",
+    "format": "prettier --write src",
     "postinstall": "install-app-deps"
   },
   "author": "Evaldas Latoskinas",

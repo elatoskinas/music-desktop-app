@@ -1,5 +1,6 @@
-// Module requires
 import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron'
+import path from 'path'
+
 import ApplicationDB from '@backend/app-database'
 
 import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
@@ -16,11 +17,15 @@ function createWindow() {
         height: 600,
         webPreferences: {
             nodeIntegration: true,
+            webSecurity: !(process.env.NODE_ENV === 'development'),
         },
     })
 
-    // Load index.html of the app
-    win.loadFile('index.html')
+    if (process.env.NODE_ENV === 'development') {
+        win.loadURL('http://localhost:8080')
+    } else {
+        win.loadFile(path.join(__dirname, 'index.html'))
+    }
 
     // Open DevTools
     win.webContents.openDevTools()

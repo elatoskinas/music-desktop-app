@@ -5,17 +5,23 @@ import { Howl } from 'howler'
 
 import { Song, SongData } from '@data/music-data' // eslint-disable-line no-unused-vars
 
-import {FileSelector} from '@frontend/FileSelector'
-import {MusicInfo} from '@frontend/MusicInfo'
+import { FileSelector } from '@frontend/FileSelector'
+import { MusicInfo } from '@frontend/MusicInfo'
 
 import { SongQueue } from '@data/song-queue'
 
-import { StyledMusicPlayerContainer, StyledMusicPlayerContentContainer, StyledMusicPlayerContentPanel, StyledMusicPlayerNavBarContainer, StyledMusicPlayerNavBarContent } from './MusicPlayer.styles'
+import {
+    StyledMusicPlayerContainer,
+    StyledMusicPlayerContentContainer,
+    StyledMusicPlayerContentPanel,
+    StyledMusicPlayerNavBarContainer,
+    StyledMusicPlayerNavBarContent,
+} from './MusicPlayer.styles'
 import { MusicPlayingQueue } from './MusicPlayingQueue'
 import { MusicController } from './MusicController'
 
 interface MusicPlayerState {
-    sound: Howl,
+    sound: Howl
     metadata: SongData
 }
 
@@ -30,8 +36,8 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         super(props)
 
         this.state = {
-            'sound': undefined,
-            'metadata': undefined
+            sound: undefined,
+            metadata: undefined,
         }
 
         this.songQueue = new SongQueue()
@@ -47,7 +53,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
 
     /**
      * Event call for when the provided Song is loaded.
-     * 
+     *
      * @param musicData Music data of the song that was loaded
      */
     onSongLoad(musicData: Song) {
@@ -93,19 +99,19 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     /**
      * Loads the Song from the provided data, and plays the song if the
      * flag is set.
-     * 
+     *
      * @param musicData Song data
      * @param play If true, the song will start playing
      */
     private loadSound(musicData: Song, play: boolean) {
         const sound = new Howl({
             src: [musicData.path],
-            html5: true
+            html5: true,
         })
 
         this.setState({
             sound,
-            metadata: musicData.data
+            metadata: musicData.data,
         })
 
         if (play) {
@@ -114,7 +120,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
     }
 
     render() {
-        return(
+        return (
             <StyledMusicPlayerContainer>
                 <StyledMusicPlayerContentPanel>
                     <StyledMusicPlayerNavBarContainer>
@@ -129,7 +135,8 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
                     </StyledMusicPlayerContentContainer>
                 </StyledMusicPlayerContentPanel>
 
-                <MusicController sound={this.state.sound}
+                <MusicController
+                    sound={this.state.sound}
                     onSongEnded={this.onSongEnded}
                     onPreviousSong={this.onPreviousSong}
                     onNextSong={this.onNextSong}
@@ -138,4 +145,3 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         )
     }
 }
-

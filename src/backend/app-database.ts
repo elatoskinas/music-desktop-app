@@ -3,7 +3,7 @@ import { AlbumData, Song } from '@data/music-data'
 
 /**
  * Component encapsulating the central application database.
- * 
+ *
  * TODO: Split into different components/DAOs?
  * TODO: Song add query can probably be optimized
  *       (using 1 fetch instead of 2?)
@@ -22,7 +22,7 @@ class AppDatabase {
     /**
      * Fetches album with given title & artist.
      * If such entry does not exist, 'undefined' will be returned.
-     * 
+     *
      * @param title Title of album to fetch
      * @param artist Artist of album to fetch
      */
@@ -40,7 +40,9 @@ class AppDatabase {
                 params.push(artist)
             }
 
-            const existingAlbumStmt = this.db.prepare(`SELECT id FROM album WHERE ${titleCondition} AND ${artistCondition} LIMIT 1`)
+            const existingAlbumStmt = this.db.prepare(
+                `SELECT id FROM album WHERE ${titleCondition} AND ${artistCondition} LIMIT 1`
+            )
             existingAlbumStmt.get(params, (err, row) => {
                 resolve(row)
             })
@@ -52,16 +54,25 @@ class AppDatabase {
      * Adds an album to the database from the provided AlbumData data object.
      * If an album with the same title & album already exists, then no insertion
      * is performed.
-     * 
+     *
      * @param album Album to add
      */
     async addAlbum(album: AlbumData): Promise<void> {
         return await new Promise((resolve) => {
             this.db.serialize(async () => {
-                const albumStmt = this.db.prepare('INSERT OR IGNORE INTO album VALUES (NULL, ?, ?, ?, ?, ?)')
-                albumStmt.run(album.title, album.artist, album.year, album.totalTracks, album.totalDisks, () => {
-                    resolve()
-                })
+                const albumStmt = this.db.prepare(
+                    'INSERT OR IGNORE INTO album VALUES (NULL, ?, ?, ?, ?, ?)'
+                )
+                albumStmt.run(
+                    album.title,
+                    album.artist,
+                    album.year,
+                    album.totalTracks,
+                    album.totalDisks,
+                    () => {
+                        resolve()
+                    }
+                )
                 albumStmt.finalize()
             })
         })
@@ -70,19 +81,35 @@ class AppDatabase {
     /**
      * Adds a song to the database from the provided Song object.
      * The Song is linked to it's defined album, which is created if it does not exist.
-     * 
+     *
      * @param song Song to add
      */
     async addSong(song: Song) {
-        let albumEntry: any = await this.getAlbum(song.data.album.title, song.data.album.artist)
+        let albumEntry: any = await this.getAlbum(
+            song.data.album.title,
+            song.data.album.artist
+        )
 
         if (!albumEntry) {
             await this.addAlbum(song.data.album)
-            albumEntry = await this.getAlbum(song.data.album.title, song.data.album.artist)
+            albumEntry = await this.getAlbum(
+                song.data.album.title,
+                song.data.album.artist
+            )
         }
 
-        const songStmt = this.db.prepare('INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)')
-        songStmt.run(song.path, song.data.title, song.data.year, song.data.track, song.data.disk, song.data.duration, albumEntry.id)
+        const songStmt = this.db.prepare(
+            'INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)'
+        )
+        songStmt.run(
+            song.path,
+            song.data.title,
+            song.data.year,
+            song.data.track,
+            song.data.disk,
+            song.data.duration,
+            albumEntry.id
+        )
         songStmt.finalize()
     }
 

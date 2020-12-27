@@ -150,7 +150,7 @@ export class MusicEntry<D extends MusicEntryData> {
     /**
      * Create a new MusicEntry instance holding the specified corresponding
      * data.
-     * 
+     *
      * @param data  Data of the MusicEntry
      */
     constructor(data: D) {
@@ -168,7 +168,7 @@ export class Song extends MusicEntry<SongData> {
     /**
      * Create a new Song instancce with the specified
      * song data and the path of the song.
-     * 
+     *
      * @param data  SongData object
      * @param path  Full path of song
      */
@@ -188,7 +188,7 @@ export class Album extends MusicEntry<AlbumData> {
 
     /**
      * Create a new Album instance with the specified album data.
-     * 
+     *
      * @param data  AlbumData object
      */
     constructor(data: AlbumData) {
@@ -199,10 +199,10 @@ export class Album extends MusicEntry<AlbumData> {
     /**
      * Adds a song to the album, also updating any relevant
      * data for the album.
-     * 
+     *
      * TODO: Prevent song duplication
      * TODO: Update AlbumData
-     * 
+     *
      * @param song Song to add to the album
      */
     addSong(song: Song) {

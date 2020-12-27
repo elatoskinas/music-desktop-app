@@ -15,8 +15,8 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            nodeIntegration: true
-        }
+            nodeIntegration: true,
+        },
     })
 
     // Load index.html of the app
@@ -62,28 +62,30 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
     const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
 
     // Open dialog for file selection (enable multi-selection mode)
-    let promise = dialog.showOpenDialog(
-        {
-            properties: [fileSelectProperty, 'multiSelections'],
-            filters: [
-                { name: 'All Files', extensions: SUPPORTED_TYPES }
-            ]
-        })
+    let promise = dialog.showOpenDialog({
+        properties: [fileSelectProperty, 'multiSelections'],
+        filters: [{ name: 'All Files', extensions: SUPPORTED_TYPES }],
+    })
 
     // Setup a promise to send the response
-    promise.then(function(success) {
-        // If file selection was not cancelled, then process selected file paths
-        if (!success.canceled) {
-            // Construct file callback to send back to event
-            let replyCallback = function fileSendCallback(sound: Song) {
-                ApplicationDB.addSong(sound)
-                ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
+    promise.then(
+        function (success) {
+            // If file selection was not cancelled, then process selected file paths
+            if (!success.canceled) {
+                // Construct file callback to send back to event
+                let replyCallback = function fileSendCallback(sound: Song) {
+                    ApplicationDB.addSong(sound)
+                    ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
+                }
+
+                fileLoader.processSoundFilePaths(
+                    success.filePaths,
+                    replyCallback
+                )
             }
-
-            fileLoader.processSoundFilePaths(success.filePaths, replyCallback)
+        },
+        function (error) {
+            console.log(error)
         }
-    }, function(error) {
-        console.log(error)
-    })
+    )
 })
-

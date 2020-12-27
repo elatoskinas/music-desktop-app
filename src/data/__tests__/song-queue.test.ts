@@ -1,5 +1,5 @@
-import {SongQueue} from '@data/song-queue.ts'
-import {Song, SongData, Album, AlbumData} from '@data/music-data.ts'
+import { SongQueue } from '@data/song-queue.ts'
+import { Song, SongData, Album, AlbumData } from '@data/music-data.ts'
 
 let songQueue: SongQueue
 
@@ -11,16 +11,15 @@ describe('Empty queue tests', () => {
     test('Test initialize queue', () => {
         expect(songQueue.songCount()).toBe(0)
     })
-    
+
     test('Test next no song', () => {
         let song = songQueue.next()
-    
+
         // Assert that no song gets retrieved, and that
         // the song queue does not shrink in size unexpectedly
         expect(song).toBeUndefined()
         expect(songQueue.songCount()).toBe(0)
     })
-    
 })
 
 describe('Single song tests', () => {

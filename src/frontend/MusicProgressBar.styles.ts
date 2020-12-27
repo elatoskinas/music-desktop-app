@@ -17,29 +17,34 @@ export const StyledProgressBar = styled.input`
 
     border-radius: 2px;
 
-    background: linear-gradient(to right, ${progressFilledColor} 0%,
-        ${progressFilledColor} ${(props: StyledProgressBarProps) => props.progressPercent}%,
-        ${THEME_COLOURS.accentDark} ${(props: StyledProgressBarProps) => props.progressPercent}%,
-        ${THEME_COLOURS.accentDark} 100%);
+    background: linear-gradient(
+        to right,
+        ${progressFilledColor} 0%,
+        ${progressFilledColor}
+            ${(props: StyledProgressBarProps) => props.progressPercent}%,
+        ${THEME_COLOURS.accentDark}
+            ${(props: StyledProgressBarProps) => props.progressPercent}%,
+        ${THEME_COLOURS.accentDark} 100%
+    );
 
     ::-webkit-slider-thumb {
         width: 15px;
         height: 15px;
-    
+
         -webkit-appearance: none;
         background-color: ${THEME_COLOURS.primary};
-    
+
         border-radius: 100%;
         border-style: solid;
         border-color: ${progressFilledColor};
         border-width: 2px;
-        transition: ease .2s;
+        transition: ease 0.2s;
     }
 
     ::-webkit-slider-thumb:hover {
         background-color: #7abcff;
     }
-    
+
     ::-webkit-slider-thumb:active {
         background-color: ${progressFilledColor};
     }

@@ -1,26 +1,30 @@
 import * as React from 'react'
 
-import {PLAY_STATUS} from '@common/status.ts'
+import { PLAY_STATUS } from '@common/status.ts'
 import { IoMdPlay, IoMdPause } from 'react-icons/io'
 import { TiMediaStop } from 'react-icons/ti'
 import { MdFastRewind, MdFastForward } from 'react-icons/md'
-import { StyledMusicControlButton, StyledMusicControlContainer, StyledMusicControllerContainer } from './MusicController.styles'
+import {
+    StyledMusicControlButton,
+    StyledMusicControlContainer,
+    StyledMusicControllerContainer,
+} from './MusicController.styles'
 import { MusicProgress } from './MusicProgressBar'
 
 export interface MusicControllerProps {
-    sound: Howl,
-    onSongEnded: Function,
-    onPreviousSong: any,
+    sound: Howl
+    onSongEnded: Function
+    onPreviousSong: any
     onNextSong: any
 }
 
 interface MusicControllerState {
-    status: string,
+    status: string
     duration: number
 }
 
 export interface PlayButtonProps {
-    playSound: any, // TODO: Could replace with more accurate type for callback
+    playSound: any // TODO: Could replace with more accurate type for callback
     status: string
 }
 
@@ -31,7 +35,7 @@ export interface ControlButtonProps {
 const BUTTON_ICONS = {
     [PLAY_STATUS.STOPPED]: <TiMediaStop />,
     [PLAY_STATUS.PLAYING]: <IoMdPause />,
-    [PLAY_STATUS.PAUSED]:  <IoMdPlay />
+    [PLAY_STATUS.PAUSED]: <IoMdPlay />,
 }
 
 /**
@@ -40,7 +44,10 @@ const BUTTON_ICONS = {
  */
 export function PlayButton(props: PlayButtonProps) {
     return (
-        <StyledMusicControlButton onClick={props.playSound} aria-label='Play Button'>
+        <StyledMusicControlButton
+            onClick={props.playSound}
+            aria-label="Play Button"
+        >
             {BUTTON_ICONS[props.status]}
         </StyledMusicControlButton>
     )
@@ -52,7 +59,10 @@ export function PlayButton(props: PlayButtonProps) {
  */
 export function RewindButton(props: ControlButtonProps) {
     return (
-        <StyledMusicControlButton onClick={props.callback} aria-label='Rewind Button'>
+        <StyledMusicControlButton
+            onClick={props.callback}
+            aria-label="Rewind Button"
+        >
             <MdFastRewind />
         </StyledMusicControlButton>
     )
@@ -64,26 +74,32 @@ export function RewindButton(props: ControlButtonProps) {
  */
 export function ForwardButton(props: ControlButtonProps) {
     return (
-        <StyledMusicControlButton onClick={props.callback} aria-label='Forward Button'>
+        <StyledMusicControlButton
+            onClick={props.callback}
+            aria-label="Forward Button"
+        >
             <MdFastForward />
         </StyledMusicControlButton>
-    ) 
+    )
 }
 
 /**
  * Component to control the current sound.
  * Contains the current sound being played as state, alongside with the metadata
  * and the status of playback.
- * 
+ *
  * Valid status includes 'STOPPED', 'PLAYING' and 'PAUSED'.
  */
-export class MusicController extends React.Component<MusicControllerProps, MusicControllerState> {
+export class MusicController extends React.Component<
+    MusicControllerProps,
+    MusicControllerState
+> {
     constructor(props) {
         super(props)
 
         this.state = {
-            'status': PLAY_STATUS.STOPPED,
-            'duration': 0
+            status: PLAY_STATUS.STOPPED,
+            duration: 0,
         }
 
         this.playSound = this.playSound.bind(this)
@@ -119,16 +135,16 @@ export class MusicController extends React.Component<MusicControllerProps, Music
      */
     loadSound(sound: Howl) {
         // Initialize callbacks
-        sound.on('play', ()  => this.updateStatus(PLAY_STATUS.PLAYING))
-        sound.on('stop', ()  => this.updateStatus(PLAY_STATUS.STOPPED))
-        sound.on('end', ()   => {
+        sound.on('play', () => this.updateStatus(PLAY_STATUS.PLAYING))
+        sound.on('stop', () => this.updateStatus(PLAY_STATUS.STOPPED))
+        sound.on('end', () => {
             this.updateStatus(PLAY_STATUS.STOPPED)
             this.props.onSongEnded()
         })
         sound.on('pause', () => this.updateStatus(PLAY_STATUS.PAUSED))
         sound.on('load', () => {
             this.setState({
-                duration: sound.duration()
+                duration: sound.duration(),
             })
         })
     }
@@ -139,7 +155,7 @@ export class MusicController extends React.Component<MusicControllerProps, Music
      */
     updateStatus(newStatus: string) {
         this.setState({
-            status: newStatus
+            status: newStatus,
         })
     }
 
@@ -157,14 +173,21 @@ export class MusicController extends React.Component<MusicControllerProps, Music
     }
 
     render() {
-        return(
+        return (
             <StyledMusicControllerContainer>
                 <StyledMusicControlContainer>
                     <RewindButton callback={this.props.onPreviousSong} />
-                    <PlayButton playSound={this.playSound} status={this.state.status} />
+                    <PlayButton
+                        playSound={this.playSound}
+                        status={this.state.status}
+                    />
                     <ForwardButton callback={this.props.onNextSong} />
                 </StyledMusicControlContainer>
-                <MusicProgress sound={this.props.sound} status={this.state.status} duration={this.state.duration} />
+                <MusicProgress
+                    sound={this.props.sound}
+                    status={this.state.status}
+                    duration={this.state.duration}
+                />
             </StyledMusicControllerContainer>
         )
     }

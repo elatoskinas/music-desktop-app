@@ -1,12 +1,15 @@
 import * as React from 'react'
 
-import {PLAY_STATUS} from '@common/status.ts'
-import {formatTimestamp} from '@common/format-utils.ts'
-import {StyledProgressBar, StyledProgressTimeContainer} from './MusicProgressBar.styles'
+import { PLAY_STATUS } from '@common/status.ts'
+import { formatTimestamp } from '@common/format-utils.ts'
+import {
+    StyledProgressBar,
+    StyledProgressTimeContainer,
+} from './MusicProgressBar.styles'
 
 export interface MusicProgressProps {
-    sound: Howl,
-    status: string,
+    sound: Howl
+    status: string
     duration: number
 }
 
@@ -19,7 +22,10 @@ interface MusicProgressState {
  * Contains the current sound as the property, and keeps track of the sound duration
  * & time for the state.
  */
-export class MusicProgress extends React.Component<MusicProgressProps, MusicProgressState> {
+export class MusicProgress extends React.Component<
+    MusicProgressProps,
+    MusicProgressState
+> {
     timeInterval: ReturnType<typeof setInterval>
     tickInterval = 200
     seeking = false
@@ -28,7 +34,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         super(props)
 
         this.state = {
-            'time': 0
+            time: 0,
         }
 
         this.onProgressBarHold = this.onProgressBarHold.bind(this)
@@ -55,7 +61,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
             // an explicit check should be made before assigning the new time value.
             if (typeof time === 'number') {
                 this.setState({
-                    'time': time // Get current position
+                    time: time, // Get current position
                 })
             }
         }
@@ -73,7 +79,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
     /**
      * Get the current progress in percentage (in 0 to 100 range as float) of
      * the current song, or 0 if no song is in progress.
-     * 
+     *
      * @param time       Current time of song
      * @param duration   Duration of song
      */
@@ -84,10 +90,13 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
     getProgress() {
         let duration = this.props.duration
         let time = this.state.time
-        return ((duration == 0 ? 0 : Math.floor(time)/Math.ceil(duration)) * 100)
+        return (
+            (duration == 0 ? 0 : Math.floor(time) / Math.ceil(duration)) * 100
+        )
     }
 
-    onPlayStatusChange(status: string) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    onPlayStatusChange(status: string) {
+        // eslint-disable-line @typescript-eslint/no-unused-vars
         // Unused var error suppressed for now due to there being a use-case
         // for the new status string.
 
@@ -109,10 +118,10 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
         // Reset time step if sound changes
         if (this.props.sound !== prevProps.sound) {
             this.setState({
-                'time': 0
+                time: 0,
             })
         }
-        
+
         if (this.props.status !== prevProps.status) {
             this.onPlayStatusChange(this.props.status)
         }
@@ -133,7 +142,7 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
 
         // Update state with new time
         this.setState({
-            'time': e.target.value
+            time: e.target.value,
         })
     }
 
@@ -150,17 +159,17 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
 
     render() {
         const progressBar = (
-            <StyledProgressBar type="range"
+            <StyledProgressBar
+                type="range"
                 min="0"
-                max={ Math.ceil(this.props.duration) }
+                max={Math.ceil(this.props.duration)}
                 step="1"
                 onMouseDown={this.onProgressBarHold}
                 onChange={this.onProgressBarChange}
                 onMouseUp={this.onProgressBarRelease}
-                value={ Math.floor(this.state.time) }
+                value={Math.floor(this.state.time)}
                 progressPercent={this.getProgress()}
-            >
-            </StyledProgressBar>
+            ></StyledProgressBar>
         )
 
         return (
@@ -168,13 +177,9 @@ export class MusicProgress extends React.Component<MusicProgressProps, MusicProg
                 {progressBar}
 
                 <StyledProgressTimeContainer>
-                    <p>
-                        {formatTimestamp(this.state.time)}
-                    </p>
+                    <p>{formatTimestamp(this.state.time)}</p>
 
-                    <p>
-                        {formatTimestamp(this.props.duration)}
-                    </p>
+                    <p>{formatTimestamp(this.props.duration)}</p>
                 </StyledProgressTimeContainer>
             </div>
         )

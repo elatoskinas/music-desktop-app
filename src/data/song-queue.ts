@@ -1,5 +1,5 @@
 import LinkedList from 'yallist'
-import {Song, Album} from '@data/music-data'
+import { Song, Album } from '@data/music-data'
 
 /**
  * Song Queue abstract data type holding a structure to maintain
@@ -26,7 +26,7 @@ export class SongQueue {
     /**
      * Changes the song to the specified song, if it exists in the queue.
      * Otherwise does nothing.
-     * 
+     *
      * @param song Song to change to
      */
     changeSong(song: Song) {
@@ -38,19 +38,18 @@ export class SongQueue {
 
     /**
      * Returns the current song in the queue
-     * 
+     *
      * @returns Current song in the queue
      */
     current() {
         return this.currentSong ? this.currentSong.value : undefined
     }
 
-
     /**
      * Moves the position of the queue to the next song in the queue.
      * If the current song is the last song in the queue, the position
      * is reset to the first song in the queue.
-     * 
+     *
      * @returns  Next song in queue. Can be undefined.
      */
     next() {
@@ -59,7 +58,7 @@ export class SongQueue {
             this.currentSong = this.currentSong.next
 
             // Wrap song to head if reached end
-            if  (this.currentSong == undefined) {
+            if (this.currentSong == undefined) {
                 this.currentSong = this.queue.head
             }
 
@@ -72,18 +71,20 @@ export class SongQueue {
 
     /**
      * Returns true if the current song precedes another song in the queue.
-     * 
+     *
      * @returns false if the current song is the last in the queue
      */
     hasNext() {
-        return this.currentSong != undefined && this.currentSong.next != undefined
+        return (
+            this.currentSong != undefined && this.currentSong.next != undefined
+        )
     }
 
     /**
      * Moves the position of the queue to the previous song in the queue.
      * If the current song is the first song in the queue, the position
      * is reset to the last song in the queue.
-     * 
+     *
      * @returns Previous song in queue. Can be undefined.
      */
     previous() {
@@ -92,7 +93,7 @@ export class SongQueue {
             this.currentSong = this.currentSong.prev
 
             // Wrap song to tail if reached end
-            if  (this.currentSong == undefined) {
+            if (this.currentSong == undefined) {
                 this.currentSong = this.queue.tail
             }
 
@@ -105,7 +106,7 @@ export class SongQueue {
 
     /**
      * Adds a song to the queue
-     * 
+     *
      * @param song  Song to add to queue
      */
     addSong(song: Song) {
@@ -120,7 +121,7 @@ export class SongQueue {
 
     /**
      * Adds all the songs from the provided album to the queue.
-     * 
+     *
      * @param album  Album to add to the queue
      */
     addAlbum(album: Album) {

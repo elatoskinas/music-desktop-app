@@ -1,4 +1,4 @@
-import {Song, SongData, Album, AlbumData} from '@data/music-data'
+import { Song, SongData, Album, AlbumData } from '@data/music-data'
 
 describe('SongData tests', () => {
     let songData: SongData
@@ -9,7 +9,7 @@ describe('SongData tests', () => {
 
     test('Set artists', () => {
         expect(songData.artists).toEqual([])
-        
+
         const artists = ['Artisti 1', 'Artist 2']
         let returnSong = songData.setArtists(artists)
 
@@ -83,7 +83,7 @@ describe('Album & Song tests', () => {
         const data = new AlbumData()
 
         let album = new Album(data)
-        
+
         expect(album.data).toBe(data)
         expect(album.songs).toEqual([])
     })

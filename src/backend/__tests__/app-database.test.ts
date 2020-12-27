@@ -3,7 +3,10 @@ import { AlbumData, Song, SongData } from '@data/music-data'
 
 describe('Album table tests', () => {
     test('Query non-existent', async () => {
-        const resultingAlbum = await AppDatabase.getAlbum('randomTitle', 'withRandomArtist')
+        const resultingAlbum = await AppDatabase.getAlbum(
+            'randomTitle',
+            'withRandomArtist'
+        )
         expect(resultingAlbum).toBeUndefined()
     })
 
@@ -11,7 +14,6 @@ describe('Album table tests', () => {
         const artist = 'Test Artist'
         const title = 'Test Album Title'
         const year = 2020
-
 
         const album = new AlbumData()
             .setArtist(artist)
@@ -29,14 +31,16 @@ describe('Album table tests', () => {
 
         await AppDatabase.addAlbum(album)
 
-        const queriedAlbum: any = await AppDatabase.getAlbum(undefined, undefined)
+        const queriedAlbum: any = await AppDatabase.getAlbum(
+            undefined,
+            undefined
+        )
         expect(queriedAlbum).toBeDefined()
     })
 
     test('Add album with only artist', async () => {
         const artist = 'Test Artist'
-        const album = new AlbumData()
-            .setArtist(artist)
+        const album = new AlbumData().setArtist(artist)
 
         await AppDatabase.addAlbum(album)
 
@@ -46,8 +50,7 @@ describe('Album table tests', () => {
 
     test('Add album with only title', async () => {
         const title = 'Test title'
-        const album = new AlbumData()
-            .setTitle(title)
+        const album = new AlbumData().setTitle(title)
 
         await AppDatabase.addAlbum(album)
 
@@ -65,7 +68,7 @@ describe('Song table tests', () => {
 
         // TODO: test song added properly
     })
-    
+
     test('Add song with data', async () => {
         const songData = new SongData()
             .setArtists(['Artist'])
@@ -106,13 +109,14 @@ describe('Song & album integration', () => {
             .setTitle('Some album name')
             .setYear(2018)
 
-        const songData = new SongData()
-            .setTitle('Song')
-            .setAlbum(albumData)
+        const songData = new SongData().setTitle('Song').setAlbum(albumData)
 
         await AppDatabase.addSong(new Song(songData, 'test/path.mp3'))
 
-        const queriedAlbum: any = await AppDatabase.getAlbum(albumData.title, albumData.artist)
+        const queriedAlbum: any = await AppDatabase.getAlbum(
+            albumData.title,
+            albumData.artist
+        )
         expect(queriedAlbum).toBeDefined()
     })
 })

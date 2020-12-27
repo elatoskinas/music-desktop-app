@@ -1,5 +1,5 @@
 import * as fileLoader from '@backend/file-loader'
-import {Song, SongData} from '@data/music-data'
+import { Song, SongData } from '@data/music-data'
 
 import { mocked } from 'ts-jest/utils'
 import { Stream } from 'stream'
@@ -11,7 +11,7 @@ jest.mock('@backend/music-loader.ts')
 import * as fg from 'fast-glob'
 import * as fs from 'fs'
 
-import {loadSoundData} from '@backend/music-loader'
+import { loadSoundData } from '@backend/music-loader'
 
 afterEach(() => {
     // Restore all mocks after finishing with a test
@@ -27,7 +27,9 @@ describe('Sound file processing tests', () => {
     beforeEach(() => {
         // Re-create callback on each call
         callback = jest.fn()
-        mocked(loadSoundData).mockResolvedValue(new Song(new SongData(), 'path'))
+        mocked(loadSoundData).mockResolvedValue(
+            new Song(new SongData(), 'path')
+        )
     })
 
     test('Process empty sound file paths', async () => {
@@ -49,31 +51,42 @@ describe('Sound file processing tests', () => {
 
         test('Process single file path does not exist', async () => {
             const paths = ['/some/path/not/exists']
-    
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
-    
+
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
+
             // Callback should never be invoked if the path does not exist
             expect(callback).toHaveBeenCalledTimes(0)
             expect(streams).toEqual([])
         })
-    
+
         test('Path formatting with backslashes', async () => {
             const paths = ['path\\with\\backslash']
-    
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
-    
+
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
+
             // Assert that the directory check was called with a forward-slash path
             expect(fs.existsSync).toBeCalledWith('path/with/backslash')
             expect(streams).toEqual([])
         })
-    
+
         test('Path formatting inconsistent', async () => {
             const paths = ['path/with\\some\\minor/inconsistencies']
-    
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
-    
+
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
+
             // Assert that the directory check was called with a forward-slash path
-            expect(fs.existsSync).toBeCalledWith('path/with/some/minor/inconsistencies')
+            expect(fs.existsSync).toBeCalledWith(
+                'path/with/some/minor/inconsistencies'
+            )
             expect(streams).toEqual([])
         })
     })
@@ -93,21 +106,31 @@ describe('Sound file processing tests', () => {
 
         test('Process existing file not directory', async () => {
             const paths = ['/path/to/file.mp3']
-    
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
-    
+
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
+
             // Assert callback invoked with direct path
             expect(callback).toHaveBeenCalledTimes(1)
             expect(loadSoundData).toHaveBeenCalledWith(paths[0])
 
             expect(streams).toEqual([])
         })
-    
+
         test('Process existing files not directories multiple', async () => {
-            const paths = ['/path/to/file1.mp3', '/path/to/file2.mp3', '/path/to/file3.mp3']
-    
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
-    
+            const paths = [
+                '/path/to/file1.mp3',
+                '/path/to/file2.mp3',
+                '/path/to/file3.mp3',
+            ]
+
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
+
             // Assert callback invoked with direct path
             expect(callback).toHaveBeenCalledTimes(3)
             expect(loadSoundData).toHaveBeenCalledWith(paths[0])
@@ -127,7 +150,7 @@ describe('Sound file processing tests', () => {
             // Create expected stats object, setting the isDirectory check to resolve to false
             const expectedStats = new fs.Stats()
             expectedStats.isDirectory = () => true
-            
+
             // Make statSync return the directory object set to false
             mocked(fs).statSync.mockReturnValue(expectedStats)
 
@@ -143,8 +166,11 @@ describe('Sound file processing tests', () => {
             const paths = ['/path/to/music']
 
             dirStream.push(null)
-    
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
+
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
             expect(streams.length).toEqual(1)
 
             return Promise.all(streams).then(() => {
@@ -157,17 +183,22 @@ describe('Sound file processing tests', () => {
             expect.assertions(3)
 
             const paths = ['/path/to/music']
-    
+
             dirStream.push('/path/to/music/file.mp3')
             dirStream.push(null)
 
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
             expect(streams.length).toEqual(1)
 
             return Promise.all(streams).then(() => {
                 // Assert that a single callback is made
                 expect(callback).toHaveBeenCalledTimes(1)
-                expect(loadSoundData).toHaveBeenCalledWith('/path/to/music/file.mp3')
+                expect(loadSoundData).toHaveBeenCalledWith(
+                    '/path/to/music/file.mp3'
+                )
             })
         })
 
@@ -175,21 +206,30 @@ describe('Sound file processing tests', () => {
             expect.assertions(5)
 
             const paths = ['/path/to/music']
-    
+
             dirStream.push('/path/to/music/file1.mp3')
             dirStream.push('/path/to/music/file2.mp3')
             dirStream.push('/path/to/music/file3.mp3')
             dirStream.push(null)
 
-            let streams = await fileLoader.processSoundFilePaths(paths, callback)
+            let streams = await fileLoader.processSoundFilePaths(
+                paths,
+                callback
+            )
             expect(streams.length).toEqual(1)
 
             return Promise.all(streams).then(() => {
                 // Assert that a single callback is made
                 expect(callback).toHaveBeenCalledTimes(3)
-                expect(loadSoundData).toHaveBeenCalledWith('/path/to/music/file1.mp3')
-                expect(loadSoundData).toHaveBeenCalledWith('/path/to/music/file2.mp3')
-                expect(loadSoundData).toHaveBeenCalledWith('/path/to/music/file3.mp3')
+                expect(loadSoundData).toHaveBeenCalledWith(
+                    '/path/to/music/file1.mp3'
+                )
+                expect(loadSoundData).toHaveBeenCalledWith(
+                    '/path/to/music/file2.mp3'
+                )
+                expect(loadSoundData).toHaveBeenCalledWith(
+                    '/path/to/music/file3.mp3'
+                )
             })
         })
 

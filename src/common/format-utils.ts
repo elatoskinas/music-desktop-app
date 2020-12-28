@@ -1,8 +1,8 @@
 /**
  * Formats the specified number into a string of format hh:mm:ss
- * 
+ *
  * TODO: Exclude hours/mins if n/a
- * 
+ *
  * @param time  Time as number to format
  */
 export function formatTimestamp(time: number) {
@@ -22,7 +22,7 @@ export function formatTimestamp(time: number) {
 /**
  * Escape regex string literal by replacing special regexp symbols with
  * escaped counterparts.
- * 
+ *
  * @param text String literal to escape
  */
 export function escapeRegex(text: string): string {

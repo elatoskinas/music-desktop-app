@@ -30,5 +30,5 @@ export const StyledMusicControlButton = styled.button`
     :active {
         background-color: ${THEME_COLOURS.accentDark};
         border-color: ${THEME_COLOURS.primary};
-    }    
+    }
 `

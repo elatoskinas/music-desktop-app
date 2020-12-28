@@ -10,7 +10,8 @@ export const StyledSongListContainer = styled.div`
 `
 
 export const StyledSongListEntry = styled.div`
-    background-color: ${(props:  StyledSongListEntryTitleProps) => props.isActive ? THEME_COLOURS.tertiary : THEME_COLOURS.accentLight};
+    background-color: ${(props: StyledSongListEntryTitleProps) =>
+        props.isActive ? THEME_COLOURS.tertiary : THEME_COLOURS.accentLight};
     padding: ${BASE_STYLE.padding.med} 0;
     margin: ${BASE_STYLE.margin.small} 0;
 

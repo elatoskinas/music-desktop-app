@@ -11,7 +11,7 @@ import { Howl } from 'howler'
 jest.mock('howler')
 
 beforeEach(() => {
-    (Howl as jest.Mock).mockClear()
+    ;(Howl as jest.Mock).mockClear()
 })
 
 test('Test play button click plays sound', async () => {
@@ -19,7 +19,9 @@ test('Test play button click plays sound', async () => {
     let soundFunction = jest.fn()
 
     // Render component
-    render(<PlayButton status={PLAY_STATUS.STOPPED} playSound={soundFunction} />)
+    render(
+        <PlayButton status={PLAY_STATUS.STOPPED} playSound={soundFunction} />
+    )
 
     // Find button, perform click & wait for it to register
     fireEvent.click(screen.getByRole('button'))
@@ -40,12 +42,26 @@ describe('Sound tests', () => {
 
     beforeEach(() => {
         // Initialize undefined sound, and render music controller
-        const { rerender } = render(<MusicController sound={sound} onSongEnded={songEnded} onPreviousSong={songEnded} onNextSong={songEnded} />)
+        const { rerender } = render(
+            <MusicController
+                sound={sound}
+                onSongEnded={songEnded}
+                onPreviousSong={songEnded}
+                onNextSong={songEnded}
+            />
+        )
         rerenderController = rerender
 
         // Create new sound & rerender component with updated sound
         sound = new Howl(null)
-        rerenderController(<MusicController sound={sound} onSongEnded={songEnded} onPreviousSong={songEnded} onNextSong={songEnded} />)
+        rerenderController(
+            <MusicController
+                sound={sound}
+                onSongEnded={songEnded}
+                onPreviousSong={songEnded}
+                onNextSong={songEnded}
+            />
+        )
     })
 
     test('Test music controller sound change', () => {
@@ -55,16 +71,16 @@ describe('Sound tests', () => {
         expect(sound.on).toHaveBeenCalledWith('pause', expect.any(Function))
         expect(sound.on).toHaveBeenCalledWith('end', expect.any(Function))
         expect(sound.on).toHaveBeenCalledWith('load', expect.any(Function))
-    
+
         // Assert that only 1 * 5 ccalls are made to sound on
         expect(sound.on).toHaveBeenCalledTimes(5)
     })
-    
-    test('Test play sound', async () => {    
+
+    test('Test play sound', async () => {
         // Find play button, perform click & wait for it to register
         fireEvent.click(screen.getByLabelText('Play Button'))
         await waitFor(() => screen.getByLabelText('Play Button'))
-    
+
         expect(sound.play).toBeCalledTimes(1)
         expect(sound.pause).toBeCalledTimes(0)
     })
@@ -87,7 +103,14 @@ describe('Sound tests', () => {
 
         // Create new sound & rerender component with updated sound
         sound = new Howl(null)
-        rerenderController(<MusicController sound={sound} onSongEnded={songEnded} onPreviousSong={songEnded} onNextSong={songEnded} />)
+        rerenderController(
+            <MusicController
+                sound={sound}
+                onSongEnded={songEnded}
+                onPreviousSong={songEnded}
+                onNextSong={songEnded}
+            />
+        )
 
         // Assert that old sound is stopped, and callbacks are removed
         expect(oldSound.stop).toHaveBeenCalled()
@@ -96,7 +119,14 @@ describe('Sound tests', () => {
 
     test('Test play no sound', async () => {
         // Restore music controller to original state with no sound
-        rerenderController(<MusicController sound={undefined} onSongEnded={songEnded} onPreviousSong={songEnded} onNextSong={songEnded} />)
+        rerenderController(
+            <MusicController
+                sound={undefined}
+                onSongEnded={songEnded}
+                onPreviousSong={songEnded}
+                onNextSong={songEnded}
+            />
+        )
 
         // Find play button, perform click & wait for it to register
         fireEvent.click(screen.getByLabelText('Play Button'))

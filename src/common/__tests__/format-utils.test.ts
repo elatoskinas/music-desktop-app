@@ -11,8 +11,8 @@ test.each([
     [91, '1:31'],
     [234, '3:54'],
     [1623, '27:03'],
-    [10050, '167:30']
+    [10050, '167:30'],
 ])('Format timestamp of %d', (time: number, expected: string) => {
-    const result = formatUtils.formatTimestamp(time)    
+    const result = formatUtils.formatTimestamp(time)
     expect(result).toBe(expected)
 })

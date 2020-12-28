@@ -1,5 +1,9 @@
 import React from 'react'
-import { StyledSongListContainer, StyledSongListEntry, StyledSongListEntryTitle } from './MusicPlayingQueue.styles'
+import {
+    StyledSongListContainer,
+    StyledSongListEntry,
+    StyledSongListEntryTitle,
+} from './MusicPlayingQueue.styles'
 import { SongQueue } from '@data/song-queue'
 
 export interface MusicPlayingQueueProps {
@@ -24,8 +28,12 @@ export class MusicPlayingQueue extends React.Component<MusicPlayingQueueProps> {
             const isActive = song === queue.current()
 
             return (
-                <StyledSongListEntry key={index} isActive={isActive}
-                    onClick={() => { queue.changeSong(song) }}
+                <StyledSongListEntry
+                    key={index}
+                    isActive={isActive}
+                    onClick={() => {
+                        queue.changeSong(song)
+                    }}
                 >
                     <StyledSongListEntryTitle>
                         {song.data.title}

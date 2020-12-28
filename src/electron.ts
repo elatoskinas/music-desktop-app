@@ -1,5 +1,6 @@
-// Module requires
 import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron'
+import path from 'path'
+
 import ApplicationDB from '@backend/app-database'
 
 import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
@@ -15,12 +16,21 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            nodeIntegration: true
-        }
+            nodeIntegration: true,
+
+            // Disable web security to allow typical production functionality,
+            // e.g. reading files from file system
+            webSecurity: !(process.env.NODE_ENV === 'development'),
+        },
     })
 
-    // Load index.html of the app
-    win.loadFile('index.html')
+    if (process.env.NODE_ENV === 'development') {
+        // TODO: configure port to always be 8080 in config
+        // TODO: Should export port as constant?
+        win.loadURL('http://localhost:8080')
+    } else {
+        win.loadFile(path.join(__dirname, 'index.html'))
+    }
 
     // Open DevTools
     win.webContents.openDevTools()
@@ -62,28 +72,30 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
     const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
 
     // Open dialog for file selection (enable multi-selection mode)
-    let promise = dialog.showOpenDialog(
-        {
-            properties: [fileSelectProperty, 'multiSelections'],
-            filters: [
-                { name: 'All Files', extensions: SUPPORTED_TYPES }
-            ]
-        })
+    let promise = dialog.showOpenDialog({
+        properties: [fileSelectProperty, 'multiSelections'],
+        filters: [{ name: 'All Files', extensions: SUPPORTED_TYPES }],
+    })
 
     // Setup a promise to send the response
-    promise.then(function(success) {
-        // If file selection was not cancelled, then process selected file paths
-        if (!success.canceled) {
-            // Construct file callback to send back to event
-            let replyCallback = function fileSendCallback(sound: Song) {
-                ApplicationDB.addSong(sound)
-                ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
+    promise.then(
+        function (success) {
+            // If file selection was not cancelled, then process selected file paths
+            if (!success.canceled) {
+                // Construct file callback to send back to event
+                let replyCallback = function fileSendCallback(sound: Song) {
+                    ApplicationDB.addSong(sound)
+                    ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
+                }
+
+                fileLoader.processSoundFilePaths(
+                    success.filePaths,
+                    replyCallback
+                )
             }
-
-            fileLoader.processSoundFilePaths(success.filePaths, replyCallback)
+        },
+        function (error) {
+            console.log(error)
         }
-    }, function(error) {
-        console.log(error)
-    })
+    )
 })
-

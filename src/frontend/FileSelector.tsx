@@ -37,7 +37,7 @@ export class FileSelector extends React.Component<FileSelectorProps> {
     render() {
         return (
             <button onClick={this.openFileSelection}>
-                <GoFileDirectory/>
+                <GoFileDirectory />
             </button>
         )
     }

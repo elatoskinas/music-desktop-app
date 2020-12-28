@@ -9,8 +9,10 @@ let ALIASES = {
     '@common': path.resolve(__dirname, './src/common'),
 }
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 const electronConfig = {
-    mode: 'development',
+    mode: isDevelopment ? 'development' : 'production',
     entry: './src/electron.ts',
     target: 'electron-main',
     module: {
@@ -30,6 +32,10 @@ const electronConfig = {
         alias: ALIASES,
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
+    node: {
+        // https://github.com/webpack/webpack/issues/1599
+        __dirname: false,
+    },
     externals: {
         // https://stackoverflow.com/questions/50991453/electron-packager-with-sqlite3-and-webpack
         sqlite3: 'commonjs sqlite3',
@@ -37,7 +43,7 @@ const electronConfig = {
 }
 
 const reactConfig = {
-    mode: 'development',
+    mode: isDevelopment ? 'development' : 'production',
     entry: './src/react.tsx',
     target: 'electron-renderer',
     devtool: 'source-map',

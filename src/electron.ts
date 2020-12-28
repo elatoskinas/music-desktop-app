@@ -17,11 +17,16 @@ function createWindow() {
         height: 600,
         webPreferences: {
             nodeIntegration: true,
+
+            // Disable web security to allow typical production functionality,
+            // e.g. reading files from file system
             webSecurity: !(process.env.NODE_ENV === 'development'),
         },
     })
 
     if (process.env.NODE_ENV === 'development') {
+        // TODO: configure port to always be 8080 in config
+        // TODO: Should export port as constant?
         win.loadURL('http://localhost:8080')
     } else {
         win.loadFile(path.join(__dirname, 'index.html'))

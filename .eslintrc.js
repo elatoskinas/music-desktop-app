@@ -52,6 +52,7 @@ module.exports = {
         'prettier/prettier': [
             'error',
             {
+              // https://stackoverflow.com/questions/53516594/why-do-i-keep-getting-delete-cr-prettier-prettier
               'endOfLine': 'auto'
             }
         ]

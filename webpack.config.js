@@ -59,7 +59,10 @@ const reactConfig = {
         filename: 'react.js',
     },
     resolve: {
-        alias: ALIASES,
+        alias: {
+            'react-dom': '@hot-loader/react-dom',
+            ...ALIASES,
+        },
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
     plugins: [

@@ -2,7 +2,12 @@ import sqlite, { Database } from 'better-sqlite3'
 import { Song, Album } from '@data/music-data'
 import queue from 'async/queue'
 import { QueueObject } from 'async'
-import { AlbumModel, SongModel } from '@data/music-model'
+import {
+    AlbumModel,
+    SongArtistModel,
+    SongGenreModel,
+    SongModel,
+} from '@data/music-model'
 
 interface AlbumInsertQueueTask {
     album: Album
@@ -225,9 +230,25 @@ class AppDatabase {
             .prepare('SELECT * FROM song WHERE path = ?')
             .get(path)
 
+        const genres = this.db
+            .prepare('SELECT genre FROM song_genre WHERE song_id=?')
+            .all(songRow.id)
+            .map((row: SongGenreModel) => {
+                return row.genre
+            })
+
+        const artists = this.db
+            .prepare('SELECT artist_name FROM song_artist WHERE song_id=?')
+            .all(songRow.id)
+            .map((row: SongArtistModel) => {
+                return row.artist_name
+            })
+
         const resultSong: Song = new Song()
+            .setArtists(artists)
             .setDisk(songRow.disk)
             .setDuration(songRow.duration)
+            .setGenres(genres)
             .setRating(songRow.rating)
             .setPath(songRow.path)
             .setTitle(songRow.title)

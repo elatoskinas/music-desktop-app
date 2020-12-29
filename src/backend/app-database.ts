@@ -1,8 +1,8 @@
 import * as sqlite3 from 'sqlite3'
-import { AlbumData, Song } from '@data/music-data'
+import { AlbumData, Song, SongData } from '@data/music-data'
 import queue from 'async/queue'
 import { QueueObject } from 'async'
-import { AlbumModel } from '@data/music-model'
+import { AlbumModel, SongModel } from '@data/music-model'
 
 interface AlbumInsertQueueTask {
     album: AlbumData
@@ -251,13 +251,38 @@ class AppDatabase {
         )
     }
 
+    getSong(path: string): Promise<SongData> {
+        return new Promise((resolve) => {
+            // TODO: join genres
+            // TODO: join artists
+            // TODO: join album
+            const songStmt = this.db.prepare(
+                'SELECT * FROM song WHERE path = ?'
+            )
+
+            songStmt.get(path, (err, row: SongModel) => {
+                const resultSong: SongData = new SongData()
+                    .setDisk(row.disk)
+                    .setDuration(row.duration)
+                    .setRating(row.rating)
+                    .setTitle(row.title)
+                    .setTrack(row.track)
+                    .setYear(row.year)
+
+                resolve(resultSong)
+            })
+
+            songStmt.finalize()
+        })
+    }
+
     /**
      * Adds a genre to the database. If the genre already exists, does nothing.
      *
      * @param genre  Genre to add
      */
-    async addGenre(genre: string): Promise<void> {
-        return await new Promise((resolve) => {
+    addGenre(genre: string): Promise<void> {
+        return new Promise((resolve) => {
             this.db.serialize(() => {
                 const genreStmt = this.db.prepare(
                     'INSERT OR IGNORE INTO genre VALUES(?)'
@@ -282,8 +307,8 @@ class AppDatabase {
      *
      * @param artist Artist to add
      */
-    async addArtist(artist: string): Promise<void> {
-        return await new Promise((resolve) => {
+    addArtist(artist: string): Promise<void> {
+        return new Promise((resolve) => {
             this.db.serialize(async () => {
                 const artistStmt = this.db.prepare(
                     'INSERT OR IGNORE INTO artist VALUES(?)'

@@ -84,6 +84,7 @@ export class Song extends MusicData {
         super()
 
         this.artists = []
+        this.album = new Album()
     }
 
     setAlbum(album: Album) {

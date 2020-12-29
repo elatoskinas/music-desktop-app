@@ -52,12 +52,12 @@ class AppDatabase {
     ): Promise<void> => {
         // Update all genres
         await Promise.all(
-            task.album.genres.map((genre) => this.addGenre(genre))
+            task.album.genres.map((genre) => this.addGenre(genre)) || []
         )
 
         // Update all artists
         await Promise.all(
-            task.album.artists.map((artist) => this.addArtist(artist))
+            task.album.artists.map((artist) => this.addArtist(artist)) || []
         )
 
         const album = await this.getOrAddAlbum(task.album)
@@ -398,7 +398,7 @@ class AppDatabase {
 }
 
 // Create in-memory database
-const appDB = new AppDatabase('test.db')
+const appDB = new AppDatabase(':memory:')
 
 // Export app database singleton
 export default appDB

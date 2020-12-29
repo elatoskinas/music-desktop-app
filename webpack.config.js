@@ -38,7 +38,8 @@ const electronConfig = {
     },
     externals: {
         // https://stackoverflow.com/questions/50991453/electron-packager-with-sqlite3-and-webpack
-        sqlite3: 'commonjs sqlite3',
+        // https://github.com/JoshuaWise/better-sqlite3/issues/253
+        'better-sqlite3': 'commonjs better-sqlite3',
     },
 }
 

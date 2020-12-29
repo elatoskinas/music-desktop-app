@@ -20,7 +20,17 @@ class AppDatabase {
         this.db = new sqlite3.Database(dbFilePath)
 
         this.albumInsertQueue = new queue(async (task, callback) => {
-            const album = await this.getOrAddAlbum(task.album)
+            // Update all genres
+            await Promise.all(
+                task.data.genres.map((genre) => this.addGenre(genre))
+            )
+
+            // Update all artists
+            await Promise.all(
+                task.data.artists.map((artist) => this.addArtist(artist))
+            )
+
+            const album = await this.getOrAddAlbum(task.data.album)
             callback(album)
         }, 1)
 
@@ -89,7 +99,7 @@ class AppDatabase {
      * If an album with the same title & album already exists, then no insertion
      * is performed.
      *
-     * TODO: Handle updates (rather than 'IGNORE INTO') (?)
+     * TODO: Handle updates (rather than 'IGNORE INTO') [for extra genres]
      *
      * @param album Album to add
      */
@@ -137,18 +147,8 @@ class AppDatabase {
      * @param song Song to add
      */
     async addSong(song: Song) {
-        this.albumInsertQueue.push({ album: song.data.album }, (album) => {
+        this.albumInsertQueue.push({ data: song.data }, (album) => {
             this.db.parallelize(async () => {
-                // Update all genres
-                await Promise.all(
-                    song.data.genres.map((genre) => this.addGenre(genre))
-                )
-
-                // Update all artists
-                await Promise.all(
-                    song.data.artists.map((artist) => this.addArtist(artist))
-                )
-
                 const songStmt = this.db.prepare(
                     'INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)'
                 )
@@ -170,9 +170,6 @@ class AppDatabase {
                     song.data.rating,
                     album.id,
                     function () {
-                        console.log(this)
-
-                        // TODO: verify not 'IGNORE'
                         const songID = this.lastID
                         for (const genre of song.data.genres) {
                             genreStmt.run(songID, genre)
@@ -197,16 +194,16 @@ class AppDatabase {
      */
     async addGenre(genre: string): Promise<void> {
         return await new Promise((resolve) => {
-            this.db.serialize(async () => {
+            this.db.serialize(() => {
                 const genreStmt = this.db.prepare(
                     'INSERT OR IGNORE INTO genre VALUES(?)'
                 )
 
-                genreStmt.run(genre, () => {
+                genreStmt.run(genre)
+
+                genreStmt.finalize(() => {
                     resolve()
                 })
-
-                genreStmt.finalize()
             })
         })
     }
@@ -224,7 +221,7 @@ class AppDatabase {
      */
     async addArtist(artist: string): Promise<void> {
         return await new Promise((resolve) => {
-            this.db.serialize(async () => {
+            this.db.serialize(() => {
                 const artistStmt = this.db.prepare(
                     'INSERT OR IGNORE INTO artist VALUES(?)'
                 )

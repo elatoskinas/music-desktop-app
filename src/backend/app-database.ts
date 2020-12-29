@@ -1,6 +1,12 @@
 import * as sqlite3 from 'sqlite3'
 import { AlbumData, Song } from '@data/music-data'
 import queue from 'async/queue'
+import { QueueObject } from 'async'
+import { AlbumModel } from '@data/music-model'
+
+interface AlbumInsertQueueTask {
+    album: AlbumData
+}
 
 /**
  * Component encapsulating the central application database.
@@ -11,78 +17,67 @@ import queue from 'async/queue'
  * TODO: Look into secondary indices
  * TODO: Make SongData and AlbumData function calls consistent
  *       (use either Album and Song OR AlbumData and SongData)
+ * TODO: Wait for initialize tables to be completed (?)
  */
 class AppDatabase {
     db: sqlite3.Database
-    albumInsertQueue: any
 
-    constructor(dbFilePath) {
+    /**
+     * Async queue for album inserts.
+     * The queue must be initialized with concurrency 1 in order to
+     * avoid inserting the same album over a short period of time.
+     *
+     * TODO: Can probably be optimized further, e.g. in batch processing
+     * TODO: Queueing is only needed for the same AlbumData objects. Can maybe use
+     *       Map<AlbumData, Queue>
+     */
+    albumInsertQueue: QueueObject<AlbumInsertQueueTask>
+
+    constructor(dbFilePath: string) {
         this.db = new sqlite3.Database(dbFilePath)
-
-        this.albumInsertQueue = new queue(async (task, callback) => {
-            // Update all genres
-            await Promise.all(
-                task.album.genres.map((genre) => this.addGenre(genre))
-            )
-
-            // Update all artists
-            await Promise.all(
-                task.album.artists.map((artist) => this.addArtist(artist))
-            )
-
-            const album = await this.getOrAddAlbum(task.album)
-            callback(album)
-        }, 1)
-
+        this.albumInsertQueue = new queue(this.processAlbum, 1)
         this.initializeTables()
     }
 
     /**
-     * Fetches album with given title & artist.
-     * If such entry does not exist, 'undefined' will be returned.
+     * Processes an AlbumInsertQueueTask. Used as the processing function
+     * for the Album Insert Queue.
      *
-     * @param album Album to fetch (uses title & artists from object)
+     * @param task Task to process
+     * @param callback Callback function that is invoked at end of processing (parameter)
      */
-    getAlbum(album: AlbumData) {
-        return new Promise((resolve) => {
-            const titleCondition = album.title ? 'title = ?' : 'title iS NULL'
+    processAlbum = async (
+        task: AlbumInsertQueueTask,
+        callback: (album: AlbumModel) => void
+    ): Promise<void> => {
+        // Update all genres
+        await Promise.all(
+            task.album.genres.map((genre) => this.addGenre(genre))
+        )
 
-            const inQueryPlaceholder = album.artists
-                .map(() => {
-                    return '?'
-                })
-                .join(', ')
+        // Update all artists
+        await Promise.all(
+            task.album.artists.map((artist) => this.addArtist(artist))
+        )
 
-            const existingAlbumStmt = album.artists.length == 0 ? this.db.prepare(
-                `SELECT id FROM album WHERE ${titleCondition} LIMIT 1`
-            ) : this.db.prepare(
-                `
-                SELECT id, artist_name FROM album JOIN album_artist ON album.id=album_artist.album_id
-                WHERE ${titleCondition} AND artist_name IN (${inQueryPlaceholder}) LIMIT 1
-                `
-            )
-
-            const params = []
-
-            if (album.title) {
-                params.push(album.title)
-            }
-
-            for (const artist of album.artists) {
-                params.push(artist)
-            }
-
-            existingAlbumStmt.get(params, (err, row) => {
-                resolve(row)
-            })
-            existingAlbumStmt.finalize()
-        })
+        const album = await this.getOrAddAlbum(task.album)
+        callback(album)
     }
 
-    getOrAddAlbum(album: AlbumData) {
+    /**
+     * Fetches an album, or adds if the album does not exist in the database.
+     *
+     * NOTE: The function should be ran synchronously for the same albums to avoid
+     *       conflicts and race conditions!
+     *
+     * See also: addAlbum and getAlbum
+     *
+     * @param album Album to add
+     */
+    getOrAddAlbum(album: AlbumData): Promise<AlbumModel> {
         return new Promise((resolve) => {
             this.db.serialize(async () => {
-                let albumEntry: any = await this.getAlbum(album)
+                let albumEntry: AlbumModel = await this.getAlbum(album)
 
                 if (!albumEntry) {
                     await this.addAlbum(album)
@@ -95,9 +90,58 @@ class AppDatabase {
     }
 
     /**
+     * Fetches album from given album data instance.
+     * If such entry does not exist, 'undefined' will be returned.
+     *
+     * Album is fetched on basis of title and artists.
+     *
+     * TODO: When artists.length > 1, all artists should be matched
+     *       (or longest match alternatively)
+     *
+     * @param album Album data to fetch album database entry with
+     */
+    getAlbum(album: AlbumData): Promise<AlbumModel> {
+        return new Promise((resolve) => {
+            const titleCondition = album.title ? 'title = ?' : 'title iS NULL'
+
+            // Generate query place holders for artists
+            const artistInQueryPlaceholder = album.artists
+                .map(() => {
+                    return '?'
+                })
+                .join(', ')
+
+            // No artists: fetch on basis of title; Else join with artist table and look for match
+            const existingAlbumStmt =
+                album.artists.length == 0
+                    ? this.db.prepare(
+                        `SELECT id FROM album WHERE ${titleCondition} LIMIT 1`
+                    )
+                    : this.db.prepare(
+                        `
+                        SELECT id, artist_name FROM album JOIN album_artist ON album.id=album_artist.album_id
+                        WHERE ${titleCondition} AND artist_name IN (${artistInQueryPlaceholder}) LIMIT 1
+                        `
+                    )
+
+            const params = []
+            if (album.title) {
+                params.push(album.title)
+            }
+
+            for (const artist of album.artists) {
+                params.push(artist)
+            }
+
+            existingAlbumStmt.get(params, (err, row: AlbumModel) => {
+                resolve(row)
+            })
+            existingAlbumStmt.finalize()
+        })
+    }
+
+    /**
      * Adds an album to the database from the provided AlbumData data object.
-     * If an album with the same title & album already exists, then no insertion
-     * is performed.
      *
      * TODO: Handle updates (rather than 'IGNORE INTO') [for extra genres]
      *
@@ -145,57 +189,66 @@ class AppDatabase {
      * Adds a song to the database from the provided Song object.
      * The Song is linked to it's defined album, which is created if it does not exist.
      *
+     * TODO: REPLACE INTO will create a new ID, which might cause problems later on.
+     *       Should look into an alternative measure (maybe lookup then insert)
+     *
      * @param song Song to add
      */
-    async addSong(song: Song) {
-        this.albumInsertQueue.push({ album: song.data.album }, (album) => {
-            this.db.parallelize(async () => {
-                // Update all genres
-                await Promise.all(
-                    song.data.genres.map((genre) => this.addGenre(genre))
-                )
+    async addSong(song: Song): Promise<void> {
+        // Run insert synchronously, then continue song addition in parallel
+        this.albumInsertQueue.push(
+            { album: song.data.album },
+            (album: AlbumModel) => {
+                this.db.parallelize(async () => {
+                    // Update all genres
+                    await Promise.all(
+                        song.data.genres.map((genre) => this.addGenre(genre))
+                    )
 
-                // Update all artists
-                await Promise.all(
-                    song.data.artists.map((artist) => this.addArtist(artist))
-                )
+                    // Update all artists
+                    await Promise.all(
+                        song.data.artists.map((artist) =>
+                            this.addArtist(artist)
+                        )
+                    )
 
-                const songStmt = this.db.prepare(
-                    'INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)'
-                )
+                    const songStmt = this.db.prepare(
+                        'INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)'
+                    )
 
-                const genreStmt = this.db.prepare(
-                    'INSERT OR IGNORE INTO song_genre VALUES (?, ?)'
-                )
-                const artistStmt = this.db.prepare(
-                    'INSERT OR IGNORE INTO song_artist VALUES (?, ?)'
-                )
+                    const genreStmt = this.db.prepare(
+                        'INSERT OR IGNORE INTO song_genre VALUES (?, ?)'
+                    )
+                    const artistStmt = this.db.prepare(
+                        'INSERT OR IGNORE INTO song_artist VALUES (?, ?)'
+                    )
 
-                songStmt.run(
-                    song.path,
-                    song.data.title,
-                    song.data.year,
-                    song.data.track,
-                    song.data.disk,
-                    song.data.duration,
-                    song.data.rating,
-                    album.id,
-                    function () {
-                        const songID = this.lastID
-                        for (const genre of song.data.genres) {
-                            genreStmt.run(songID, genre)
+                    songStmt.run(
+                        song.path,
+                        song.data.title,
+                        song.data.year,
+                        song.data.track,
+                        song.data.disk,
+                        song.data.duration,
+                        song.data.rating,
+                        album.id,
+                        function () {
+                            const songID = this.lastID
+                            for (const genre of song.data.genres) {
+                                genreStmt.run(songID, genre)
+                            }
+                            genreStmt.finalize()
+
+                            for (const artist of song.data.artists) {
+                                artistStmt.run(songID, artist)
+                            }
+                            artistStmt.finalize()
                         }
-                        genreStmt.finalize()
-
-                        for (const artist of song.data.artists) {
-                            artistStmt.run(songID, artist)
-                        }
-                        artistStmt.finalize()
-                    }
-                )
-                songStmt.finalize()
-            })
-        })
+                    )
+                    songStmt.finalize()
+                })
+            }
+        )
     }
 
     /**
@@ -211,7 +264,6 @@ class AppDatabase {
                 )
 
                 genreStmt.run(genre)
-
                 genreStmt.finalize(() => {
                     resolve()
                 })
@@ -237,11 +289,10 @@ class AppDatabase {
                     'INSERT OR IGNORE INTO artist VALUES(?)'
                 )
 
-                artistStmt.run(artist, () => {
+                artistStmt.run(artist)
+                artistStmt.finalize(() => {
                     resolve()
                 })
-
-                artistStmt.finalize()
             })
         })
     }

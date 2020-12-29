@@ -3,7 +3,7 @@ import * as React from 'react'
 
 import { Howl } from 'howler'
 
-import { Song, SongData } from '@data/music-data' // eslint-disable-line no-unused-vars
+import { Song } from '@data/music-data' // eslint-disable-line no-unused-vars
 
 import { FileSelector } from '@frontend/FileSelector'
 import { MusicInfo } from '@frontend/MusicInfo'
@@ -22,7 +22,7 @@ import { MusicController } from './MusicController'
 
 interface MusicPlayerState {
     sound: Howl
-    metadata: SongData
+    metadata: Song
 }
 
 /**
@@ -111,7 +111,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
 
         this.setState({
             sound,
-            metadata: musicData.data,
+            metadata: musicData,
         })
 
         if (play) {

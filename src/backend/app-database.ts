@@ -1,11 +1,11 @@
 import * as sqlite3 from 'sqlite3'
-import { AlbumData, Song, SongData } from '@data/music-data'
+import { Song, Album } from '@data/music-data'
 import queue from 'async/queue'
 import { QueueObject } from 'async'
 import { AlbumModel, SongModel } from '@data/music-model'
 
 interface AlbumInsertQueueTask {
-    album: AlbumData
+    album: Album
 }
 
 /**
@@ -74,7 +74,7 @@ class AppDatabase {
      *
      * @param album Album to add
      */
-    getOrAddAlbum(album: AlbumData): Promise<AlbumModel> {
+    getOrAddAlbum(album: Album): Promise<AlbumModel> {
         return new Promise((resolve) => {
             this.db.serialize(async () => {
                 let albumEntry: AlbumModel = await this.getAlbum(album)
@@ -100,7 +100,7 @@ class AppDatabase {
      *
      * @param album Album data to fetch album database entry with
      */
-    getAlbum(album: AlbumData): Promise<AlbumModel> {
+    getAlbum(album: Album): Promise<AlbumModel> {
         return new Promise((resolve) => {
             const titleCondition = album.title ? 'title = ?' : 'title iS NULL'
 
@@ -147,7 +147,7 @@ class AppDatabase {
      *
      * @param album Album to add
      */
-    addAlbum(album: AlbumData): Promise<void> {
+    addAlbum(album: Album): Promise<void> {
         return new Promise((resolve) => {
             const genreStmt = this.db.prepare(
                 'INSERT OR IGNORE INTO album_genre VALUES (?, ?)'
@@ -194,64 +194,66 @@ class AppDatabase {
      *
      * @param song Song to add
      */
-    async addSong(song: Song): Promise<void> {
-        // Run insert synchronously, then continue song addition in parallel
-        this.albumInsertQueue.push(
-            { album: song.data.album },
-            (album: AlbumModel) => {
-                this.db.parallelize(async () => {
-                    // Update all genres
-                    await Promise.all(
-                        song.data.genres.map((genre) => this.addGenre(genre))
-                    )
-
-                    // Update all artists
-                    await Promise.all(
-                        song.data.artists.map((artist) =>
-                            this.addArtist(artist)
+    addSong(song: Song): Promise<void> {
+        return new Promise((resolve) => {
+            // Run insert synchronously, then continue song addition in parallel
+            this.albumInsertQueue.push(
+                { album: song.album },
+                (album: AlbumModel) => {
+                    this.db.parallelize(async () => {
+                        // Update all genres
+                        await Promise.all(
+                            song.genres.map((genre) => this.addGenre(genre))
                         )
-                    )
 
-                    const songStmt = this.db.prepare(
-                        'INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)'
-                    )
+                        // Update all artists
+                        await Promise.all(
+                            song.artists.map((artist) => this.addArtist(artist))
+                        )
 
-                    const genreStmt = this.db.prepare(
-                        'INSERT OR IGNORE INTO song_genre VALUES (?, ?)'
-                    )
-                    const artistStmt = this.db.prepare(
-                        'INSERT OR IGNORE INTO song_artist VALUES (?, ?)'
-                    )
+                        const songStmt = this.db.prepare(
+                            'INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)'
+                        )
 
-                    songStmt.run(
-                        song.path,
-                        song.data.title,
-                        song.data.year,
-                        song.data.track,
-                        song.data.disk,
-                        song.data.duration,
-                        song.data.rating,
-                        album.id,
-                        function () {
-                            const songID = this.lastID
-                            for (const genre of song.data.genres) {
-                                genreStmt.run(songID, genre)
+                        const genreStmt = this.db.prepare(
+                            'INSERT OR IGNORE INTO song_genre VALUES (?, ?)'
+                        )
+                        const artistStmt = this.db.prepare(
+                            'INSERT OR IGNORE INTO song_artist VALUES (?, ?)'
+                        )
+
+                        songStmt.run(
+                            song.path,
+                            song.title,
+                            song.year,
+                            song.track,
+                            song.disk,
+                            song.duration,
+                            song.rating,
+                            album.id,
+                            function () {
+                                const songID = this.lastID
+                                for (const genre of song.genres) {
+                                    genreStmt.run(songID, genre)
+                                }
+                                genreStmt.finalize()
+
+                                for (const artist of song.artists) {
+                                    artistStmt.run(songID, artist)
+                                }
+                                artistStmt.finalize()
                             }
-                            genreStmt.finalize()
-
-                            for (const artist of song.data.artists) {
-                                artistStmt.run(songID, artist)
-                            }
-                            artistStmt.finalize()
-                        }
-                    )
-                    songStmt.finalize()
-                })
-            }
-        )
+                        )
+                        songStmt.finalize(() => {
+                            resolve()
+                        })
+                    })
+                }
+            )
+        })
     }
 
-    getSong(path: string): Promise<SongData> {
+    getSong(path: string): Promise<Song> {
         return new Promise((resolve) => {
             // TODO: join genres
             // TODO: join artists
@@ -261,10 +263,11 @@ class AppDatabase {
             )
 
             songStmt.get(path, (err, row: SongModel) => {
-                const resultSong: SongData = new SongData()
+                const resultSong: Song = new Song()
                     .setDisk(row.disk)
                     .setDuration(row.duration)
                     .setRating(row.rating)
+                    .setPath(path)
                     .setTitle(row.title)
                     .setTrack(row.track)
                     .setYear(row.year)

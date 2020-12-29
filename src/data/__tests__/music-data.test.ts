@@ -1,10 +1,10 @@
-import { Song, SongData, Album, AlbumData } from '@data/music-data'
+import { Song, Album } from '@data/music-data'
 
-describe('SongData tests', () => {
-    let songData: SongData
+describe('Song tests', () => {
+    let songData: Song
 
     beforeEach(() => {
-        songData = new SongData()
+        songData = new Song()
     })
 
     test('Set artists', () => {
@@ -42,49 +42,10 @@ describe('SongData tests', () => {
     test('Set album', () => {
         expect(songData.album).toBeUndefined()
 
-        const album = new AlbumData()
+        const album = new Album()
         let returnSong = songData.setAlbum(album)
 
         expect(returnSong).toBe(songData)
         expect(songData.album).toBe(album)
-    })
-})
-
-describe('AlbumData tests', () => {
-    let albumData: AlbumData
-
-    beforeEach(() => {
-        albumData = new AlbumData()
-    })
-
-    test('Set artist', () => {
-        expect(albumData.artist).toBeUndefined()
-
-        const artist = 'Album Artist'
-        let returnAlbum = albumData.setArtist(artist)
-
-        expect(returnAlbum).toBe(albumData)
-        expect(albumData.artist).toEqual(artist)
-    })
-})
-
-describe('Album & Song tests', () => {
-    test('Create Song', () => {
-        const data = new SongData()
-        const path = 'some/path/to/file'
-
-        let song = new Song(data, path)
-
-        expect(song.data).toBe(data)
-        expect(song.path).toBe(path)
-    })
-
-    test('Create Album', () => {
-        const data = new AlbumData()
-
-        let album = new Album(data)
-
-        expect(album.data).toBe(data)
-        expect(album.songs).toEqual([])
     })
 })

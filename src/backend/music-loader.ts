@@ -1,5 +1,5 @@
 import * as metadataReader from 'music-metadata'
-import { Song, SongData, AlbumData } from '@data/music-data'
+import { Song, Album } from '@data/music-data'
 import { splitArtists } from '@common/format-utils'
 
 /**
@@ -21,11 +21,11 @@ export function loadSoundData(path: string) {
             duration: true,
         })
         .then((outputMetadata) => {
-            return new Song(createSongData(outputMetadata), path)
+            return createSong(path, outputMetadata)
         })
         .catch((err) => {
             console.error(err.message)
-            return new Song(new SongData(), path)
+            return new Song().setPath(path)
         })
 }
 
@@ -35,12 +35,11 @@ export function loadSoundData(path: string) {
  * @param metadata  Song metadata
  * @returns new Song Data instance corresponding to the metadata provided
  */
-function createSongData(metadata: metadataReader.IAudioMetadata) {
+function createSong(path: string, metadata: metadataReader.IAudioMetadata) {
     let commonMeta = metadata.common
-    let songData = new SongData()
+    let song = new Song().setPath(path)
 
-    songData
-        .setTitle(commonMeta.title)
+    song.setTitle(commonMeta.title)
         .setYear(commonMeta.year)
         .setGenres(commonMeta.genre || [])
         .setCovers(commonMeta.picture)
@@ -55,17 +54,16 @@ function createSongData(metadata: metadataReader.IAudioMetadata) {
         )
         .setDuration(metadata.format.duration)
 
-    // TODO: Update album for all songs in album
-    let albumData = new AlbumData()
+    let album = new Album()
 
-    albumData
+    album
         .setTitle(commonMeta.album)
         .setArtists(splitArtists(commonMeta.albumartist))
-        .setGenres(songData.genres)
+        .setGenres(song.genres)
         .setTotalTracks(commonMeta.track.of)
         .setTotalDisks(commonMeta.disk.of)
 
-    songData.setAlbum(albumData)
+    song.setAlbum(album)
 
-    return songData
+    return song
 }

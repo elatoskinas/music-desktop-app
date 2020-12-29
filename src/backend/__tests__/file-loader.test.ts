@@ -1,5 +1,5 @@
 import * as fileLoader from '@backend/file-loader'
-import { Song, SongData } from '@data/music-data'
+import { Song } from '@data/music-data'
 
 import { mocked } from 'ts-jest/utils'
 import { Stream } from 'stream'
@@ -27,9 +27,7 @@ describe('Sound file processing tests', () => {
     beforeEach(() => {
         // Re-create callback on each call
         callback = jest.fn()
-        mocked(loadSoundData).mockResolvedValue(
-            new Song(new SongData(), 'path')
-        )
+        mocked(loadSoundData).mockResolvedValue(new Song().setPath('path'))
     })
 
     test('Process empty sound file paths', async () => {

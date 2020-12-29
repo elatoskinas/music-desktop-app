@@ -12,7 +12,7 @@ import { IPicture } from 'music-metadata'
  * Class to represent the data of a generic Music Entry;
  * Contains common data for music entries (songs & albums)
  */
-export abstract class MusicEntryData {
+export abstract class MusicData {
     title: string
     artists: string[]
     year: number
@@ -26,6 +26,7 @@ export abstract class MusicEntryData {
      */
     constructor() {
         this.genres = []
+        this.artists = []
         this.covers = []
     }
 
@@ -70,10 +71,11 @@ export abstract class MusicEntryData {
  * Contains all the necessary song information,
  * as well as the album that the song is linked to.
  */
-export class SongData extends MusicEntryData {
-    album: AlbumData
+export class Song extends MusicData {
+    album: Album
     track: number
     disk: number
+    path: string
 
     /**
      * Create a new Song Data instance.
@@ -84,7 +86,7 @@ export class SongData extends MusicEntryData {
         this.artists = []
     }
 
-    setAlbum(album: AlbumData) {
+    setAlbum(album: Album) {
         this.album = album
         return this
     }
@@ -98,6 +100,11 @@ export class SongData extends MusicEntryData {
         this.disk = disk
         return this
     }
+
+    setPath(path: string) {
+        this.path = path
+        return this
+    }
 }
 
 /**
@@ -105,9 +112,10 @@ export class SongData extends MusicEntryData {
  * Contains all the necessary album information,
  * but does not contain the information of each concrete song.
  */
-export class AlbumData extends MusicEntryData {
+export class Album extends MusicData {
     totalTracks: number
     totalDisks: number
+    songs: Song[]
 
     /**
      * Create new Album Data instance.
@@ -124,78 +132,5 @@ export class AlbumData extends MusicEntryData {
     setTotalDisks(totalDisks: number) {
         this.totalDisks = totalDisks
         return this
-    }
-}
-
-/**
- * Music Entry classes
- */
-
-/**
- * Generic Music Entry class definition
- */
-export class MusicEntry<D extends MusicEntryData> {
-    data: D
-
-    /**
-     * Create a new MusicEntry instance holding the specified corresponding
-     * data.
-     *
-     * @param data  Data of the MusicEntry
-     */
-    constructor(data: D) {
-        this.data = data
-    }
-}
-
-/**
- * Class corresponding to a song, containing the concrete
- * sound object, as well as the song data.
- */
-export class Song extends MusicEntry<SongData> {
-    path: string
-
-    /**
-     * Create a new Song instancce with the specified
-     * song data and the path of the song.
-     *
-     * @param data  SongData object
-     * @param path  Full path of song
-     */
-    constructor(data: SongData, path: string) {
-        super(data)
-        this.path = path
-    }
-}
-
-/**
- * Class corresponding to an album, containing a list of
- * songs that the album contains in order, as well as the
- * album data.
- */
-export class Album extends MusicEntry<AlbumData> {
-    songs: Song[]
-
-    /**
-     * Create a new Album instance with the specified album data.
-     *
-     * @param data  AlbumData object
-     */
-    constructor(data: AlbumData) {
-        super(data)
-        this.songs = []
-    }
-
-    /**
-     * Adds a song to the album, also updating any relevant
-     * data for the album.
-     *
-     * TODO: Prevent song duplication
-     * TODO: Update AlbumData
-     *
-     * @param song Song to add to the album
-     */
-    addSong(song: Song) {
-        this.songs.push(song)
     }
 }

@@ -1,5 +1,6 @@
-import * as metadata from 'music-metadata'
+import * as metadataReader from 'music-metadata'
 import { Song, SongData, AlbumData } from '@data/music-data'
+import { splitArtists } from '@common/format-utils'
 
 /**
  * Loads sound data from the specified file path.
@@ -15,7 +16,7 @@ import { Song, SongData, AlbumData } from '@data/music-data'
  */
 export function loadSoundData(path: string) {
     // Parse the metadata of the file
-    return metadata
+    return metadataReader
         .parseFile(path, {
             duration: true,
         })
@@ -34,19 +35,24 @@ export function loadSoundData(path: string) {
  * @param metadata  Song metadata
  * @returns new Song Data instance corresponding to the metadata provided
  */
-function createSongData(metadata: metadata.IAudioMetadata) {
+function createSongData(metadata: metadataReader.IAudioMetadata) {
     let commonMeta = metadata.common
     let songData = new SongData()
 
     songData
         .setTitle(commonMeta.title)
         .setYear(commonMeta.year)
-        .setGenres(commonMeta.genre)
+        .setGenres(commonMeta.genre || [])
         .setCovers(commonMeta.picture)
-        .setArtists(commonMeta.artists)
+        .setArtists(commonMeta.artists || [])
         .setTrack(commonMeta.track.no)
         .setDisk(commonMeta.disk.no)
-        .setRating(commonMeta.rating)
+        .setRating(
+            // TODO: This way of converting may not be applicable. Might require changing
+            commonMeta.rating?.length > 0
+                ? metadataReader.ratingToStars(commonMeta.rating[0].rating)
+                : 0
+        )
         .setDuration(metadata.format.duration)
 
     // TODO: Update album for all songs in album
@@ -54,7 +60,8 @@ function createSongData(metadata: metadata.IAudioMetadata) {
 
     albumData
         .setTitle(commonMeta.album)
-        .setArtist(commonMeta.albumartist)
+        .setArtists(splitArtists(commonMeta.albumartist))
+        .setGenres(songData.genres)
         .setTotalTracks(commonMeta.track.of)
         .setTotalDisks(commonMeta.disk.of)
 

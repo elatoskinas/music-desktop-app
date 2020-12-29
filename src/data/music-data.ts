@@ -2,7 +2,6 @@
  * File for keeping music data containing classes.
  */
 
-import { IRating } from 'music-metadata/lib/type'
 import { IPicture } from 'music-metadata'
 
 /**
@@ -15,8 +14,10 @@ import { IPicture } from 'music-metadata'
  */
 export abstract class MusicEntryData {
     title: string
+    artists: string[]
     year: number
     duration: number
+    rating: number
     genres: string[]
     covers: IPicture[]
 
@@ -43,6 +44,11 @@ export abstract class MusicEntryData {
         return this
     }
 
+    setArtists(artists: string[]) {
+        this.artists = artists
+        return this
+    }
+
     setGenres(genres: string[]) {
         this.genres = genres
         return this
@@ -50,6 +56,11 @@ export abstract class MusicEntryData {
 
     setCovers(covers: IPicture[]) {
         this.covers = covers
+        return this
+    }
+
+    setRating(rating: number) {
+        this.rating = rating
         return this
     }
 }
@@ -60,13 +71,9 @@ export abstract class MusicEntryData {
  * as well as the album that the song is linked to.
  */
 export class SongData extends MusicEntryData {
-    artists: string[]
-
     album: AlbumData
     track: number
     disk: number
-
-    ratings: IRating[]
 
     /**
      * Create a new Song Data instance.
@@ -75,12 +82,6 @@ export class SongData extends MusicEntryData {
         super()
 
         this.artists = []
-        this.ratings = []
-    }
-
-    setArtists(artists: string[]) {
-        this.artists = artists
-        return this
     }
 
     setAlbum(album: AlbumData) {
@@ -97,11 +98,6 @@ export class SongData extends MusicEntryData {
         this.disk = disk
         return this
     }
-
-    setRating(ratings: IRating[]) {
-        this.ratings = ratings
-        return this
-    }
 }
 
 /**
@@ -110,7 +106,6 @@ export class SongData extends MusicEntryData {
  * but does not contain the information of each concrete song.
  */
 export class AlbumData extends MusicEntryData {
-    artist: string
     totalTracks: number
     totalDisks: number
 
@@ -119,11 +114,6 @@ export class AlbumData extends MusicEntryData {
      */
     constructor() {
         super()
-    }
-
-    setArtist(artist: string) {
-        this.artist = artist
-        return this
     }
 
     setTotalTracks(totalTracks: number) {

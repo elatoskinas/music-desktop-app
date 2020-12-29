@@ -41,7 +41,7 @@ export class MusicInfo extends React.Component<{ metadata: SongData }, {}> {
                 <StyledSongInfoContainer>
                     <StyledSongCoverImage src={coverSource} />
                     <p>Title: {meta.title}</p>
-                    <p>Album Artist: {meta.album.artist}</p>
+                    <p>Album Artist: {meta.album.artists}</p>
                     <p>Album: {meta.album.title}</p>
                 </StyledSongInfoContainer>
             )

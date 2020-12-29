@@ -197,21 +197,20 @@ describe('Song table tests', () => {
     // TODO: test replace for genre linking
 })
 
-// describe('Song & album integration', () => {
-//     test('Add song with album', async () => {
-//         const albumData = new AlbumData()
-//             .setArtist('Artist')
-//             .setTitle('Some album name')
-//             .setYear(2018)
+describe('Song & album integration', () => {
+    test('Add song with album', async () => {
+        const path = 'test/with_album.mp3'
+        const song = new Song()
+            .setPath(path)
+            .setAlbum(new Album().setArtists(['Artist1']).setTitle('Title123'))
 
-//         const songData = new SongData().setTitle('Song').setAlbum(albumData)
+        await AppDatabase.addSong(song)
 
-//         await AppDatabase.addSong(new Song(songData, 'test/path.mp3'))
+        const resultSong: Song = AppDatabase.getSong(path)
 
-//         const queriedAlbum: any = await AppDatabase.getAlbum(
-//             albumData.title,
-//             albumData.artist
-//         )
-//         expect(queriedAlbum).toBeDefined()
-//     })
-// })
+        expect(resultSong).toBeDefined()
+        expect(resultSong.path).toEqual(path)
+        expect(resultSong.album.title).toEqual(song.album.title)
+        expect(resultSong.album.artists).toEqual(song.album.artists)
+    })
+})

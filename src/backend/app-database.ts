@@ -85,7 +85,8 @@ class AppDatabase {
      * Fetches album from given album data instance.
      * If such entry does not exist, 'undefined' will be returned.
      *
-     * Album is fetched on basis of title and artists.
+     * Album is fetched on basis of title and artists,
+     * or directly by ID if it is present.
      *
      * TODO: When artists.length > 1, all artists should be matched
      *       (or longest match alternatively)
@@ -93,38 +94,46 @@ class AppDatabase {
      * @param album Album data to fetch album database entry with
      */
     getAlbum(album: Album): Album | null {
-        const titleCondition = album.title ? 'title = ?' : 'title iS NULL'
+        let albumRow: AlbumModel
 
-        // Generate query place holders for artists
-        const artistInQueryPlaceholder = album.artists
-            .map(() => {
-                return '?'
-            })
-            .join(', ')
+        if (album.id) {
+            albumRow = this.db
+                .prepare('SELECT * FROM album WHERE id = ?')
+                .get(album.id)
+        } else {
+            const titleCondition = album.title ? 'title = ?' : 'title iS NULL'
 
-        // No artists: fetch on basis of title; Else join with artist table and look for match
-        const existingAlbumStmt =
-            album.artists.length == 0
-                ? this.db.prepare(
-                    `SELECT * FROM album WHERE ${titleCondition} LIMIT 1`
-                )
-                : this.db.prepare(
-                    `
-                    SELECT * FROM album JOIN album_artist ON album.id=album_artist.album_id
-                    WHERE ${titleCondition} AND artist_name IN (${artistInQueryPlaceholder}) LIMIT 1
-                    `
-                )
+            // Generate query place holders for artists
+            const artistInQueryPlaceholder = album.artists
+                .map(() => {
+                    return '?'
+                })
+                .join(', ')
 
-        const params = []
-        if (album.title) {
-            params.push(album.title)
+            // No artists: fetch on basis of title; Else join with artist table and look for match
+            const existingAlbumStmt =
+                album.artists.length == 0
+                    ? this.db.prepare(
+                        `SELECT * FROM album WHERE ${titleCondition} LIMIT 1`
+                    )
+                    : this.db.prepare(
+                        `
+                        SELECT * FROM album JOIN album_artist ON album.id=album_artist.album_id
+                        WHERE ${titleCondition} AND artist_name IN (${artistInQueryPlaceholder}) LIMIT 1
+                        `
+                    )
+
+            const params = []
+            if (album.title) {
+                params.push(album.title)
+            }
+
+            for (const artist of album.artists) {
+                params.push(artist)
+            }
+
+            albumRow = existingAlbumStmt.get(params)
         }
-
-        for (const artist of album.artists) {
-            params.push(artist)
-        }
-
-        const albumRow: AlbumModel = existingAlbumStmt.get(params)
 
         if (!albumRow) {
             return null
@@ -264,21 +273,24 @@ class AppDatabase {
             .get(path)
 
         const genres = this.db
-            .prepare('SELECT genre FROM song_genre WHERE song_id=?')
+            .prepare('SELECT genre FROM song_genre WHERE song_id = ?')
             .all(songRow.id)
             .map((row: SongGenreModel) => {
                 return row.genre
             })
 
         const artists = this.db
-            .prepare('SELECT artist_name FROM song_artist WHERE song_id=?')
+            .prepare('SELECT artist_name FROM song_artist WHERE song_id = ?')
             .all(songRow.id)
             .map((row: SongArtistModel) => {
                 return row.artist_name
             })
 
+        const album = this.getAlbum(new Album().setId(songRow.albumId))
+
         const resultSong: Song = new Song()
             .setId(songRow.id)
+            .setAlbum(album)
             .setArtists(artists)
             .setDisk(songRow.disk)
             .setDuration(songRow.duration)

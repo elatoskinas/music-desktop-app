@@ -13,6 +13,7 @@ import { IPicture } from 'music-metadata'
  * Contains common data for music entries (songs & albums)
  */
 export abstract class MusicData {
+    id: number
     title: string
     artists: string[]
     year: number
@@ -28,6 +29,11 @@ export abstract class MusicData {
         this.genres = []
         this.artists = []
         this.covers = []
+    }
+
+    setId(id: number) {
+        this.id = id
+        return this
     }
 
     setTitle(title: string) {

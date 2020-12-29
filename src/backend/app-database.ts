@@ -3,6 +3,8 @@ import { Song, Album } from '@data/music-data'
 import queue from 'async/queue'
 import { QueueObject } from 'async'
 import {
+    AlbumArtistModel,
+    AlbumGenreModel,
     AlbumModel,
     SongArtistModel,
     SongGenreModel,
@@ -20,6 +22,7 @@ interface AlbumInsertQueueTask {
  * TODO: Song add query can probably be optimized
  *       (using 1 fetch instead of 2?)
  * TODO: Look into secondary indices
+ * TODO: projections for GET
  */
 class AppDatabase {
     db: Database
@@ -50,14 +53,8 @@ class AppDatabase {
      */
     processAlbum = (
         task: AlbumInsertQueueTask,
-        callback: (album: AlbumModel) => void
+        callback: (album: Album) => void
     ): void => {
-        // Update all genres
-        task.album.genres.map((genre) => this.addGenre(genre))
-
-        // Update all artists
-        task.album.artists.map((artist) => this.addArtist(artist)) || []
-
         const album = this.getOrAddAlbum(task.album)
         callback(album)
     }
@@ -72,11 +69,12 @@ class AppDatabase {
      *
      * @param album Album to add
      */
-    getOrAddAlbum(album: Album): AlbumModel {
-        let albumEntry: AlbumModel = this.getAlbum(album)
+    getOrAddAlbum(album: Album): Album {
+        let albumEntry: Album = this.getAlbum(album)
 
         if (!albumEntry) {
             this.addAlbum(album)
+            // TODO: can optimize by fetching by ID directly
             albumEntry = this.getAlbum(album)
         }
 
@@ -94,7 +92,7 @@ class AppDatabase {
      *
      * @param album Album data to fetch album database entry with
      */
-    getAlbum(album: Album): AlbumModel {
+    getAlbum(album: Album): Album | null {
         const titleCondition = album.title ? 'title = ?' : 'title iS NULL'
 
         // Generate query place holders for artists
@@ -108,11 +106,11 @@ class AppDatabase {
         const existingAlbumStmt =
             album.artists.length == 0
                 ? this.db.prepare(
-                    `SELECT id FROM album WHERE ${titleCondition} LIMIT 1`
+                    `SELECT * FROM album WHERE ${titleCondition} LIMIT 1`
                 )
                 : this.db.prepare(
                     `
-                    SELECT id, artist_name FROM album JOIN album_artist ON album.id=album_artist.album_id
+                    SELECT * FROM album JOIN album_artist ON album.id=album_artist.album_id
                     WHERE ${titleCondition} AND artist_name IN (${artistInQueryPlaceholder}) LIMIT 1
                     `
                 )
@@ -126,7 +124,36 @@ class AppDatabase {
             params.push(artist)
         }
 
-        const resultAlbum: AlbumModel = existingAlbumStmt.get(params)
+        const albumRow: AlbumModel = existingAlbumStmt.get(params)
+
+        if (!albumRow) {
+            return null
+        }
+
+        const artists = this.db
+            .prepare('SELECT artist_name FROM album_artist WHERE album_id=?')
+            .all(albumRow.id)
+            .map((row: AlbumArtistModel) => {
+                return row.artist_name
+            })
+
+        const genres = this.db
+            .prepare('SELECT genre FROM album_genre WHERE album_id=?')
+            .all(albumRow.id)
+            .map((row: AlbumGenreModel) => {
+                return row.genre
+            })
+
+        const resultAlbum: Album = new Album()
+            .setArtists(artists)
+            .setGenres(genres)
+            .setId(albumRow.id)
+            .setRating(albumRow.rating)
+            .setTitle(albumRow.title)
+            .setTotalDisks(albumRow.total_disks)
+            .setTotalTracks(albumRow.total_tracks)
+            .setYear(albumRow.year)
+
         return resultAlbum
     }
 
@@ -138,6 +165,12 @@ class AppDatabase {
      * @param album Album to add
      */
     addAlbum(album: Album): void {
+        // Update all genres
+        album.genres.map((genre) => this.addGenre(genre))
+
+        // Update all artists
+        album.artists.map((artist) => this.addArtist(artist))
+
         const genreStmt = this.db.prepare(
             'INSERT OR IGNORE INTO album_genre VALUES (?, ?)'
         )
@@ -180,7 +213,7 @@ class AppDatabase {
             // Run insert synchronously, then continue song addition in parallel
             this.albumInsertQueue.push(
                 { album: song.album },
-                async (album: AlbumModel) => {
+                async (album: Album) => {
                     // Update all genres
                     song.genres.map((genre) => this.addGenre(genre))
 
@@ -245,6 +278,7 @@ class AppDatabase {
             })
 
         const resultSong: Song = new Song()
+            .setId(songRow.id)
             .setArtists(artists)
             .setDisk(songRow.disk)
             .setDuration(songRow.duration)

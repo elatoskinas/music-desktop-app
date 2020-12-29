@@ -1,73 +1,104 @@
 import AppDatabase from '../app-database'
-import { Song } from '@data/music-data'
+import { Album, Song } from '@data/music-data'
 
 describe('Album table tests', () => {
-    // Query non existent
-    // Add & query no artist, no title
-    // Add & query no artist, with title
-    // Add & query 1 artist, with title
-    // Add & query 1 artist, no title
-    // Add & query multi artists with title
-    // Add & query multi artists partial match
-    // Add & query duplicate (identical)
-    // Add & query duplicate (extra genres)
-    // Add & query duplicate (extra artists)
+    test('Query non-existent', () => {
+        const resultAlbum = AppDatabase.getAlbum(
+            new Album().setTitle('randomTitle').setArtists(['randomArtist'])
+        )
+        expect(resultAlbum).toBeNull()
+    })
 
-    // test('Query non-existent', async () => {
-    //     const resultingAlbum = await AppDatabase.getAlbum(
-    //         'randomTitle',
-    //         'withRandomArtist'
-    //     )
-    //     expect(resultingAlbum).toBeUndefined()
-    // })
+    test('Add & query no artist, no title', () => {
+        const album = new Album()
 
-    // test('Add album with artist, title, year', async () => {
-    //     const artist = 'Test Artist'
-    //     const title = 'Test Album Title'
-    //     const year = 2020
+        AppDatabase.addAlbum(album)
 
-    //     const album = new AlbumData()
-    //         .setArtist(artist)
-    //         .setTitle(title)
-    //         .setYear(year)
+        const resultAlbum = AppDatabase.getAlbum(album)
+        expect(resultAlbum).toBeDefined()
+        expect(resultAlbum.title).toBeNull()
+        expect(resultAlbum.artists).toHaveLength(0)
+    })
 
-    //     await AppDatabase.addAlbum(album)
+    test('Add & query no artist, with title', () => {
+        const album = new Album().setTitle('Album Title')
 
-    //     const queriedAlbum: any = await AppDatabase.getAlbum(title, artist)
-    //     expect(queriedAlbum).toBeDefined()
-    // })
+        AppDatabase.addAlbum(album)
 
-    // test('Add album with no parameters', async () => {
-    //     const album = new AlbumData()
+        const resultAlbum = AppDatabase.getAlbum(album)
+        expect(resultAlbum).toBeDefined()
+        expect(resultAlbum.title).toEqual(album.title)
+        expect(resultAlbum.artists).toHaveLength(0)
+    })
 
-    //     await AppDatabase.addAlbum(album)
+    test('Add & query 1 artist, with title', () => {
+        const album = new Album().setTitle('Album Title').setArtists(['Artist'])
 
-    //     const queriedAlbum: any = await AppDatabase.getAlbum(
-    //         undefined,
-    //         undefined
-    //     )
-    //     expect(queriedAlbum).toBeDefined()
-    // })
+        AppDatabase.addAlbum(album)
 
-    // test('Add album with only artist', async () => {
-    //     const artist = 'Test Artist'
-    //     const album = new AlbumData().setArtist(artist)
+        const resultAlbum = AppDatabase.getAlbum(album)
+        expect(resultAlbum).toBeDefined()
+        expect(resultAlbum.title).toEqual(album.title)
+        expect(resultAlbum.artists).toEqual(album.artists)
+    })
 
-    //     await AppDatabase.addAlbum(album)
+    test('Add & query 1 artist, no title', () => {
+        const album = new Album().setArtists(['Artist'])
 
-    //     const queriedAlbum: any = await AppDatabase.getAlbum(undefined, artist)
-    //     expect(queriedAlbum).toBeDefined()
-    // })
+        AppDatabase.addAlbum(album)
 
-    // test('Add album with only title', async () => {
-    //     const title = 'Test title'
-    //     const album = new AlbumData().setTitle(title)
+        const resultAlbum = AppDatabase.getAlbum(album)
+        expect(resultAlbum).toBeDefined()
+        expect(resultAlbum.title).toBeNull()
+        expect(resultAlbum.artists).toEqual(album.artists)
+    })
 
-    //     await AppDatabase.addAlbum(album)
+    test('Add & query multi artists, with title', () => {
+        const album = new Album()
+            .setTitle('Multi-artist title')
+            .setArtists(['Artist1', 'Artist2', 'Artist3'])
 
-    //     const queriedAlbum: any = await AppDatabase.getAlbum(title, undefined)
-    //     expect(queriedAlbum).toBeDefined()
-    // })
+        AppDatabase.addAlbum(album)
+
+        const resultAlbum = AppDatabase.getAlbum(album)
+        expect(resultAlbum).toBeDefined()
+        expect(resultAlbum.title).toEqual(album.title)
+        expect(resultAlbum.artists).toEqual(album.artists)
+    })
+
+    test('Add & query identical album', () => {
+        const album = new Album().setTitle('DUPE TITLE').setArtists(['Artist'])
+
+        const album2 = new Album()
+            .setTitle(album.title)
+            .setArtists(album.artists)
+
+        AppDatabase.addAlbum(album)
+
+        const originalAlbum = AppDatabase.getAlbum(album)
+        const resultAlbum = AppDatabase.getOrAddAlbum(album2)
+
+        expect(resultAlbum.id).toEqual(originalAlbum.id)
+    })
+
+    test('Add & query same title different artist albums', () => {
+        const album = new Album()
+            .setTitle('DUPE TITLE MULTI')
+            .setArtists(['Artist1'])
+
+        const album2 = new Album().setTitle(album.title).setArtists(['Artist2'])
+
+        AppDatabase.addAlbum(album)
+
+        const originalAlbum = AppDatabase.getAlbum(album)
+        const resultAlbum = AppDatabase.getOrAddAlbum(album2)
+
+        expect(resultAlbum.id).not.toEqual(originalAlbum.id)
+    })
+
+    // TODO: Add & query duplicate (extra genres)
+    // TODO: Add & query duplicate (extra artists)
+    // TODO: Add & query duplicate (multi-artist partial match)
 })
 
 describe('Song table tests', () => {
@@ -77,7 +108,7 @@ describe('Song table tests', () => {
 
         await AppDatabase.addSong(song)
 
-        const resultSong: Song = await AppDatabase.getSong(path)
+        const resultSong: Song = AppDatabase.getSong(path)
         expect(resultSong).toBeDefined()
         expect(resultSong.path).toEqual(song.path)
     })
@@ -93,7 +124,7 @@ describe('Song table tests', () => {
 
         await AppDatabase.addSong(song)
 
-        const resultSong: Song = await AppDatabase.getSong(song.path)
+        const resultSong: Song = AppDatabase.getSong(song.path)
 
         expect(resultSong).toBeDefined()
         expect(resultSong.path).toEqual(song.path)
@@ -111,7 +142,7 @@ describe('Song table tests', () => {
 
         await AppDatabase.addSong(song)
 
-        const resultSong: Song = await AppDatabase.getSong(song.path)
+        const resultSong: Song = AppDatabase.getSong(song.path)
 
         expect(resultSong).toBeDefined()
         expect(resultSong.genres).toHaveLength(song.genres.length)
@@ -125,7 +156,7 @@ describe('Song table tests', () => {
 
         await AppDatabase.addSong(song)
 
-        const resultSong: Song = await AppDatabase.getSong(song.path)
+        const resultSong: Song = AppDatabase.getSong(song.path)
 
         expect(resultSong).toBeDefined()
         expect(resultSong.artists).toHaveLength(song.artists.length)
@@ -145,7 +176,7 @@ describe('Song table tests', () => {
 
         await AppDatabase.addSong(song1)
 
-        const resultSong1: Song = await AppDatabase.getSong(song1.path)
+        const resultSong1: Song = AppDatabase.getSong(song1.path)
 
         expect(resultSong1).toBeDefined()
         expect(resultSong1.disk).toEqual(song1.disk)

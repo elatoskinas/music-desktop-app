@@ -22,15 +22,15 @@ class AppDatabase {
         this.albumInsertQueue = new queue(async (task, callback) => {
             // Update all genres
             await Promise.all(
-                task.data.genres.map((genre) => this.addGenre(genre))
+                task.album.genres.map((genre) => this.addGenre(genre))
             )
 
             // Update all artists
             await Promise.all(
-                task.data.artists.map((artist) => this.addArtist(artist))
+                task.album.artists.map((artist) => this.addArtist(artist))
             )
 
-            const album = await this.getOrAddAlbum(task.data.album)
+            const album = await this.getOrAddAlbum(task.album)
             callback(album)
         }, 1)
 
@@ -123,6 +123,7 @@ class AppDatabase {
                 album.rating,
                 function () {
                     const albumID = this.lastID
+
                     for (const genre of album.genres) {
                         genreStmt.run(albumID, genre)
                     }
@@ -147,8 +148,18 @@ class AppDatabase {
      * @param song Song to add
      */
     async addSong(song: Song) {
-        this.albumInsertQueue.push({ data: song.data }, (album) => {
+        this.albumInsertQueue.push({ album: song.data.album }, (album) => {
             this.db.parallelize(async () => {
+                // Update all genres
+                await Promise.all(
+                    song.data.genres.map((genre) => this.addGenre(genre))
+                )
+
+                // Update all artists
+                await Promise.all(
+                    song.data.artists.map((artist) => this.addArtist(artist))
+                )
+
                 const songStmt = this.db.prepare(
                     'INSERT OR REPLACE INTO song VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)'
                 )
@@ -221,7 +232,7 @@ class AppDatabase {
      */
     async addArtist(artist: string): Promise<void> {
         return await new Promise((resolve) => {
-            this.db.serialize(() => {
+            this.db.serialize(async () => {
                 const artistStmt = this.db.prepare(
                     'INSERT OR IGNORE INTO artist VALUES(?)'
                 )

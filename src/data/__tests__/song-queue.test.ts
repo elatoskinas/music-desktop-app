@@ -1,5 +1,5 @@
 import { SongQueue } from '@data/song-queue.ts'
-import { Song, SongData, Album, AlbumData } from '@data/music-data.ts'
+import { Song, Album } from '@data/music-data.ts'
 
 let songQueue: SongQueue
 
@@ -26,7 +26,7 @@ describe('Single song tests', () => {
     let song: Song
 
     beforeEach(() => {
-        song = new Song(new SongData(), 'test/path')
+        song = new Song().setPath('test/path')
     })
 
     test('Test add song', () => {
@@ -85,9 +85,9 @@ describe('Multiple song test', () => {
 
     beforeEach(() => {
         songs = []
-        songs.push(new Song(new SongData(), 'test/path1'))
-        songs.push(new Song(new SongData(), 'test/path2'))
-        songs.push(new Song(new SongData(), 'test/path3'))
+        songs.push(new Song().setPath('test/path1'))
+        songs.push(new Song().setPath('test/path2'))
+        songs.push(new Song().setPath('test/path3'))
     })
 
     test('Test add multiple songs', () => {
@@ -120,12 +120,8 @@ describe('Multiple song test', () => {
     })
 
     test('Test fill from album', () => {
-        let albumData = new AlbumData()
-        let album = new Album(albumData)
-
-        for (const song of songs) {
-            album.addSong(song)
-        }
+        let album = new Album()
+        album.songs = songs
 
         songQueue.addAlbum(album)
 

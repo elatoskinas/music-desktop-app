@@ -28,3 +28,12 @@ export function formatTimestamp(time: number) {
 export function escapeRegex(text: string): string {
     return text.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
 }
+
+/**
+ * Splits an artist tag into a list of artists by the ';' character
+ *
+ * @param artist Artist tag
+ */
+export function splitArtists(artist: string): string[] {
+    return artist ? artist.split(';') : []
+}

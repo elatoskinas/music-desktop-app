@@ -36,7 +36,7 @@ export class MusicPlayingQueue extends React.Component<MusicPlayingQueueProps> {
                     }}
                 >
                     <StyledSongListEntryTitle>
-                        {song.data.title}
+                        {song.title}
                     </StyledSongListEntryTitle>
                 </StyledSongListEntry>
             )

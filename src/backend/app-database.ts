@@ -317,6 +317,23 @@ class AppDatabase {
         return resultSong
     }
 
+    getSongs(): Song[] {
+        return this.db
+            .prepare('SELECT * FROM song')
+            .all()
+            .map((songRow: SongModel) => {
+                return new Song()
+                    .setId(songRow.id)
+                    .setDisk(songRow.disk)
+                    .setDuration(songRow.duration)
+                    .setRating(songRow.rating)
+                    .setPath(songRow.path)
+                    .setTitle(songRow.title)
+                    .setTrack(songRow.track)
+                    .setYear(songRow.year)
+            })
+    }
+
     /**
      * Adds a genre to the database. If the genre already exists, does nothing.
      *

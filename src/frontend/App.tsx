@@ -6,6 +6,7 @@ import { HashRouter, Switch, Route } from 'react-router-dom'
 import { MusicController } from './MusicController'
 import { NavBar } from './NavBar'
 import { AppContextConsumer, AppContextProvider } from './AppContext'
+import { Gallery } from './Gallery'
 
 /**
  * Main application component.
@@ -20,7 +21,7 @@ class App extends React.Component {
                             <NavBar />
                             <Switch>
                                 <Route path="/gallery">
-                                    <h1>Gallery</h1>
+                                    <Gallery />
                                 </Route>
 
                                 <Route path="/settings">

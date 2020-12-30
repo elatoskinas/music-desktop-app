@@ -3,7 +3,7 @@ import path from 'path'
 
 import ApplicationDB from '@backend/app-database'
 
-import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
+import { GET_SONGS, LOADED_SOUND, OPEN_FILE_SELECTION, RETURN_SONGS } from '@common/messages.ts'
 import * as fileLoader from '@backend/file-loader'
 import { SUPPORTED_TYPES } from '@common/status.ts'
 
@@ -98,4 +98,9 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
             console.log(error)
         }
     )
+})
+
+ipcMain.on(GET_SONGS.name, (ev, data) => {
+    const songs = ApplicationDB.getSongs()
+    ev.reply(RETURN_SONGS.name, RETURN_SONGS.data(songs))
 })

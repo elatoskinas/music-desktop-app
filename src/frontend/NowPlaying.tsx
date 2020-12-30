@@ -7,7 +7,7 @@ import { MusicInfo } from '@frontend/MusicInfo'
 
 import { SongQueue } from '@data/song-queue'
 
-import { StyledMusicPlayerContentContainer } from './MusicPlayer.styles'
+import { StyledMusicPlayerContentContainer } from './NowPlaying.styles'
 import { MusicPlayingQueue } from './MusicPlayingQueue'
 import { AppContext, AppContextState } from './AppContext'
 

@@ -5,7 +5,6 @@ import { Howl } from 'howler'
 
 import { Song } from '@data/music-data' // eslint-disable-line no-unused-vars
 
-import { FileSelector } from '@frontend/FileSelector'
 import { MusicInfo } from '@frontend/MusicInfo'
 
 import { SongQueue } from '@data/song-queue'
@@ -14,11 +13,10 @@ import {
     StyledMusicPlayerContainer,
     StyledMusicPlayerContentContainer,
     StyledMusicPlayerContentPanel,
-    StyledMusicPlayerNavBarContainer,
-    StyledMusicPlayerNavBarContent,
 } from './MusicPlayer.styles'
 import { MusicPlayingQueue } from './MusicPlayingQueue'
 import { MusicController } from './MusicController'
+import { NavBar } from './NavBar'
 
 interface MusicPlayerState {
     sound: Howl
@@ -123,11 +121,7 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
         return (
             <StyledMusicPlayerContainer>
                 <StyledMusicPlayerContentPanel>
-                    <StyledMusicPlayerNavBarContainer>
-                        <StyledMusicPlayerNavBarContent>
-                            <FileSelector onSoundLoaded={this.onSongLoad} />
-                        </StyledMusicPlayerNavBarContent>
-                    </StyledMusicPlayerNavBarContainer>
+                    <NavBar />
 
                     <StyledMusicPlayerContentContainer>
                         <MusicInfo metadata={this.state.metadata} />

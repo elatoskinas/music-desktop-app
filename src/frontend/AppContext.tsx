@@ -6,6 +6,7 @@ export interface AppContextState {
     activeSong: Song
     queuedSongs: Song[]
     queueSong: (song: Song) => void
+    changeSong: (song: Song) => void
     nextSong: () => void
     previousSong: () => void
 }
@@ -26,6 +27,7 @@ export class AppContextProvider extends React.Component<{}, AppContextState> {
             activeSong: this.queue.current(),
             queuedSongs: this.queue.getAllSongs(),
             queueSong: this.queueSong,
+            changeSong: this.changeSong,
             nextSong: this.nextSong,
             previousSong: this.previousSong,
         }
@@ -37,6 +39,14 @@ export class AppContextProvider extends React.Component<{}, AppContextState> {
         this.setState({
             activeSong: this.queue.current(),
             queuedSongs: this.queue.getAllSongs(),
+        })
+    }
+
+    changeSong = (song: Song) => {
+        this.queue.changeSong(song)
+
+        this.setState({
+            activeSong: this.queue.current(),
         })
     }
 

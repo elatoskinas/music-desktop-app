@@ -1,6 +1,6 @@
 import { hot } from 'react-hot-loader/root'
 import * as React from 'react'
-import { MusicPlayer } from '@frontend/MusicPlayer'
+import { NowPlaying } from '@frontend/NowPlaying'
 import { AppContainer, AppContentPanel } from './App.styled'
 import { HashRouter, Switch, Route } from 'react-router-dom'
 import { MusicController } from './MusicController'
@@ -28,8 +28,7 @@ class App extends React.Component {
                                 </Route>
 
                                 <Route path="/playing">
-                                    <h1>Queue</h1>
-                                    <MusicPlayer />
+                                    <NowPlaying />
                                 </Route>
 
                                 <Route path="/">
@@ -38,7 +37,18 @@ class App extends React.Component {
                             </Switch>
                         </AppContentPanel>
 
-                        {/* <MusicController /> */}
+                        <AppContextConsumer>
+                            {(value) => {
+                                return (
+                                    <MusicController
+                                        song={value.activeSong}
+                                        onNextSong={value.nextSong}
+                                        onPreviousSong={value.previousSong}
+                                        onSongEnded={value.nextSong}
+                                    />
+                                )
+                            }}
+                        </AppContextConsumer>
                     </AppContainer>
                 </HashRouter>
             </AppContextProvider>

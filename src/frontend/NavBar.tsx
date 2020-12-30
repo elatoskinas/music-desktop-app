@@ -12,14 +12,20 @@ import {
     MdQueueMusic,
     MdSettings,
 } from 'react-icons/md'
+import { FileSelector } from './FileSelector'
+import { AppContext, AppContextState } from './AppContext'
 
 export class NavBar extends React.Component<{}, {}> {
+    static contextType = AppContext
+
     constructor(props) {
         super(props)
         this.state = {}
     }
 
     render() {
+        const { queueSong } = this.context as AppContextState
+
         return (
             <StyledNavBarContainer>
                 <StyledNavBarContent>
@@ -46,7 +52,12 @@ export class NavBar extends React.Component<{}, {}> {
                             <MdSettings size="3x"></MdSettings>
                         </StyledNavBarButton>
                     </Link>
-                    {/* <FileSelector onSoundLoaded={this.onSongLoad} /> */}
+
+                    <FileSelector
+                        onSoundLoaded={(song) => {
+                            queueSong(song)
+                        }}
+                    />
                 </StyledNavBarContent>
             </StyledNavBarContainer>
         )

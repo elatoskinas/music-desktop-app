@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Howl } from 'howler'
 
 import { PLAY_STATUS } from '@common/status.ts'
 import { IoMdPlay, IoMdPause } from 'react-icons/io'
@@ -10,15 +11,17 @@ import {
     StyledMusicControllerContainer,
 } from './MusicController.styles'
 import { MusicProgress } from './MusicProgressBar'
+import { Song } from '@data/music-data'
 
 export interface MusicControllerProps {
-    sound: Howl
-    onSongEnded: Function
-    onPreviousSong: any
-    onNextSong: any
+    song: Song
+    onPreviousSong: () => void
+    onNextSong: () => void
+    onSongEnded: () => void
 }
 
 interface MusicControllerState {
+    sound: Howl
     status: string
     duration: number
 }
@@ -98,6 +101,7 @@ export class MusicController extends React.Component<
         super(props)
 
         this.state = {
+            sound: null,
             status: PLAY_STATUS.STOPPED,
             duration: 0,
         }
@@ -105,27 +109,56 @@ export class MusicController extends React.Component<
         this.playSound = this.playSound.bind(this)
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.sound !== prevProps.sound) {
-            if (prevProps.sound != null) {
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.song !== prevProps.song) {
+            this.loadSong(this.props.song)
+        }
+
+        if (this.state.sound !== prevState.sound) {
+            if (prevState.sound != null) {
                 // Stop old sound
-                prevProps.sound.stop()
+                prevState.sound.stop()
 
                 // Remove all callbacks
-                prevProps.sound.off()
+                prevState.sound.off()
 
                 // Unload last sound
                 // TODO: Should some caching mechanism be used, e.g. for queue?
-                prevProps.sound.unload()
+                prevState.sound.unload()
             }
 
             // Reset status to stopped
             this.updateStatus(PLAY_STATUS.STOPPED)
 
             // Load sound if it exists
-            if (this.props.sound != null) {
-                this.loadSound(this.props.sound)
+            if (this.state.sound != null) {
+                this.loadSound(this.state.sound)
             }
+        }
+    }
+
+    /**
+     * Loads the Song from the provided data, and plays the song if the
+     * flag is set.
+     *
+     * @param musicData Song data
+     * @param play If true, the song will start playing
+     */
+    loadSong(musicData: Song) {
+        const sound = new Howl({
+            src: [musicData.path],
+            html5: true,
+        })
+
+        const oldSound = this.state.sound
+
+        this.setState({
+            sound,
+        })
+
+        // Do not play song automatically if this is the first song added
+        if (oldSound) {
+            sound.play()
         }
     }
 
@@ -163,7 +196,7 @@ export class MusicController extends React.Component<
      * Plays/pauses the current active sound, if a sound is loaded.
      */
     playSound() {
-        const sound = this.props.sound
+        const sound = this.state.sound
 
         // Play the sound
         if (sound != null) {
@@ -184,7 +217,7 @@ export class MusicController extends React.Component<
                     <ForwardButton callback={this.props.onNextSong} />
                 </StyledMusicControlContainer>
                 <MusicProgress
-                    sound={this.props.sound}
+                    sound={this.state.sound}
                     status={this.state.status}
                     duration={this.state.duration}
                 />

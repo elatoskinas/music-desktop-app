@@ -3,6 +3,7 @@
  */
 
 import { IPicture } from 'music-metadata'
+import { IntLike } from 'integer'
 
 /**
  * Metadata Classes
@@ -13,7 +14,7 @@ import { IPicture } from 'music-metadata'
  * Contains common data for music entries (songs & albums)
  */
 export abstract class MusicData {
-    id: number
+    id: IntLike
     title: string
     artists: string[]
     year: number
@@ -31,7 +32,7 @@ export abstract class MusicData {
         this.covers = []
     }
 
-    setId(id: number) {
+    setId(id: IntLike) {
         this.id = id
         return this
     }
@@ -138,6 +139,11 @@ export class Album extends MusicData {
 
     setTotalDisks(totalDisks: number) {
         this.totalDisks = totalDisks
+        return this
+    }
+
+    setSongs(songs: Song[]) {
+        this.songs = songs
         return this
     }
 }

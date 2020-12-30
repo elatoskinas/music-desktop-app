@@ -10,7 +10,9 @@ import {
     SongGenreModel,
     SongModel,
 } from '@data/music-model'
+import { IntLike } from 'integer'
 
+/** Task data for album insert queue */
 interface AlbumInsertQueueTask {
     album: Album
 }
@@ -23,6 +25,7 @@ interface AlbumInsertQueueTask {
  *       (using 1 fetch instead of 2?)
  * TODO: Look into secondary indices
  * TODO: projections for GET
+ * TODO: split table querying into separate DAOs? (e.g. one for song, one for album)
  */
 class AppDatabase {
     db: Database
@@ -35,6 +38,7 @@ class AppDatabase {
      * TODO: Can probably be optimized further, e.g. in batch processing
      * TODO: Queueing is only needed for the same AlbumData objects. Can maybe use
      *       Map<AlbumData, Queue>
+     * TODO: Re-evaluate if queue necessary with better-sqlite3 (one test with concurrency 100 did not indicate so)
      */
     albumInsertQueue: QueueObject<AlbumInsertQueueTask>
 
@@ -73,9 +77,8 @@ class AppDatabase {
         let albumEntry: Album = this.getAlbum(album)
 
         if (!albumEntry) {
-            this.addAlbum(album)
-            // TODO: can optimize by fetching by ID directly
-            albumEntry = this.getAlbum(album)
+            const id = this.addAlbum(album)
+            albumEntry = this.getAlbum(album.setId(id))
         }
 
         return albumEntry
@@ -168,12 +171,13 @@ class AppDatabase {
 
     /**
      * Adds an album to the database from the provided AlbumData data object.
+     * Returns the id of the album that was inserted.
      *
      * TODO: Handle updates (rather than 'IGNORE INTO') [for extra genres]
      *
      * @param album Album to add
      */
-    addAlbum(album: Album): void {
+    addAlbum(album: Album): IntLike {
         // Update all genres
         album.genres.map((genre) => this.addGenre(genre))
 
@@ -206,6 +210,8 @@ class AppDatabase {
         for (const artist of album.artists) {
             artistStmt.run(albumID, artist)
         }
+
+        return albumID
     }
 
     /**
@@ -267,6 +273,13 @@ class AppDatabase {
         })
     }
 
+    /**
+     * Gets song data from the database, querying by path.
+     *
+     * TODO: replace parameter with 'Song' object?
+     *
+     * @param path Path of the song to retrieve
+     */
     getSong(path: string): Song {
         const songRow: SongModel = this.db
             .prepare('SELECT * FROM song WHERE path = ?')
@@ -332,7 +345,7 @@ class AppDatabase {
      * Creates data tables.
      */
     initializeTables() {
-        this.db.exec('PRAGMA foreign_keys = ON')
+        this.db.pragma('foreign_keys = ON')
 
         this.db.exec(`CREATE TABLE IF NOT EXISTS song(
             id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -9,14 +9,8 @@ import { MusicInfo } from '@frontend/MusicInfo'
 
 import { SongQueue } from '@data/song-queue'
 
-import {
-    StyledMusicPlayerContainer,
-    StyledMusicPlayerContentContainer,
-    StyledMusicPlayerContentPanel,
-} from './MusicPlayer.styles'
+import { StyledMusicPlayerContentContainer } from './MusicPlayer.styles'
 import { MusicPlayingQueue } from './MusicPlayingQueue'
-import { MusicController } from './MusicController'
-import { NavBar } from './NavBar'
 
 interface MusicPlayerState {
     sound: Howl
@@ -119,23 +113,10 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
 
     render() {
         return (
-            <StyledMusicPlayerContainer>
-                <StyledMusicPlayerContentPanel>
-                    <NavBar />
-
-                    <StyledMusicPlayerContentContainer>
-                        <MusicInfo metadata={this.state.metadata} />
-                        <MusicPlayingQueue songQueue={this.songQueue} />
-                    </StyledMusicPlayerContentContainer>
-                </StyledMusicPlayerContentPanel>
-
-                <MusicController
-                    sound={this.state.sound}
-                    onSongEnded={this.onSongEnded}
-                    onPreviousSong={this.onPreviousSong}
-                    onNextSong={this.onNextSong}
-                />
-            </StyledMusicPlayerContainer>
+            <StyledMusicPlayerContentContainer>
+                <MusicInfo metadata={this.state.metadata} />
+                <MusicPlayingQueue songQueue={this.songQueue} />
+            </StyledMusicPlayerContentContainer>
         )
     }
 }

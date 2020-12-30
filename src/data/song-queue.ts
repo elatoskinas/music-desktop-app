@@ -6,10 +6,6 @@ import { Song, Album } from '@data/music-data'
  * a list of songs and a pointer to the current song
  */
 export class SongQueue {
-    // TODO: Temporary external event receiver when song is changed
-    //       outside of normal queue/music player controls.
-    public onSongChangeListener: (newSong: Song) => void
-
     private queue: LinkedList<Song>
     private songNodeMapping: Map<Song, LinkedList.Node<Song>>
     private currentSong: LinkedList.Node<Song>
@@ -32,7 +28,6 @@ export class SongQueue {
     changeSong(song: Song) {
         if (this.songNodeMapping.has(song)) {
             this.currentSong = this.songNodeMapping.get(song)
-            this.onSongChangeListener(song)
         }
     }
 

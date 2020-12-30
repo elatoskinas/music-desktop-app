@@ -32,11 +32,6 @@ export class MusicPlayer extends React.Component<{}, MusicPlayerState> {
             metadata: undefined,
         }
 
-        this.songQueue = new SongQueue()
-        this.songQueue.onSongChangeListener = (song: Song) => {
-            this.loadSound(song, true)
-        }
-
         this.onSongLoad = this.onSongLoad.bind(this)
         this.onSongEnded = this.onSongEnded.bind(this)
         this.onNextSong = this.onNextSong.bind(this)

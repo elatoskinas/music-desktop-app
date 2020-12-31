@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import LinkedList from 'yallist'
 import { Song, Album } from '@data/music-data'
 
@@ -105,8 +106,10 @@ export class SongQueue {
      * @param song  Song to add to queue
      */
     addSong(song: Song) {
-        this.queue.push(song)
-        this.songNodeMapping.set(song, this.queue.tail)
+        // Clone the song prior to insertion to maintain uniqueness per song instance.
+        const songCopy = _.clone(song)
+        this.queue.push(songCopy)
+        this.songNodeMapping.set(songCopy, this.queue.tail)
 
         // Update current song if there was none before
         if (this.currentSong == undefined) {

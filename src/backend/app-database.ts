@@ -319,18 +319,20 @@ class AppDatabase {
 
     getSongs(): Song[] {
         return this.db
-            .prepare('SELECT * FROM song')
+            .prepare('SELECT path FROM song')
             .all()
             .map((songRow: SongModel) => {
-                return new Song()
-                    .setId(songRow.id)
-                    .setDisk(songRow.disk)
-                    .setDuration(songRow.duration)
-                    .setRating(songRow.rating)
-                    .setPath(songRow.path)
-                    .setTitle(songRow.title)
-                    .setTrack(songRow.track)
-                    .setYear(songRow.year)
+                return (
+                    new Song()
+                        .setId(songRow.id)
+                        // .setDisk(songRow.disk)
+                        // .setDuration(songRow.duration)
+                        // .setRating(songRow.rating)
+                        .setPath(songRow.path)
+                )
+                // .setTitle(songRow.title)
+                // .setTrack(songRow.track)
+                // .setYear(songRow.year)
             })
     }
 

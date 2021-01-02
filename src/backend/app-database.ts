@@ -117,14 +117,14 @@ class AppDatabase {
             const existingAlbumStmt =
                 album.artists.length == 0
                     ? this.db.prepare(
-                        `SELECT * FROM album WHERE ${titleCondition} LIMIT 1`
-                    )
+                          `SELECT * FROM album WHERE ${titleCondition} LIMIT 1`
+                      )
                     : this.db.prepare(
-                        `
+                          `
                         SELECT * FROM album JOIN album_artist ON album.id=album_artist.album_id
                         WHERE ${titleCondition} AND artist_name IN (${artistInQueryPlaceholder}) LIMIT 1
                         `
-                    )
+                      )
 
             const params = []
             if (album.title) {
@@ -156,15 +156,9 @@ class AppDatabase {
                 return row.genre
             })
 
-        const resultAlbum: Album = new Album()
+        const resultAlbum: Album = Album.create(albumRow)
             .setArtists(artists)
             .setGenres(genres)
-            .setId(albumRow.id)
-            .setRating(albumRow.rating)
-            .setTitle(albumRow.title)
-            .setTotalDisks(albumRow.total_disks)
-            .setTotalTracks(albumRow.total_tracks)
-            .setYear(albumRow.year)
 
         return resultAlbum
     }
@@ -301,20 +295,27 @@ class AppDatabase {
 
         const album = this.getAlbum(new Album().setId(songRow.albumId))
 
-        const resultSong: Song = new Song()
-            .setId(songRow.id)
+        const resultSong: Song = Song.create(songRow)
             .setAlbum(album)
             .setArtists(artists)
-            .setDisk(songRow.disk)
-            .setDuration(songRow.duration)
             .setGenres(genres)
-            .setRating(songRow.rating)
-            .setPath(songRow.path)
-            .setTitle(songRow.title)
-            .setTrack(songRow.track)
-            .setYear(songRow.year)
 
         return resultSong
+    }
+
+    /**
+     * Retrieves all songs from the database.
+     *
+     * TODO: Add projections
+     * TODO: Add filter conditions
+     */
+    getSongs(): Song[] {
+        return this.db
+            .prepare('SELECT path FROM song')
+            .all()
+            .map((songRow: SongModel) => {
+                return Song.create(songRow)
+            })
     }
 
     /**

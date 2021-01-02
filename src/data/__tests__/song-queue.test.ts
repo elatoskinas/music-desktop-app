@@ -35,7 +35,7 @@ describe('Single song tests', () => {
 
         songQueue.addSong(song)
         expect(songQueue.songCount()).toBe(1)
-        expect(songQueue.current()).toBe(song)
+        expect(songQueue.current()).toEqual(song)
     })
 
     test('Test add & next song', () => {
@@ -43,40 +43,40 @@ describe('Single song tests', () => {
 
         // Ensure song loaded to queue as first song
         expect(songQueue.songCount()).toBe(1)
-        expect(songQueue.current()).toBe(song)
+        expect(songQueue.current()).toEqual(song)
 
         // Assert wrapping of song
-        expect(songQueue.next()).toBe(song)
-        expect(songQueue.current()).toBe(song)
+        expect(songQueue.next()).toEqual(song)
+        expect(songQueue.current()).toEqual(song)
     })
 
     test('Test previous wrapping', () => {
         songQueue.addSong(song)
 
         expect(songQueue.songCount()).toBe(1)
-        expect(songQueue.current()).toBe(song)
-        expect(songQueue.previous()).toBe(song)
-        expect(songQueue.current()).toBe(song)
+        expect(songQueue.current()).toEqual(song)
+        expect(songQueue.previous()).toEqual(song)
+        expect(songQueue.current()).toEqual(song)
     })
 
     test('Test next to previous wrapping', () => {
         songQueue.addSong(song)
 
-        expect(songQueue.current()).toBe(song)
-        expect(songQueue.next()).toBe(song)
-        expect(songQueue.current()).toBe(song)
-        expect(songQueue.previous()).toBe(song)
+        expect(songQueue.current()).toEqual(song)
+        expect(songQueue.next()).toEqual(song)
+        expect(songQueue.current()).toEqual(song)
+        expect(songQueue.previous()).toEqual(song)
     })
 
     test('Test next to previous edge multiple', () => {
         songQueue.addSong(song)
 
-        expect(songQueue.current()).toBe(song)
-        expect(songQueue.next()).toBe(song)
-        expect(songQueue.next()).toBe(song)
-        expect(songQueue.next()).toBe(song)
-        expect(songQueue.current()).toBe(song)
-        expect(songQueue.previous()).toBe(song)
+        expect(songQueue.current()).toEqual(song)
+        expect(songQueue.next()).toEqual(song)
+        expect(songQueue.next()).toEqual(song)
+        expect(songQueue.next()).toEqual(song)
+        expect(songQueue.current()).toEqual(song)
+        expect(songQueue.previous()).toEqual(song)
     })
 })
 
@@ -98,10 +98,10 @@ describe('Multiple song test', () => {
         expect(songQueue.songCount()).toBe(3)
 
         // Run a full loop through the queue
-        expect(songQueue.current()).toBe(songs[0])
-        expect(songQueue.next()).toBe(songs[1])
-        expect(songQueue.next()).toBe(songs[2])
-        expect(songQueue.next()).toBe(songs[0])
+        expect(songQueue.current()).toEqual(songs[0])
+        expect(songQueue.next()).toEqual(songs[1])
+        expect(songQueue.next()).toEqual(songs[2])
+        expect(songQueue.next()).toEqual(songs[0])
     })
 
     test('Test multiple songs previous & next', () => {
@@ -112,11 +112,11 @@ describe('Multiple song test', () => {
         expect(songQueue.songCount()).toBe(3)
 
         // Run a double wrapping loop around the queue
-        expect(songQueue.current()).toBe(songs[0])
-        expect(songQueue.previous()).toBe(songs[2])
-        expect(songQueue.previous()).toBe(songs[1])
-        expect(songQueue.next()).toBe(songs[2])
-        expect(songQueue.next()).toBe(songs[0])
+        expect(songQueue.current()).toEqual(songs[0])
+        expect(songQueue.previous()).toEqual(songs[2])
+        expect(songQueue.previous()).toEqual(songs[1])
+        expect(songQueue.next()).toEqual(songs[2])
+        expect(songQueue.next()).toEqual(songs[0])
     })
 
     test('Test fill from album', () => {
@@ -126,9 +126,9 @@ describe('Multiple song test', () => {
         songQueue.addAlbum(album)
 
         expect(songQueue.songCount()).toBe(3)
-        expect(songQueue.current()).toBe(songs[0])
+        expect(songQueue.current()).toEqual(songs[0])
         songQueue.next()
-        expect(songQueue.next()).toBe(songs[2])
+        expect(songQueue.next()).toEqual(songs[2])
     })
 
     test('Test has next state', () => {
@@ -138,11 +138,24 @@ describe('Multiple song test', () => {
 
         expect(songQueue.songCount()).toBe(3)
 
-        expect(songQueue.current()).toBe(songs[0])
+        expect(songQueue.current()).toEqual(songs[0])
         expect(songQueue.hasNext()).toBe(true)
-        expect(songQueue.next()).toBe(songs[1])
+        expect(songQueue.next()).toEqual(songs[1])
         expect(songQueue.hasNext()).toBe(true)
-        expect(songQueue.next()).toBe(songs[2])
+        expect(songQueue.next()).toEqual(songs[2])
         expect(songQueue.hasNext()).toBe(false)
     })
+})
+
+test('Test add same songs', () => {
+    const song = new Song().setPath('path/to/song.mp3')
+    songQueue.addSong(song)
+    songQueue.addSong(song)
+
+    const song1 = songQueue.current()
+    const song2 = songQueue.next()
+
+    // Songs should equal, but should not refer to the same reference
+    expect(song1).toEqual(song2)
+    expect(song1).not.toBe(song2)
 })

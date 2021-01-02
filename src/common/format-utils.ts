@@ -35,5 +35,11 @@ export function escapeRegex(text: string): string {
  * @param artist Artist tag
  */
 export function splitArtists(artist: string): string[] {
-    return artist ? artist.split(';') : []
+    if (!artist) {
+        return []
+    }
+
+    return artist.split(';').map((artist) => {
+        return artist.trim()
+    })
 }

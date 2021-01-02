@@ -3,8 +3,14 @@ import path from 'path'
 
 import ApplicationDB from '@backend/app-database'
 
-import { LOADED_SOUND, OPEN_FILE_SELECTION } from '@common/messages.ts'
+import {
+    GET_SONGS,
+    LOADED_SOUND,
+    OPEN_FILE_SELECTION,
+    RETURN_SONGS,
+} from '@common/messages.ts'
 import * as fileLoader from '@backend/file-loader'
+import { loadSoundData } from '@backend/music-loader'
 import { SUPPORTED_TYPES } from '@common/status.ts'
 
 // Event imports (adds new events to app.on)
@@ -98,4 +104,16 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
             console.log(error)
         }
     )
+})
+
+// TODO: Fix loading for larger file volumes
+ipcMain.on(GET_SONGS.name, async (ev) => {
+    const songs = await Promise.all(
+        ApplicationDB.getSongs().map(async (song: Song) => {
+            // Re-load all songs to account for metadata differences and
+            // to retrieve cover art.
+            return await loadSoundData(song.path)
+        })
+    )
+    ev.reply(RETURN_SONGS.name, RETURN_SONGS.data(songs))
 })

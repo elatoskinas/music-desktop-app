@@ -1,13 +1,15 @@
+import { Song } from '@data/music-data'
 import React from 'react'
 import {
     StyledSongListContainer,
     StyledSongListEntry,
     StyledSongListEntryTitle,
 } from './MusicPlayingQueue.styles'
-import { SongQueue } from '@data/song-queue'
 
 export interface MusicPlayingQueueProps {
-    songQueue: SongQueue
+    activeSong: Song
+    songs: Song[]
+    onSongChange: (song: Song) => void
 }
 
 /**
@@ -20,19 +22,16 @@ export class MusicPlayingQueue extends React.Component<MusicPlayingQueueProps> {
      * The active song is highlighted.
      */
     getSongListEntries(): JSX.Element[] {
-        const queue = this.props.songQueue
-
         // Map queue songs to list entries
-        // TODO: Optimize this?
-        return queue.getAllSongs().map((song, index) => {
-            const isActive = song === queue.current()
+        return this.props.songs.map((song, index) => {
+            const isActive = song === this.props.activeSong
 
             return (
                 <StyledSongListEntry
                     key={index}
                     isActive={isActive}
                     onClick={() => {
-                        queue.changeSong(song)
+                        this.props.onSongChange(song)
                     }}
                 >
                     <StyledSongListEntryTitle>

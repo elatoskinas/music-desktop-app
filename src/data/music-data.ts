@@ -4,10 +4,7 @@
 
 import { IPicture } from 'music-metadata'
 import { IntLike } from 'integer'
-
-/**
- * Metadata Classes
- */
+import { AlbumModel, SongModel } from './music-model'
 
 /**
  * Class to represent the data of a generic Music Entry;
@@ -94,6 +91,23 @@ export class Song extends MusicData {
         this.album = new Album()
     }
 
+    /**
+     * Creates a Song instance from a SongModel data object.
+     *
+     * @param data SongModel to create Song from
+     */
+    static create(data: SongModel) {
+        return new Song()
+            .setDisk(data.disk)
+            .setDuration(data.duration)
+            .setId(data.id)
+            .setPath(data.path)
+            .setRating(data.rating)
+            .setTitle(data.title)
+            .setTrack(data.track)
+            .setYear(data.year)
+    }
+
     setAlbum(album: Album) {
         this.album = album
         return this
@@ -130,6 +144,21 @@ export class Album extends MusicData {
      */
     constructor() {
         super()
+    }
+
+    /**
+     * Creates an Album instance from an AlbumModel data object.
+     *
+     * @param data AlbumModel to create Album from
+     */
+    static create(data: AlbumModel) {
+        return new Album()
+            .setId(data.id)
+            .setRating(data.rating)
+            .setTitle(data.title)
+            .setTotalDisks(data.total_disks)
+            .setTotalTracks(data.total_tracks)
+            .setYear(data.year)
     }
 
     setTotalTracks(totalTracks: number) {

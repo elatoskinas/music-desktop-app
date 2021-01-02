@@ -1,11 +1,19 @@
 import { hot } from 'react-hot-loader/root'
 import * as React from 'react'
 import { NowPlaying } from '@frontend/NowPlaying'
-import { AppContainer, AppContentPanel } from './App.styled'
+import {
+    AppContainer,
+    AppContentMainPanel,
+    AppContentPanel,
+} from './App.styled'
 import { HashRouter, Switch, Route } from 'react-router-dom'
 import { MusicController } from './MusicController'
 import { NavBar } from './NavBar'
-import { AppContextConsumer, AppContextProvider, AppContextState } from './AppContext'
+import {
+    AppContextConsumer,
+    AppContextProvider,
+    AppContextState,
+} from './AppContext'
 import { Gallery } from './Gallery'
 
 /**
@@ -19,23 +27,25 @@ class App extends React.Component {
                     <AppContainer>
                         <AppContentPanel>
                             <NavBar />
-                            <Switch>
-                                <Route path="/gallery">
-                                    <Gallery />
-                                </Route>
+                            <AppContentMainPanel>
+                                <Switch>
+                                    <Route path="/gallery">
+                                        <Gallery />
+                                    </Route>
 
-                                <Route path="/settings">
-                                    <h1>Settings</h1>
-                                </Route>
+                                    <Route path="/settings">
+                                        <h1>Settings</h1>
+                                    </Route>
 
-                                <Route path="/playing">
-                                    <NowPlaying />
-                                </Route>
+                                    <Route path="/playing">
+                                        <NowPlaying />
+                                    </Route>
 
-                                <Route path="/">
-                                    <h1>Home</h1>
-                                </Route>
-                            </Switch>
+                                    <Route path="/">
+                                        <h1>Home</h1>
+                                    </Route>
+                                </Switch>
+                            </AppContentMainPanel>
                         </AppContentPanel>
 
                         <AppContextConsumer>

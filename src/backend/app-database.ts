@@ -156,15 +156,9 @@ class AppDatabase {
                 return row.genre
             })
 
-        const resultAlbum: Album = new Album()
+        const resultAlbum: Album = Album.create(albumRow)
             .setArtists(artists)
             .setGenres(genres)
-            .setId(albumRow.id)
-            .setRating(albumRow.rating)
-            .setTitle(albumRow.title)
-            .setTotalDisks(albumRow.total_disks)
-            .setTotalTracks(albumRow.total_tracks)
-            .setYear(albumRow.year)
 
         return resultAlbum
     }
@@ -301,18 +295,10 @@ class AppDatabase {
 
         const album = this.getAlbum(new Album().setId(songRow.albumId))
 
-        const resultSong: Song = new Song()
-            .setId(songRow.id)
+        const resultSong: Song = Song.create(songRow)
             .setAlbum(album)
             .setArtists(artists)
-            .setDisk(songRow.disk)
-            .setDuration(songRow.duration)
             .setGenres(genres)
-            .setRating(songRow.rating)
-            .setPath(songRow.path)
-            .setTitle(songRow.title)
-            .setTrack(songRow.track)
-            .setYear(songRow.year)
 
         return resultSong
     }
@@ -328,17 +314,7 @@ class AppDatabase {
             .prepare('SELECT path FROM song')
             .all()
             .map((songRow: SongModel) => {
-                return (
-                    new Song()
-                        .setId(songRow.id)
-                        // .setDisk(songRow.disk)
-                        // .setDuration(songRow.duration)
-                        // .setRating(songRow.rating)
-                        .setPath(songRow.path)
-                )
-                // .setTitle(songRow.title)
-                // .setTrack(songRow.track)
-                // .setYear(songRow.year)
+                return Song.create(songRow)
             })
     }
 

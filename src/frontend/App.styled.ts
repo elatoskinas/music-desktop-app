@@ -11,3 +11,7 @@ export const AppContentPanel = styled.div`
     flex-flow: row;
     overflow-y: auto;
 `
+export const AppContentMainPanel = styled.div`
+    width: 100%;
+    overflow-y: auto;
+`

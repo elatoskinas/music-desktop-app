@@ -11,6 +11,10 @@ import { StyledMusicPlayerContentContainer } from './NowPlaying.styles'
 import { MusicPlayingQueue } from './MusicPlayingQueue'
 import { AppContext, AppContextState } from './AppContext'
 
+/**
+ * Component to display the queue of currently playing songs,
+ * and allow interactions to modify queue and change songs.
+ */
 export class NowPlaying extends React.Component<{}, {}> {
     static contextType = AppContext
 

@@ -14,6 +14,10 @@ import {
 } from 'react-icons/md'
 import { FileSelector } from './FileSelector'
 
+/**
+ * Main app navigation bar shown in most pages, giving access
+ * to main functionality.
+ */
 export class NavBar extends React.Component<{}, {}> {
     constructor(props) {
         super(props)

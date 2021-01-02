@@ -14,6 +14,10 @@ interface GalleryState {
     songs: Song[]
 }
 
+/**
+ * Gallery displaying songs loaded by the app
+ * TODO: Refresh functionality
+ */
 export class Gallery extends React.Component<{}, GalleryState> {
     static contextType = AppContext
 

@@ -5,7 +5,7 @@ import { AppContainer, AppContentPanel } from './App.styled'
 import { HashRouter, Switch, Route } from 'react-router-dom'
 import { MusicController } from './MusicController'
 import { NavBar } from './NavBar'
-import { AppContextConsumer, AppContextProvider } from './AppContext'
+import { AppContextConsumer, AppContextProvider, AppContextState } from './AppContext'
 import { Gallery } from './Gallery'
 
 /**
@@ -39,13 +39,15 @@ class App extends React.Component {
                         </AppContentPanel>
 
                         <AppContextConsumer>
-                            {(value) => {
+                            {(contextValue: AppContextState) => {
                                 return (
                                     <MusicController
-                                        song={value.activeSong}
-                                        onNextSong={value.nextSong}
-                                        onPreviousSong={value.previousSong}
-                                        onSongEnded={value.nextSong}
+                                        song={contextValue.activeSong}
+                                        onNextSong={contextValue.nextSong}
+                                        onPreviousSong={
+                                            contextValue.previousSong
+                                        }
+                                        onSongEnded={contextValue.nextSong}
                                     />
                                 )
                             }}

@@ -106,6 +106,7 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
     )
 })
 
+// TODO: Fix loading for larger file volumes
 ipcMain.on(GET_SONGS.name, async (ev) => {
     const songs = await Promise.all(
         ApplicationDB.getSongs().map(async (song: Song) => {

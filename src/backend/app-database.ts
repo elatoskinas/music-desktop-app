@@ -317,6 +317,12 @@ class AppDatabase {
         return resultSong
     }
 
+    /**
+     * Retrieves all songs from the database.
+     *
+     * TODO: Add projections
+     * TODO: Add filter conditions
+     */
     getSongs(): Song[] {
         return this.db
             .prepare('SELECT path FROM song')

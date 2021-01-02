@@ -2,19 +2,34 @@ import { Song } from '@data/music-data'
 import { SongQueue } from '@data/song-queue'
 import * as React from 'react'
 
+/** Shared App Context state */
 export interface AppContextState {
+    /** Song that is currently selected to be played */
     activeSong: Song
+
+    /** Songs that are in the playing queue */
     queuedSongs: Song[]
+
+    /** Queues a song */
     queueSong: (song: Song) => void
+
+    /** Changes the song to the specified */
     changeSong: (song: Song) => void
+
+    /** Changes song to next in queue */
     nextSong: () => void
+
+    /** Changes song to previous in queue */
     previousSong: () => void
 }
 
 export const AppContext = React.createContext<AppContextState>(null)
-
 export const AppContextConsumer = AppContext.Consumer
 
+/**
+ * App Context Provider component that provides AppContext to the
+ * children of the component.
+ */
 export class AppContextProvider extends React.Component<{}, AppContextState> {
     queue: SongQueue
 

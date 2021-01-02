@@ -4,10 +4,10 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
 import { PLAY_STATUS } from '@common/status.ts'
-import { MusicController, PlayButton } from '@frontend/MusicController'
+import { PlayButton } from '@frontend/MusicController'
 
 import { Howl } from 'howler'
-import { Song } from '@data/music-data'
+// import { Song } from '@data/music-data'
 
 jest.mock('howler')
 

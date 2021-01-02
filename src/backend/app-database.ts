@@ -117,14 +117,14 @@ class AppDatabase {
             const existingAlbumStmt =
                 album.artists.length == 0
                     ? this.db.prepare(
-                        `SELECT * FROM album WHERE ${titleCondition} LIMIT 1`
-                    )
+                          `SELECT * FROM album WHERE ${titleCondition} LIMIT 1`
+                      )
                     : this.db.prepare(
-                        `
+                          `
                         SELECT * FROM album JOIN album_artist ON album.id=album_artist.album_id
                         WHERE ${titleCondition} AND artist_name IN (${artistInQueryPlaceholder}) LIMIT 1
                         `
-                    )
+                      )
 
             const params = []
             if (album.title) {

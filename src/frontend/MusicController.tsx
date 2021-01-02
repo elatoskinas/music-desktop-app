@@ -150,16 +150,11 @@ export class MusicController extends React.Component<
             html5: true,
         })
 
-        const oldSound = this.state.sound
-
         this.setState({
             sound,
         })
 
-        // Do not play song automatically if this is the first song added
-        if (oldSound) {
-            sound.play()
-        }
+        sound.play()
     }
 
     /**

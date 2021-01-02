@@ -342,6 +342,20 @@ class AppDatabase {
         this.db.prepare('INSERT OR IGNORE INTO artist VALUES(?)').run(artist)
     }
 
+    storePreference(key: string, value: string): void {
+        this.db
+            .prepare(`INSERT OR REPLACE INTO preferences VALUES(?, ?)`)
+            .run(key, value)
+    }
+
+    getPreference(key: string): string | null {
+        const valueRow = this.db
+            .prepare(`SELECT value FROM preferences WHERE key = ?`)
+            .get(key)
+
+        return valueRow ? valueRow.value : null
+    }
+
     /**
      * Creates data tables.
      */
@@ -408,6 +422,11 @@ class AppDatabase {
             FOREIGN KEY(album_id) REFERENCES album(id) ON DELETE CASCADE,
             FOREIGN KEY(artist_name) REFERENCES artist(name) ON DELETE CASCADE,
             PRIMARY KEY(album_id, artist_name)
+        )`)
+
+        this.db.exec(`CREATE TABLE IF NOT EXISTS preferences(
+            key TEXT PRIMARY KEY,
+            value TEXT
         )`)
     }
 }

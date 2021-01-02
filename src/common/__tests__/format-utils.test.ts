@@ -16,3 +16,21 @@ test.each([
     const result = formatUtils.formatTimestamp(time)
     expect(result).toBe(expected)
 })
+
+test.each([
+    [undefined, []],
+    [null, []],
+    ['artist', ['artist']],
+    ['Artist With Spaces', ['Artist With Spaces']],
+    ['Artist1;Artist2;Artist3', ['Artist1', 'Artist2', 'Artist3']],
+    ['Artist1; Artist2; Artist3', ['Artist1', 'Artist2', 'Artist3']],
+    ['Artist1;', ['Artist1', '']],
+    ['  Artist  ', ['Artist']],
+    [
+        'Artist With Space;Another Artist;  Artist1',
+        ['Artist With Space', 'Another Artist', 'Artist1'],
+    ],
+])('Split artists of %s', (artist: string, expected: string[]) => {
+    const result = formatUtils.splitArtists(artist)
+    expect(result).toEqual(expected)
+})

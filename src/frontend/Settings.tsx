@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { AppContext, AppContextState } from './AppContext'
-import {
-    LOADED_SOUND,
-    OPEN_FILE_SELECTION,
-    RETURN_FILE_SELECTION,
-} from '@common/messages.ts'
+import { OPEN_FILE_SELECTION, RETURN_FILE_SELECTION } from '@common/messages.ts'
 
 import { ipcRenderer as ipc } from 'electron'
+import {
+    StyledDirectoryContainer,
+    StyledDirectoryButton,
+} from './Settings.styles'
 
 interface SettingsState {
     scanDirectories: string[]
@@ -73,7 +73,11 @@ export class Settings extends React.Component<{}, SettingsState> {
 
         const songDirectoriesElements = scanDirectories.map(
             (songDir, index) => {
-                return <div key={index}>{songDir}</div>
+                return (
+                    <StyledDirectoryContainer key={index}>
+                        {songDir}
+                    </StyledDirectoryContainer>
+                )
             }
         )
 
@@ -81,10 +85,10 @@ export class Settings extends React.Component<{}, SettingsState> {
             <div>
                 <h1>Settings</h1>
                 <div>
-                    {songDirectoriesElements}
-                    <button onClick={this.openFileSelection}>
+                    <StyledDirectoryButton onClick={this.openFileSelection}>
                         + Add Directory
-                    </button>
+                    </StyledDirectoryButton>
+                    {songDirectoriesElements}
                 </div>
             </div>
         )

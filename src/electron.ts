@@ -6,8 +6,8 @@ import ApplicationDB from '@backend/app-database'
 import {
     GET_PREFERENCES,
     GET_SONGS,
-    LOADED_SOUND,
     OPEN_FILE_SELECTION,
+    RETURN_FILE_SELECTION,
     RETURN_PREFERENCES,
     RETURN_SONGS,
     STORE_PREFERENCES,
@@ -78,11 +78,11 @@ app.on('ready', async () => {
 // Open directory event
 ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
     // Get property for file selection
-    const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
+    // const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
 
     // Open dialog for file selection (enable multi-selection mode)
     let promise = dialog.showOpenDialog({
-        properties: [fileSelectProperty, 'multiSelections'],
+        properties: ['openDirectory', 'multiSelections'],
         filters: [{ name: 'All Files', extensions: SUPPORTED_TYPES }],
     })
 
@@ -91,15 +91,17 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
         function (success) {
             // If file selection was not cancelled, then process selected file paths
             if (!success.canceled) {
-                // Construct file callback to send back to event
-                let replyCallback = function fileSendCallback(sound: Song) {
-                    ApplicationDB.addSong(sound)
-                    ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
-                }
+                ev.reply(
+                    RETURN_FILE_SELECTION.name,
+                    RETURN_FILE_SELECTION.data(success.filePaths)
+                )
 
+                // Process all sound paths
                 fileLoader.processSoundFilePaths(
                     success.filePaths,
-                    replyCallback
+                    (sound: Song) => {
+                        ApplicationDB.addSong(sound)
+                    }
                 )
             }
         },

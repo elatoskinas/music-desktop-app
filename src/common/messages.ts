@@ -2,9 +2,16 @@ import { Song } from '@data/music-data'
 
 export const OPEN_FILE_SELECTION = {
     name: 'openFileSelection',
-    data: (useFolders: boolean) => {
+    data: () => {
+        return {}
+    },
+}
+
+export const RETURN_FILE_SELECTION = {
+    name: 'returnFileSelection',
+    data: (folders: string[]) => {
         return {
-            useFolders: useFolders,
+            folders,
         }
     },
 }

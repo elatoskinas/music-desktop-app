@@ -33,3 +33,31 @@ export const RETURN_SONGS = {
         }
     },
 }
+
+export const GET_PREFERENCES = {
+    name: 'getPreferences',
+    data: (key: string) => {
+        return {
+            key,
+        }
+    },
+}
+
+export const RETURN_PREFERENCES = {
+    name: 'returnPreferences',
+    data: (value: string | null) => {
+        return {
+            value,
+        }
+    },
+}
+
+export const STORE_PREFERENCES = {
+    name: 'storePreferences',
+    data: (key: string, value: string) => {
+        return {
+            key,
+            value,
+        }
+    },
+}

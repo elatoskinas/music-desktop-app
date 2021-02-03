@@ -4,10 +4,13 @@ import path from 'path'
 import ApplicationDB from '@backend/app-database'
 
 import {
+    GET_PREFERENCES,
     GET_SONGS,
     LOADED_SOUND,
     OPEN_FILE_SELECTION,
+    RETURN_PREFERENCES,
     RETURN_SONGS,
+    STORE_PREFERENCES,
 } from '@common/messages.ts'
 import * as fileLoader from '@backend/file-loader'
 import { loadSoundData } from '@backend/music-loader'
@@ -116,4 +119,13 @@ ipcMain.on(GET_SONGS.name, async (ev) => {
         })
     )
     ev.reply(RETURN_SONGS.name, RETURN_SONGS.data(songs))
+})
+
+ipcMain.on(STORE_PREFERENCES.name, async (ev, data) => {
+    ApplicationDB.storePreference(data.key, data.value)
+})
+
+ipcMain.on(GET_PREFERENCES.name, async (ev, data) => {
+    const pref = ApplicationDB.getPreference(data.key)
+    ev.reply(RETURN_PREFERENCES.name, RETURN_PREFERENCES.data(pref))
 })

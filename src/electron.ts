@@ -97,6 +97,7 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
                 )
 
                 // Process all sound paths
+                // TODO: Perform batch process? (callback could be with arrays instead)
                 fileLoader.processSoundFilePaths(
                     success.filePaths,
                     (sound: Song) => {

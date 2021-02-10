@@ -45,14 +45,8 @@ export class Settings extends React.Component<{}, SettingsState> {
 
         // Receive sound loading event which contains the sound data of the file
         ipc.on(RETURN_FILE_SELECTION.name, (e, data) => {
-            console.log('Got:')
-            console.log(data)
-
             const newScanDirs = this.state.scanDirectories.concat(data.folders)
             storePreference(SCAN_DIRECTORIES_KEY, JSON.stringify(newScanDirs))
-
-            console.log('Upd:')
-            console.log(newScanDirs)
 
             this.setState({
                 scanDirectories: newScanDirs,
@@ -73,6 +67,7 @@ export class Settings extends React.Component<{}, SettingsState> {
 
         const songDirectoriesElements = scanDirectories.map(
             (songDir, index) => {
+                // TODO: Add removal option
                 return (
                     <StyledDirectoryContainer key={index}>
                         {songDir}

@@ -12,7 +12,6 @@ import {
     MdQueueMusic,
     MdSettings,
 } from 'react-icons/md'
-import { FileSelector } from './FileSelector'
 
 const navBarLinks = [
     {
@@ -54,10 +53,7 @@ export class NavBar extends React.Component<{}, {}> {
 
         return (
             <StyledNavBarContainer>
-                <StyledNavBarContent>
-                    {linkElements}
-                    <FileSelector onSoundLoaded={() => {}} />
-                </StyledNavBarContent>
+                <StyledNavBarContent>{linkElements}</StyledNavBarContent>
             </StyledNavBarContainer>
         )
     }

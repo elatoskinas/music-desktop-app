@@ -4,10 +4,13 @@ import path from 'path'
 import ApplicationDB from '@backend/app-database'
 
 import {
+    GET_PREFERENCES,
     GET_SONGS,
-    LOADED_SOUND,
     OPEN_FILE_SELECTION,
+    RETURN_FILE_SELECTION,
+    RETURN_PREFERENCES,
     RETURN_SONGS,
+    STORE_PREFERENCES,
 } from '@common/messages.ts'
 import * as fileLoader from '@backend/file-loader'
 import { loadSoundData } from '@backend/music-loader'
@@ -75,11 +78,11 @@ app.on('ready', async () => {
 // Open directory event
 ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
     // Get property for file selection
-    const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
+    // const fileSelectProperty = data.useFolders ? 'openDirectory' : 'openFile'
 
     // Open dialog for file selection (enable multi-selection mode)
     let promise = dialog.showOpenDialog({
-        properties: [fileSelectProperty, 'multiSelections'],
+        properties: ['openDirectory', 'multiSelections'],
         filters: [{ name: 'All Files', extensions: SUPPORTED_TYPES }],
     })
 
@@ -88,15 +91,18 @@ ipcMain.on(OPEN_FILE_SELECTION.name, (ev, data) => {
         function (success) {
             // If file selection was not cancelled, then process selected file paths
             if (!success.canceled) {
-                // Construct file callback to send back to event
-                let replyCallback = function fileSendCallback(sound: Song) {
-                    ApplicationDB.addSong(sound)
-                    ev.reply(LOADED_SOUND.name, LOADED_SOUND.data(sound))
-                }
+                ev.reply(
+                    RETURN_FILE_SELECTION.name,
+                    RETURN_FILE_SELECTION.data(success.filePaths)
+                )
 
+                // Process all sound paths
+                // TODO: Perform batch process? (callback could be with arrays instead)
                 fileLoader.processSoundFilePaths(
                     success.filePaths,
-                    replyCallback
+                    (sound: Song) => {
+                        ApplicationDB.addSong(sound)
+                    }
                 )
             }
         },
@@ -116,4 +122,13 @@ ipcMain.on(GET_SONGS.name, async (ev) => {
         })
     )
     ev.reply(RETURN_SONGS.name, RETURN_SONGS.data(songs))
+})
+
+ipcMain.on(STORE_PREFERENCES.name, async (ev, data) => {
+    ApplicationDB.storePreference(data.key, data.value)
+})
+
+ipcMain.on(GET_PREFERENCES.name, async (ev, data) => {
+    const pref = ApplicationDB.getPreference(data.key)
+    ev.reply(RETURN_PREFERENCES.name, RETURN_PREFERENCES.data(pref))
 })

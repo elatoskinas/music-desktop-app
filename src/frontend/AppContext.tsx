@@ -1,6 +1,12 @@
 import { Song } from '@data/music-data'
 import { SongQueue } from '@data/song-queue'
 import * as React from 'react'
+import { ipcRenderer as ipc } from 'electron'
+import {
+    GET_PREFERENCES,
+    RETURN_PREFERENCES,
+    STORE_PREFERENCES,
+} from '@common/messages'
 
 /** Shared App Context state */
 export interface AppContextState {
@@ -21,6 +27,12 @@ export interface AppContextState {
 
     /** Changes song to previous in queue */
     previousSong: () => void
+
+    /** Stores value into the specified key for preferences */
+    storePreference: (key: string, value: string) => void
+
+    /** Gets the value of the specified key in preferences */
+    getPreference: (key: string) => Promise<string | null>
 }
 
 export const AppContext = React.createContext<AppContextState>(null)
@@ -45,6 +57,8 @@ export class AppContextProvider extends React.Component<{}, AppContextState> {
             changeSong: this.changeSong,
             nextSong: this.nextSong,
             previousSong: this.previousSong,
+            storePreference: this.storePreference,
+            getPreference: this.getPreference,
         }
     }
 
@@ -78,6 +92,20 @@ export class AppContextProvider extends React.Component<{}, AppContextState> {
 
         this.setState({
             activeSong: prevSong,
+        })
+    }
+
+    storePreference = (key: string, value: string) => {
+        ipc.send(STORE_PREFERENCES.name, STORE_PREFERENCES.data(key, value))
+    }
+
+    getPreference = (key: string): Promise<string | null> => {
+        return new Promise((resolve) => {
+            ipc.send(GET_PREFERENCES.name, GET_PREFERENCES.data(key))
+
+            ipc.on(RETURN_PREFERENCES.name, (e, data) => {
+                resolve(data.value)
+            })
         })
     }
 

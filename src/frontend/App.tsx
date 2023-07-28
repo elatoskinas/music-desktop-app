@@ -15,6 +15,7 @@ import {
     AppContextState,
 } from './AppContext'
 import { Gallery } from './Gallery'
+import { Settings } from './Settings'
 
 /**
  * Main application component.
@@ -34,7 +35,7 @@ class App extends React.Component {
                                     </Route>
 
                                     <Route path="/settings">
-                                        <h1>Settings</h1>
+                                        <Settings />
                                     </Route>
 
                                     <Route path="/playing">

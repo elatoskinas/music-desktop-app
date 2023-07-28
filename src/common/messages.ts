@@ -2,9 +2,16 @@ import { Song } from '@data/music-data'
 
 export const OPEN_FILE_SELECTION = {
     name: 'openFileSelection',
-    data: (useFolders: boolean) => {
+    data: () => {
+        return {}
+    },
+}
+
+export const RETURN_FILE_SELECTION = {
+    name: 'returnFileSelection',
+    data: (folders: string[]) => {
         return {
-            useFolders: useFolders,
+            folders,
         }
     },
 }
@@ -30,6 +37,34 @@ export const RETURN_SONGS = {
     data: (songs: Song[]) => {
         return {
             songs,
+        }
+    },
+}
+
+export const GET_PREFERENCES = {
+    name: 'getPreferences',
+    data: (key: string) => {
+        return {
+            key,
+        }
+    },
+}
+
+export const RETURN_PREFERENCES = {
+    name: 'returnPreferences',
+    data: (value: string | null) => {
+        return {
+            value,
+        }
+    },
+}
+
+export const STORE_PREFERENCES = {
+    name: 'storePreferences',
+    data: (key: string, value: string) => {
+        return {
+            key,
+            value,
         }
     },
 }

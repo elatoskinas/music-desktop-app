@@ -67,7 +67,6 @@ const reactConfig = {
     },
     resolve: {
         alias: {
-            'react-dom': '@hot-loader/react-dom',
             ...ALIASES,
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx'],

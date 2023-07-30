@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import clone from 'lodash/clone'
 import LinkedList from 'yallist'
 import { Song, Album } from '@data/music-data'
 
@@ -107,7 +107,7 @@ export class SongQueue {
      */
     addSong(song: Song) {
         // Clone the song prior to insertion to maintain uniqueness per song instance.
-        const songCopy = _.clone(song)
+        const songCopy = clone(song)
         this.queue.push(songCopy)
         this.songNodeMapping.set(songCopy, this.queue.tail)
 

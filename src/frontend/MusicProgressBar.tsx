@@ -6,6 +6,7 @@ import {
     StyledProgressBar,
     StyledProgressTimeContainer,
 } from './MusicProgressBar.styles'
+import { Howl } from 'howler'
 
 export interface MusicProgressProps {
     sound: Howl

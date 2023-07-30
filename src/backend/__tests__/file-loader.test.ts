@@ -1,7 +1,7 @@
 import * as fileLoader from '@backend/file-loader'
 import { Song } from '@data/music-data'
 
-import { mocked } from 'ts-jest/utils'
+import { mocked } from 'jest-mock'
 import { Stream } from 'stream'
 
 jest.mock('fast-glob')
